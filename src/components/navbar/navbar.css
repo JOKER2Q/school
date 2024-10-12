@@ -1,0 +1,131 @@
+nav {
+  height: 75px;
+  position: fixed;
+  width: calc(100% - 320px);
+  background-color: var(--section-color);
+  left: 320px;
+}
+
+nav .search {
+  width: 50%;
+  background-color: var(--body-color);
+  border-radius: 6px;
+}
+nav .search input {
+  padding: 10px;
+  background-color: transparent;
+  border: none;
+  font-size: 17px;
+  color: var(--font-color);
+}
+nav .search i {
+  color: var(--font-color);
+  opacity: 0.7;
+  font-size: 19px;
+  margin-right: 15px;
+  cursor: pointer;
+}
+nav .setting {
+  gap: 30px;
+}
+nav .setting .info .photo {
+  background-color: var(--body-color);
+  color: var(--font-color);
+  width: 50px;
+  height: 50px;
+  display: flex;
+  border-radius: 50%;
+  margin-right: 12px;
+  object-fit: cover;
+}
+nav .setting .info h1,
+nav .setting .info p {
+  text-transform: capitalize;
+  line-height: 1;
+}
+
+aside {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  background-color: var(--section-color);
+  width: 320px;
+}
+aside > article {
+  padding: 20px;
+  background-color: var(--main-color);
+  height: 75px;
+}
+aside > article a {
+  color: white;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+aside > article a h1 {
+  letter-spacing: 2px;
+}
+aside > article a i {
+  margin-right: 4px;
+}
+aside > article i {
+  color: white;
+  cursor: pointer;
+  font-size: 20px;
+}
+aside > div {
+  padding: 20px 15px;
+}
+
+aside > div > .links .center {
+  cursor: pointer;
+}
+aside > div > .links > .center {
+  padding: 13px 15px;
+  background-color: var(--body-color);
+  border-radius: 6px;
+}
+
+aside > div > .links > .center:hover,
+aside > div > .links > .center.active {
+  background-color: var(--main-color);
+}
+
+aside > div > .links > .center h1 {
+  font-size: 25px;
+  text-transform: capitalize;
+  letter-spacing: 1px;
+}
+aside > div > .links > .center i:not(.arrow) {
+  margin-right: 10px;
+  font-size: 17px;
+  color: var(--main-color);
+}
+aside > div > .links > .center:hover i,
+aside > div > .links > .center.active i,
+aside > div > .links > .center:hover h1,
+aside > div > .links > .center.active h1 {
+  color: white;
+}
+aside > div > .links > .center.active i.active {
+  rotate: 90deg;
+}
+aside > div > .links > article {
+  background-color: var(--body-color);
+  margin-top: 6px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+aside > div > .links > article a {
+  display: block;
+  text-transform: capitalize;
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--font-color);
+  padding: 13px 15px;
+}
+aside > div > .links > article a.active,
+aside > div > .links > article a:hover {
+  background-color: var(--main-color);
+  color: white;
+}
