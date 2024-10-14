@@ -1,0 +1,96 @@
+form.dashboard-form {
+  background-color: var(--body-color);
+  padding: 30px;
+  box-shadow: var(--box-shadow);
+  min-height: 65vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+form.dashboard-form h1 {
+  color: var(--font-color);
+  text-transform: capitalize;
+  margin-bottom: 30px;
+}
+form.dashboard-form > div {
+  gap: 30px;
+}
+form.dashboard-form label {
+  text-transform: capitalize;
+  font-size: 21px;
+  margin-bottom: 15px;
+  color: var(--font-color);
+  cursor: text;
+  width: fit-content;
+}
+form.dashboard-form .flex-direction {
+  flex: 1;
+  min-width: 300px;
+}
+form.dashboard-form .flex-direction .inp {
+  border: none;
+  padding: 15px;
+  font-size: 20px;
+  background-color: var(--section-color);
+  color: var(--font-color);
+}
+
+form.dashboard-form .selecte {
+  position: relative;
+}
+form.dashboard-form .selecte .inp {
+  color: #777;
+  cursor: pointer;
+  position: relative;
+}
+form.dashboard-form .selecte .inp::before {
+  position: absolute;
+  content: "\f078";
+  font-weight: 900;
+  font-family: "Font Awesome 6 Free";
+  right: 10px;
+  top: 50%;
+  font-size: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+form.dashboard-form .selecte > article {
+  background-color: var(--body-color);
+  box-shadow: var(--box-shadow);
+  position: absolute;
+  width: 100%;
+  padding: 10px 15px;
+  top: 140%;
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
+  max-height: 400px;
+  overflow-y: auto;
+}
+form.dashboard-form .selecte .inp.active + article {
+  opacity: 1;
+  z-index: 1;
+  pointer-events: all;
+  top: 110%;
+}
+form.dashboard-form .selecte > article h2 {
+  color: var(--font-color);
+  text-transform: capitalize;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+form.dashboard-form .selecte > article:hover h2 {
+  opacity: 0.5;
+}
+form.dashboard-form .selecte > article h2:hover {
+  opacity: 1;
+}
+form.dashboard-form input[type="file"] {
+  color: var(--font-color);
+  font-size: 15px;
+}
+form.dashboard-form button {
+  margin-top: 30px;
+  font-size: 23px;
+  width: 150px;
+}

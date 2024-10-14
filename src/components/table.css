@@ -1,8 +1,18 @@
 div.table {
-  padding: 20px;
+  padding: 30px 20px;
   background-color: var(--body-color);
+  border-radius: 6px;
 }
-
+div.table .search input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background-color: var(--section-color);
+  font-size: 18px;
+  border-radius: 6px;
+  color: var(--font-color);
+  border: solid 1px var(--border-color);
+}
 div.table table {
   border-spacing: 0px;
   margin: 20px 0 10px;
@@ -18,6 +28,55 @@ div.table thead th {
   font-size: 21px;
   color: white;
   padding: 10px;
+}
+table .checkbox {
+  width: 20px;
+  height: 20px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  border-radius: 4px;
+  border: solid 1px var(--font-color);
+}
+table .checkbox.active {
+  border: solid 1px transparent;
+}
+table .checkbox::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background-color: rgba(16, 228, 16, 0.705);
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  transform: scale(0);
+  transition: 0.4s;
+}
+table .checkbox.active::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+table .checkbox::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  rotate: 28deg;
+  opacity: 0;
+  transition: 0.4s;
+}
+table .checkbox.active::after {
+  rotate: 0deg;
+  transition: 0.4s;
+  opacity: 1;
 }
 
 div.table tbody tr:nth-child(odd) {
@@ -62,6 +121,92 @@ div.table tbody td div.options {
   width: 150px;
   background: var(--body-color);
   box-shadow: var(--box-shadow);
-  padding: 10px;
   left: -10px;
+  padding: 8px;
+  top: 100%;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+div.table tbody td div.options.active-div {
+  top: 80%;
+}
+div.table tbody td div.options div.delete {
+  gap: 10px;
+  color: var(--font-color);
+  padding: 10px;
+  text-transform: capitalize;
+  cursor: pointer;
+  align-items: center;
+  font-weight: 500;
+}
+div.table tbody td div.options div.update {
+  font-weight: 500;
+  gap: 10px;
+  color: var(--font-color);
+  padding: 10px;
+  text-transform: capitalize;
+  cursor: pointer;
+  align-items: center;
+}
+div.table tbody td div.options div.visit {
+  font-weight: 500;
+  gap: 10px;
+  color: var(--font-color);
+  padding: 10px;
+  text-transform: capitalize;
+  cursor: pointer;
+  align-items: center;
+}
+div.table tbody td div.options div.delete:hover {
+  background-color: #ce06061c;
+}
+div.table tbody td div.options div.update:hover {
+  background-color: #0011ff1f;
+}
+div.table tbody td div.options div.visit:hover {
+  background-color: #0e9e3225;
+}
+div.table tbody td div.options div.delete i {
+  color: #ce0606;
+  font-size: 18px;
+}
+div.table tbody td div.options div.update a {
+  color: #4400ff;
+  font-size: 18px;
+}
+div.table tbody td div.options div.visit a {
+  color: #0e9e32;
+  font-size: 18px;
+}
+
+div.table .pagination {
+  justify-content: flex-end;
+  padding: 10px 15px;
+  margin-top: 30px;
+  gap: 20px;
+}
+div.table .pagination h3 {
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  color: var(--font-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: solid 1px var(--font-color);
+  cursor: pointer;
+}
+div.table .pagination h3.active,
+div.table .pagination h3:hover {
+  border: solid 1px transparent;
+  width: 40px;
+  height: 40px;
+  background-color: var(--main-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
 }

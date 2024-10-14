@@ -193,6 +193,6 @@ aside > div > .links > article a {
 }
 aside > div > .links > article a.active,
 aside > div > .links > article a:hover {
-  background-color: var(--main-color);
-  color: white;
+  background-color: var(--border-color);
+  color: var(--font-color);
 }

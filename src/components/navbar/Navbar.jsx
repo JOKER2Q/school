@@ -107,9 +107,8 @@ const Navbar = () => {
               <i className="arrow fa-solid fa-chevron-right"></i>
             </div>
             <article>
-              <NavLink to={"/all_teachers"}>all teachers</NavLink>
-              <NavLink to={"b"}>all teachers</NavLink>
-              <NavLink to={"/2"}>all teachers</NavLink>
+              <NavLink to={"all_teachers"}>all teachers</NavLink>
+              <NavLink to={"add_teacher"}>add teacher</NavLink>
             </article>
           </div>
           <div className="links">
@@ -119,9 +118,8 @@ const Navbar = () => {
               <i className="arrow fa-solid fa-chevron-right"></i>
             </div>
             <article>
-              <NavLink to={"/1"}>all teachers</NavLink>
-              <NavLink to={"3"}>all teachers</NavLink>
-              <NavLink to={"/4"}>all teachers</NavLink>
+              <NavLink to={"all_studants"}>all studants</NavLink>
+              <NavLink to={"add_studant"}>add studant</NavLink>
             </article>
           </div>
 
@@ -132,9 +130,8 @@ const Navbar = () => {
               <i className="arrow fa-solid fa-chevron-right"></i>
             </div>
             <article>
-              <NavLink to={"/5"}>all teachers</NavLink>
-              <NavLink to={"6"}>all teachers</NavLink>
-              <NavLink to={"/7"}>all teachers</NavLink>
+              <NavLink to={"/5"}>all class</NavLink>
+              <NavLink to={"6"}>add class</NavLink>
             </article>
           </div>
 
