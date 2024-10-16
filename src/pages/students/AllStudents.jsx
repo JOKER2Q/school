@@ -1,6 +1,6 @@
 import "../../components/table.css";
 import { Link } from "react-router-dom";
-const AllTeachers = () => {
+const AllStudents = () => {
   const openOptions = (e) => {
     e.stopPropagation();
     const div = document.querySelectorAll("div.table tbody td div.options");
@@ -39,14 +39,14 @@ const AllTeachers = () => {
     <main>
       <div className="dashboard-container">
         <div className="container">
-          <h1 className="title">all Teachers</h1>
+          <h1 className="title">all students</h1>
           <div className="table">
             <div className="flex search gap-20">
               <input type="text" placeholder="search by name" />
               <input type="text" placeholder="search by class" />
               <input type="text" placeholder="search by subject" />
-              <Link className="btn" to={"/add_teacher"}>
-                <i className="fa-regular fa-square-plus"></i> add teacher
+              <Link className="btn" to={"/add_student"}>
+                <i className="fa-regular fa-square-plus"></i> add student
               </Link>
             </div>
             <table>
@@ -241,4 +241,4 @@ const AllTeachers = () => {
   );
 };
 
-export default AllTeachers;
+export default AllStudents;

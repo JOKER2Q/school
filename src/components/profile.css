@@ -1,0 +1,85 @@
+div.profile {
+  padding: 40px 20px;
+  background-color: var(--body-color);
+  border-radius: 6px;
+  box-shadow: var(--box-shadow);
+  gap: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+div.profile .image .photo {
+  width: 270px;
+  height: 270px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+div.profile .image .center {
+  margin-top: 5px;
+  text-transform: capitalize;
+  background-color: var(--section-color);
+  color: var(--font-color);
+  font-weight: 500;
+  padding: 10px 15px;
+  border-radius: 6px;
+}
+div.profile .image .center:hover {
+  color: white;
+  background: var(--main-color);
+}
+div.profile .info {
+  flex: 1;
+}
+div.profile .info > h2 {
+  text-transform: capitalize;
+  font-size: 30px;
+  position: relative;
+  color: var(--font-color);
+}
+div.profile .info > h2 > a {
+  font-size: 17px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--section-color);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 4px;
+  color: #666;
+  box-shadow: var(--box-shadow);
+  right: 10px;
+}
+div.profile .info > h2 > a:hover {
+  color: white;
+  background-color: var(--main-color);
+}
+div.profile .info > h3 {
+  font-weight: 400;
+  max-width: 50%;
+  font-size: 17px;
+  margin: 20px 0 30px;
+  color: var(--font-color);
+}
+div.profile .info > .flex {
+  align-items: center;
+  margin-bottom: 15px;
+}
+div.profile .info > .flex h2 {
+  font-weight: 500;
+  text-transform: capitalize;
+  font-size: 19px;
+  width: 160px;
+  color: var(--font-color);
+}
+div.profile .info > .flex p {
+  font-size: 18px;
+  color: var(--font-color);
+}
+div.profile .info > .flex p:not(.email) {
+  text-transform: capitalize;
+}

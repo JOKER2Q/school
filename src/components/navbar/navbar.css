@@ -1,11 +1,17 @@
 nav {
   height: 75px;
   position: fixed;
-  width: calc(100% - 320px);
+  width: calc(100% - 290px);
   background-color: var(--body-color);
-  left: 320px;
+  left: 290px;
+  top: 0;
+  z-index: 3;
+  box-shadow: var(--box-shadow);
 }
-
+nav.closed {
+  left: 80px;
+  width: calc(100% - 80px);
+}
 nav .search {
   width: 50%;
   background-color: var(--section-color);
@@ -15,7 +21,7 @@ nav .search input {
   padding: 10px;
   background-color: transparent;
   border: none;
-  font-size: 17px;
+  font-size: 15px;
   color: var(--font-color);
 }
 nav .search i {
@@ -26,19 +32,20 @@ nav .search i {
   cursor: pointer;
 }
 nav .setting {
-  gap: 30px;
+  gap: 20px;
 }
 nav .setting .info .photo {
   background-color: var(--section-color);
   color: var(--font-color);
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   display: flex;
   border-radius: 50%;
   margin-right: 12px;
   object-fit: cover;
+  font-size: 14px;
 }
-nav .setting .info h1,
+nav .setting .info h4,
 nav .setting .info p {
   text-transform: capitalize;
   line-height: 1;
@@ -50,12 +57,13 @@ nav .setting .lang {
 }
 nav .setting .lang span {
   margin: 0 4px;
-  font-size: 20px;
+  font-size: 17px;
   text-transform: uppercase;
   color: var(--font-color);
 }
 nav .setting .lang i {
   opacity: 0.7;
+  font-size: 12px;
 }
 
 nav .setting .lang + div.languages {
@@ -64,13 +72,13 @@ nav .setting .lang + div.languages {
   background: var(--body-color);
   bottom: -130px;
   box-shadow: var(--box-shadow);
-  left: 0;
+  left: -20px;
   opacity: 0;
   z-index: -1;
   pointer-events: none;
 }
 nav .setting .lang + div.languages h2 {
-  font-size: 20px;
+  font-size: 18px;
   text-transform: capitalize;
   font-weight: 500;
   cursor: pointer;
@@ -88,15 +96,15 @@ nav .setting .lang + div.languages.active-div {
 }
 nav .setting .mode {
   color: var(--font-color);
-  font-size: 21px;
+  font-size: 17px;
   cursor: pointer;
   margin: 0 10px;
   border: solid 1px var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: var(--section-color);
 }
@@ -108,8 +116,12 @@ aside {
   height: 100vh;
   max-height: 100vh;
   background-color: var(--body-color);
-  width: 320px;
+  width: 290px;
   overflow-y: auto;
+}
+aside.closed {
+  width: 80px;
+  overflow: visible;
 }
 aside > article {
   padding: 20px;
@@ -118,8 +130,14 @@ aside > article {
 }
 aside > article a {
   color: white;
-  font-size: 20px;
+  font-size: 17px;
   text-transform: uppercase;
+}
+aside.closed > article a {
+  display: none;
+}
+aside.closed > article > i {
+  margin: 0 auto;
 }
 aside > article a h1 {
   letter-spacing: 2px;
@@ -130,12 +148,14 @@ aside > article a i {
 aside > article i {
   color: white;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 18px;
 }
 aside > div {
   padding: 20px 15px;
 }
-
+aside > div > .links {
+  position: relative;
+}
 aside > div > .links > .center {
   cursor: pointer;
   padding: 13px 15px;
@@ -143,26 +163,41 @@ aside > div > .links > .center {
   border-radius: 6px;
   color: var(--font-color);
 }
-
+aside > div > .links > a.center {
+  margin-top: 10px;
+}
+aside.closed > div > .links > .center {
+  justify-content: center;
+}
 aside > div > .links > .center:hover,
 aside > div > .links > .center.active {
   background-color: var(--main-color);
 }
 
 aside > div > .links > .center h1 {
-  font-size: 25px;
+  font-size: 20px;
   text-transform: capitalize;
   letter-spacing: 1px;
   color: var(--font-color);
   pointer-events: none;
 }
+aside.closed > div > .links > .center h1 {
+  display: none;
+}
 aside > div > .links > .center i {
   pointer-events: none;
+  font-size: 13px;
+}
+aside.closed > div > .links > .center i.arrow {
+  display: none;
 }
 aside > div > .links > .center i:not(.arrow) {
   margin-right: 10px;
-  font-size: 17px;
+  font-size: 14px;
   color: var(--main-color);
+}
+aside.closed > div > .links > .center i:not(.arrow) {
+  margin-right: 0;
 }
 aside > div > .links > .center:hover i,
 aside > div > .links > .center.active i,
@@ -180,13 +215,24 @@ aside > div > .links > article {
   overflow: hidden;
   max-height: 0px;
 }
+aside.closed > div > .links > article {
+  background-color: var(--body-color);
+}
+aside.closed > div > .links > article {
+  position: absolute;
+  left: calc(100% + 16px);
+  z-index: 2;
+  top: 0;
+  width: 150px;
+}
+
 aside > div > .links.active > article {
   max-height: 200px;
 }
 aside > div > .links > article a {
   display: block;
   text-transform: capitalize;
-  font-size: 20px;
+  font-size: 17px;
   font-weight: bold;
   color: var(--font-color);
   padding: 13px 15px;

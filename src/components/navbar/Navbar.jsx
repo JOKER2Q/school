@@ -5,11 +5,17 @@ import { Context } from "../../context/Context";
 const Navbar = () => {
   const context = useContext(Context);
   const location = useLocation();
+  const isClosed = localStorage.getItem("isClosed") || false;
+
   window.onclick = () => {
     const langDiv = document.querySelector(
       "nav .setting .lang + div.languages.active-div"
     );
     langDiv && langDiv.classList.remove("active-div");
+    const linksDiv = document.querySelector(
+      "aside.closed > div > .links.active"
+    );
+    linksDiv && linksDiv.classList.remove("active");
   };
 
   const modeFun = () => {
@@ -18,6 +24,7 @@ const Navbar = () => {
   };
 
   const openDiv = (ele) => {
+    ele.stopPropagation();
     const allDivs = document.querySelectorAll("aside > div > .links > .center");
     allDivs.forEach((e, i) => {
       +ele.target.dataset.index !== i &&
@@ -29,7 +36,7 @@ const Navbar = () => {
   useEffect(() => {
     const linksDiv = document.querySelectorAll("aside .links");
     const removeClass = document.querySelectorAll(
-      "aside > div > .links > .center"
+      "aside > div > .links > div.center"
     );
     removeClass.forEach((e) => e.classList.remove("active"));
     linksDiv.forEach((e) => {
@@ -39,11 +46,23 @@ const Navbar = () => {
         }
       });
     });
+    const nav = document.querySelector("nav.closed");
+    const container = document.querySelector(".dashboard-container");
+    nav && container && container.classList.add("closed");
   }, [location.pathname]);
+  const closeAside = () => {
+    const nav = document.querySelector("nav");
+    const aside = document.querySelector("aside");
+    const container = document.querySelector(".dashboard-container");
+    nav && nav.classList.toggle("closed");
+    localStorage.setItem("isClosed", nav.classList.contains("closed"));
+    aside && aside.classList.toggle("closed");
+    container && container.classList.toggle("closed");
+  };
 
   return (
     <>
-      <nav className="center">
+      <nav className={`${!isClosed === false ? "closed" : ""} center`}>
         <div className="container between">
           <div className="search center">
             <input
@@ -54,13 +73,13 @@ const Navbar = () => {
             <i className="fa-solid fa-magnifying-glass"></i>
           </div>
           <div className="setting  center">
-            <div className="info center">
+            <Link to={"teacher_profile"} className="info center">
               <i className="center photo fa-solid fa-user"></i>
               <article>
-                <h1>diyar direki</h1>
+                <h4>diyar direki</h4>
                 <p> admin </p>
               </article>
-            </div>
+            </Link>
             <i
               onClick={modeFun}
               className="fa-solid fa-moon fa-regular mode"
@@ -90,13 +109,13 @@ const Navbar = () => {
         </div>
       </nav>
 
-      <aside>
+      <aside className={`${!isClosed === false ? "closed" : ""}`}>
         <article className="between">
           <Link className="center" to={"/"}>
             <i className="fa-solid fa-graduation-cap"></i>
             <h1>school</h1>
           </Link>
-          <i className="fa-solid fa-bars-staggered"></i>
+          <i onClick={closeAside} className="fa-solid fa-bars-staggered"></i>
         </article>
 
         <div className="flex-direction flex gap-10">
@@ -118,8 +137,8 @@ const Navbar = () => {
               <i className="arrow fa-solid fa-chevron-right"></i>
             </div>
             <article>
-              <NavLink to={"all_studants"}>all studants</NavLink>
-              <NavLink to={"add_studant"}>add studant</NavLink>
+              <NavLink to={"all_students"}>all studants</NavLink>
+              <NavLink to={"add_student"}>add studant</NavLink>
             </article>
           </div>
 
@@ -146,6 +165,22 @@ const Navbar = () => {
               <NavLink to={"9"}>all teachers</NavLink>
               <NavLink to={"/g"}>all teachers</NavLink>
             </article>
+          </div>
+          <div className="links">
+            <div data-index="4" onClick={openDiv} className="center">
+              <i className="fa-solid fa-pen-nib"></i>
+              <h1 className="flex-1">subjects</h1>
+              <i className="arrow fa-solid fa-chevron-right"></i>
+            </div>
+            <article>
+              <NavLink to={"/8"}>all teachers</NavLink>
+              <NavLink to={"9"}>all teachers</NavLink>
+              <NavLink to={"/g"}>all teachers</NavLink>
+            </article>
+            <NavLink to={"attendence"} className="justify-start center">
+              <i className="fa-solid fa-clipboard-user"></i>
+              <h1>attendence</h1>
+            </NavLink>
           </div>
         </div>
       </aside>
