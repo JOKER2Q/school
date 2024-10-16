@@ -1,6 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../components/table.css";
 const Attendence = () => {
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    fetch("https://fakestoreapi.com/products")
+      .then((res) => res.json())
+      .then((data) => setData(data));
+  }, []);
+
   const handleClick = (e) => {
     e.target.classList.toggle("active");
   };
@@ -26,6 +33,39 @@ const Attendence = () => {
     const overlay = document.querySelector(".overlay");
     overlay && setOverlay(false);
   };
+
+  function completeData(e) {
+    let tds = [];
+    for (let index = 0; index < daysInMonth; index++) {
+      tds.push(
+        e.price > 100 && e.price < 300 ? (
+          <td onDoubleClick={statusClick} className="status">
+            <i className="true fa-solid fa-check"></i>
+          </td>
+        ) : e.price > 350 ? (
+          <td onDoubleClick={statusClick} className="status">
+            <i className="false fa-solid fa-xmark"></i>
+          </td>
+        ) : (
+          <td onDoubleClick={statusClick} className="status">
+            -
+          </td>
+        )
+      );
+    }
+    return tds;
+  }
+
+  const tr = data.map((e) => {
+    return (
+      <tr key={e.id}>
+        <td>{e.category}</td>
+
+        {completeData(e)}
+      </tr>
+    );
+  });
+
   return (
     <main>
       <div className="dashboard-container">
@@ -103,7 +143,7 @@ const Attendence = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                {/* <tr>
                   <td>diyar</td>
                   <td onDoubleClick={statusClick} className="status">
                     <i className="true fa-solid fa-check"></i>
@@ -223,7 +263,8 @@ const Attendence = () => {
                   <td className="status">
                     <i className="false fa-solid fa-xmark"></i>
                   </td>
-                </tr>
+                </tr> */}
+                {tr}
               </tbody>
             </table>
           </div>
