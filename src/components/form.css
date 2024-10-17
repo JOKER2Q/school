@@ -1,3 +1,60 @@
+form.login {
+  background-color: var(--body-color);
+  box-shadow: var(--box-shadow);
+  width: 75%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+form.login img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+form.login > .flex > div.forms {
+  justify-content: center;
+  flex: 50%;
+  padding: 30px 40px;
+}
+form.login > .flex > div.forms > h1 {
+  color: var(--font-color);
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+form.login > .flex > div.forms label {
+  color: var(--font-color);
+  display: block;
+  text-transform: capitalize;
+  font-weight: 500;
+  font-size: 20px;
+}
+form.login > .flex > div.forms > .inp {
+  background-color: var(--section-color);
+  border-radius: 6px;
+  gap: 5px;
+  padding: 5px 10px;
+  margin: 20px 0;
+}
+form.login > .flex > div.forms > .inp input {
+  color: var(--font-color);
+  padding: 10px;
+  background-color: transparent;
+  border: none;
+  font-size: 17px;
+}
+form.login > .flex > div.forms .btn {
+  width: 100%;
+  display: block;
+  font-size: 18px;
+  margin-top: 10px;
+}
+form.login > .flex > div.image {
+  flex: 50%;
+  background-color: rgba(0, 0, 0, 0.253);
+}
 form.dashboard-form {
   background-color: var(--body-color);
   padding: 30px;
@@ -95,4 +152,7 @@ form.dashboard-form button {
   margin-top: 30px;
   font-size: 23px;
   width: 150px;
+}
+i.password {
+  cursor: pointer;
 }

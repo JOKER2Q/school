@@ -1,9 +1,11 @@
-div.table {
+div.tabel-container {
   padding: 30px 20px;
   background-color: var(--body-color);
   border-radius: 6px;
+}
+
+div.table {
   max-width: 100%;
-  overflow-x: auto;
 }
 div.table .search input {
   flex: 1;
@@ -110,6 +112,7 @@ div.table tbody td .photo {
   justify-content: center;
   object-fit: cover;
   font-size: 14px;
+  margin: 0 auto;
 }
 div.table tbody td i.options {
   cursor: pointer;
@@ -123,7 +126,7 @@ div.table tbody td div.options {
   width: 150px;
   background: var(--body-color);
   box-shadow: var(--box-shadow);
-  left: -40px;
+  left: -115px;
   padding: 8px;
   top: 100%;
   opacity: 0;
