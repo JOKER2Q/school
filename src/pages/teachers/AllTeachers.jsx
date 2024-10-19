@@ -8,8 +8,9 @@ const AllTeachers = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   useEffect(() => {
     axios.get("http://localhost:8000/api/teachers/details").then((res) => {
-      setData(res.data.data);
-      setSearchData(res.data.data);
+      const fltr = res.data.data.filter((e) => e.active);
+      setData(fltr);
+      setSearchData(fltr);
     });
   }, []);
 
@@ -110,16 +111,16 @@ const AllTeachers = () => {
     );
   });
   const handelInput = () => {
-    const nameSearchValue = document.querySelector(
-      `input[data-type="name"]`
-    ).value;
+    const nameSearchValue = document
+      .querySelector(`input[data-type="name"]`)
+      .value.toLowerCase();
 
-    const classSearchValue = document.querySelector(
-      `input[data-type="class"]`
-    ).value;
-    const subjectSearchValue = document.querySelector(
-      `input[data-type="subject"]`
-    ).value;
+    const classSearchValue = document
+      .querySelector(`input[data-type="class"]`)
+      .value.toLowerCase();
+    const subjectSearchValue = document
+      .querySelector(`input[data-type="subject"]`)
+      .value.toLowerCase();
 
     const fltr = data.filter((e) => {
       const nameMatch = nameSearchValue

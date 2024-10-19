@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import "../../components/table.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
-const AllStudents = () => {
+const AllClasses = () => {
   const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [classesCount, setClassesCount] = useState(0);
   useEffect(() => {
-    axios.get("http://localhost:8000/api/students").then((res) => {
+    axios.get("http://localhost:8000/api/classes").then((res) => {
       const fltr = res.data.data.filter((e) => e.active);
       setData(fltr);
       setSearchData(fltr);
@@ -64,6 +65,13 @@ const AllStudents = () => {
   };
 
   const tableData = searchData.map((e, i) => {
+    axios
+      .get(
+        `http://localhost:8000/api/students?limit=1&classId=${e._id}&active=true`
+      )
+      .then((res) => {
+        setClassesCount(res.data.numberOfActiveStudents);
+      });
     return (
       <tr key={e._id}>
         <td>
@@ -72,15 +80,10 @@ const AllStudents = () => {
             className="checkbox"
           ></div>
         </td>
-        <td>
-          <i className="center photo fa-solid fa-user"></i>
-        </td>
-        <td>{`${e.firstName} ${e.lastName}`}</td>
-        <td> {e.contactInfo.phone} </td>
-        <td> {e.gender} </td>
+
         <td>{e.yearLevel}</td>
-        <td>{e.guardianContact.name}</td>
-        <td> {e.guardianContact.phone}</td>
+        <td> {e.name} </td>
+        <td> {classesCount} </td>
         <td>
           <i
             onClick={openOptions}
@@ -94,9 +97,6 @@ const AllStudents = () => {
             <div className="flex update">
               <Link className="fa-regular fa-pen-to-square"></Link>
               update
-            </div>
-            <div className="flex visit">
-              <Link className="fa-solid fa-circle-user"></Link> visit
             </div>
           </div>
         </td>
@@ -114,8 +114,7 @@ const AllStudents = () => {
 
     const fltr = data.filter((e) => {
       const nameMatch = nameSearchValue
-        ? e.firstName.toLowerCase().includes(nameSearchValue) ||
-          e.lastName.toLowerCase().includes(nameSearchValue)
+        ? e.name.toLowerCase().includes(nameSearchValue)
         : true;
 
       const subjectMatch = yearLevelSearchValue
@@ -135,7 +134,7 @@ const AllStudents = () => {
     <main>
       <div className="dashboard-container">
         <div className="container">
-          <h1 className="title">all students</h1>
+          <h1 className="title">all classes</h1>
           <div className="tabel-container">
             <div className="table">
               <div className="flex search gap-20">
@@ -151,8 +150,8 @@ const AllStudents = () => {
                   type="text"
                   placeholder="search by year level"
                 />
-                <Link className="btn" to={"/add_student"}>
-                  <i className="fa-regular fa-square-plus"></i> add student
+                <Link className="btn" to={"/add_class"}>
+                  <i className="fa-regular fa-square-plus"></i> add class
                 </Link>
               </div>
               <table>
@@ -164,13 +163,9 @@ const AllStudents = () => {
                         className="checkbox select-all"
                       ></div>
                     </th>
-                    <th>photo</th>
-                    <th>name</th>
-                    <th>phone</th>
-                    <th>gander</th>
                     <th>year Level</th>
-                    <th>guardian</th>
-                    <th>parents phone</th>
+                    <th>name</th>
+                    <th>students count</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -188,4 +183,4 @@ const AllStudents = () => {
   );
 };
 
-export default AllStudents;
+export default AllClasses;

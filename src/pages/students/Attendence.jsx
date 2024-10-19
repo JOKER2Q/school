@@ -134,139 +134,18 @@ const Attendence = () => {
             </div>
             <div className="btn">search</div>
           </form>
-          <div className="table">
-            <h2>Attendence Sheet Of Class One: Section A, April 2019</h2>
-            <table className="attendence">
-              <thead>
-                <tr>
-                  <th>student</th> {createTH(daysInMonth)}
-                </tr>
-              </thead>
-              <tbody>
-                {/* <tr>
-                  <td>diyar</td>
-                  <td onDoubleClick={statusClick} className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td>-</td>
-                </tr>
-                <tr>
-                  <td>diyar dreiki</td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td>-</td>
-
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                </tr>
-                <tr>
-                  <td>diyar</td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td>-</td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                  <td className="status">
-                    <i className="true fa-solid fa-check"></i>
-                  </td>
-                  <td className="status">
-                    <i className="false fa-solid fa-xmark"></i>
-                  </td>
-                </tr> */}
-                {tr}
-              </tbody>
-            </table>
+          <div className="tabel-container">
+            <div className="table">
+              <h2>Attendence Sheet Of Class One: Section A, April 2019</h2>
+              <table className="attendence">
+                <thead>
+                  <tr>
+                    <th>student</th> {createTH(daysInMonth)}
+                  </tr>
+                </thead>
+                <tbody>{tr}</tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

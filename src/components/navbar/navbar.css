@@ -156,7 +156,8 @@ aside > div {
 aside > div > .links {
   position: relative;
 }
-aside > div > .links > .center {
+aside > div > .links > .center,
+aside > div > a {
   cursor: pointer;
   padding: 13px 15px;
   background-color: var(--section-color);
@@ -169,19 +170,26 @@ aside > div > .links > a.center {
 aside.closed > div > .links > .center {
   justify-content: center;
 }
+aside.closed > div > a i {
+  margin: auto;
+}
 aside > div > .links > .center:hover,
-aside > div > .links > .center.active {
+aside > div > .links > .center.active,
+aside > div > a:hover,
+aside > div > a.active {
   background-color: var(--main-color);
 }
 
-aside > div > .links > .center h1 {
+aside > div > .links > .center h1,
+aside > div > a h1 {
   font-size: 20px;
   text-transform: capitalize;
   letter-spacing: 1px;
   color: var(--font-color);
   pointer-events: none;
 }
-aside.closed > div > .links > .center h1 {
+aside.closed > div > .links > .center h1,
+aside.closed > div > a h1 {
   display: none;
 }
 aside > div > .links > .center i {
@@ -191,7 +199,8 @@ aside > div > .links > .center i {
 aside.closed > div > .links > .center i.arrow {
   display: none;
 }
-aside > div > .links > .center i:not(.arrow) {
+aside > div > .links > .center i:not(.arrow),
+aside > div > a i {
   margin-right: 10px;
   font-size: 14px;
   color: var(--main-color);
@@ -202,7 +211,11 @@ aside.closed > div > .links > .center i:not(.arrow) {
 aside > div > .links > .center:hover i,
 aside > div > .links > .center.active i,
 aside > div > .links > .center:hover h1,
-aside > div > .links > .center.active h1 {
+aside > div > .links > .center.active h1,
+aside > div > a:hover h1,
+aside > div > a.active h1,
+aside > div > a:hover i,
+aside > div > a.active i {
   color: white;
 }
 aside > div > .links.active i.arrow {
