@@ -149,8 +149,8 @@ const Navbar = () => {
               <i className="arrow fa-solid fa-chevron-right"></i>
             </div>
             <article>
-              <NavLink to={"/5"}>all class</NavLink>
-              <NavLink to={"6"}>add class</NavLink>
+              <NavLink to={"all_classes"}>all class</NavLink>
+              <NavLink to={"add_class"}>add class</NavLink>
             </article>
           </div>
 
@@ -161,27 +161,19 @@ const Navbar = () => {
               <i className="arrow fa-solid fa-chevron-right"></i>
             </div>
             <article>
-              <NavLink to={"/8"}>all teachers</NavLink>
-              <NavLink to={"9"}>all teachers</NavLink>
-              <NavLink to={"/g"}>all teachers</NavLink>
+              <NavLink to={"exams_schedule"}>exams schedule</NavLink>
+              <NavLink to={"add_exam"}>add exam</NavLink>
+              <NavLink to={"exams_result"}>exams result</NavLink>
             </article>
           </div>
-          <div className="links">
-            <div data-index="4" onClick={openDiv} className="center">
-              <i className="fa-solid fa-pen-nib"></i>
-              <h1 className="flex-1">subjects</h1>
-              <i className="arrow fa-solid fa-chevron-right"></i>
-            </div>
-            <article>
-              <NavLink to={"/8"}>all teachers</NavLink>
-              <NavLink to={"9"}>all teachers</NavLink>
-              <NavLink to={"/g"}>all teachers</NavLink>
-            </article>
-            <NavLink to={"attendence"} className="justify-start center">
-              <i className="fa-solid fa-clipboard-user"></i>
-              <h1>attendence</h1>
-            </NavLink>
-          </div>
+          <NavLink to={"subjects"} className="w-100 justify-start center">
+            <i className="fa-solid fa-pen-nib"></i>
+            <h1>subjects</h1>
+          </NavLink>
+          <NavLink to={"attendence"} className="w-100 justify-start center">
+            <i className="fa-solid fa-clipboard-user"></i>
+            <h1>attendence</h1>
+          </NavLink>
         </div>
       </aside>
     </>

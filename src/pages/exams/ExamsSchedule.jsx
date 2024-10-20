@@ -2,51 +2,19 @@ import { useEffect, useState } from "react";
 import "../../components/table.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
-const AllStudents = () => {
+const ExamSchedule = () => {
   const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [dataLength, setDataLength] = useState(0);
-  const [activePage, setActivePage] = useState(1);
-  const divsCount = 10;
-
-  function updateData(e) {
-    const pages = document.querySelectorAll("div.table .pagination h3");
-    pages.forEach((e) => e.classList.remove("active"));
-    e.target.classList.add("active");
-    setActivePage(+e.target.dataset.page);
-  }
-  const createPags = (dataCount, dataLength) => {
-    const pages = Math.ceil(dataLength / dataCount);
-    let h3Pages = [];
-    for (let i = 0; i < pages; i++) {
-      h3Pages.push(
-        <h3
-          onClick={updateData}
-          data-page={i + 1}
-          key={i}
-          className={`${i === 0 ? "active" : ""}`}
-        >
-          {i + 1}
-        </h3>
-      );
-    }
-
-    return h3Pages;
-  };
   useEffect(() => {
-    axios
-      .get(
-        `http://localhost:8000/api/students?limit=${divsCount}&page=${activePage}&active=true`
-      )
-      .then((res) => {
-        setDataLength(res.data.numberOfActiveStudents);
+    axios.get("http://localhost:8000/api/exams").then((res) => {
+      const fltr = res.data.data.filter((e) => e.active);
+      console.log(fltr);
 
-        const fltr = res.data.data.filter((e) => e.active);
-        setData(fltr);
-        setSearchData(fltr);
-      });
-  }, [activePage]);
+      setData(fltr);
+      setSearchData(fltr);
+    });
+  }, []);
 
   const openOptions = (e) => {
     e.stopPropagation();
@@ -106,15 +74,13 @@ const AllStudents = () => {
             className="checkbox"
           ></div>
         </td>
-        <td>
-          <i className="center photo fa-solid fa-user"></i>
-        </td>
-        <td>{`${e.firstName} ${e.lastName}`}</td>
-        <td> {e.contactInfo.phone} </td>
-        <td> {e.gender} </td>
-        <td>{e.yearLevel}</td>
-        <td>{e.guardianContact.name}</td>
-        <td> {e.guardianContact.phone}</td>
+
+        <td>{e.subjectId.active ? e.subjectId.name : "deleted"}</td>
+        <td> {e.yearLevel} </td>
+        <td> date </td>
+        <td> {e.classId.name} </td>
+        <td>{e.duration}</td>
+        <td>{e.totalMarks}</td>
         <td>
           <i
             onClick={openOptions}
@@ -128,9 +94,6 @@ const AllStudents = () => {
             <div className="flex update">
               <Link className="fa-regular fa-pen-to-square"></Link>
               update
-            </div>
-            <div className="flex visit">
-              <Link className="fa-solid fa-circle-user"></Link> visit
             </div>
           </div>
         </td>
@@ -148,8 +111,8 @@ const AllStudents = () => {
 
     const fltr = data.filter((e) => {
       const nameMatch = nameSearchValue
-        ? e.firstName.toLowerCase().includes(nameSearchValue) ||
-          e.lastName.toLowerCase().includes(nameSearchValue)
+        ? e.subjectId.active &&
+          e.subjectId.name.toLowerCase().includes(nameSearchValue)
         : true;
 
       const subjectMatch = yearLevelSearchValue
@@ -169,7 +132,7 @@ const AllStudents = () => {
     <main>
       <div className="dashboard-container">
         <div className="container">
-          <h1 className="title">all students</h1>
+          <h1 className="title">Exam Schedule</h1>
           <div className="tabel-container">
             <div className="table">
               <div className="flex search gap-20">
@@ -185,8 +148,8 @@ const AllStudents = () => {
                   type="text"
                   placeholder="search by year level"
                 />
-                <Link className="btn" to={"/add_student"}>
-                  <i className="fa-regular fa-square-plus"></i> add student
+                <Link className="btn" to={"/add_exam"}>
+                  <i className="fa-regular fa-square-plus"></i> add exam
                 </Link>
               </div>
               <table>
@@ -198,20 +161,20 @@ const AllStudents = () => {
                         className="checkbox select-all"
                       ></div>
                     </th>
-                    <th>photo</th>
-                    <th>name</th>
-                    <th>phone</th>
-                    <th>gander</th>
-                    <th>year Level</th>
-                    <th>guardian</th>
-                    <th>parents phone</th>
+                    <th>subject</th>
+                    <th>year level</th>
+                    <th>date</th>
+                    <th>room</th>
+                    <th>duration</th>
+                    <th>mark</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>{tableData}</tbody>
               </table>
               <div className="pagination flex">
-                {createPags(divsCount, dataLength)}
+                <h3 className="active">1</h3>
+                <h3>2</h3>
               </div>
             </div>
           </div>
@@ -221,4 +184,4 @@ const AllStudents = () => {
   );
 };
 
-export default AllStudents;
+export default ExamSchedule;

@@ -203,6 +203,7 @@ body.arabic {
 
 ::-webkit-scrollbar {
   width: 11px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
