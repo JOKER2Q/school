@@ -65,7 +65,7 @@ const Attendence = () => {
       </tr>
     );
   });
-
+  
   return (
     <main>
       <div className="dashboard-container">
