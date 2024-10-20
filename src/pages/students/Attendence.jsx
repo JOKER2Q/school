@@ -39,15 +39,15 @@ const Attendence = () => {
     for (let index = 0; index < daysInMonth; index++) {
       tds.push(
         e.price > 100 && e.price < 300 ? (
-          <td onDoubleClick={statusClick} className="status">
+          <td key={index} onDoubleClick={statusClick} className="status">
             <i className="true fa-solid fa-check"></i>
           </td>
         ) : e.price > 350 ? (
-          <td onDoubleClick={statusClick} className="status">
+          <td key={index} onDoubleClick={statusClick} className="status">
             <i className="false fa-solid fa-xmark"></i>
           </td>
         ) : (
-          <td onDoubleClick={statusClick} className="status">
+          <td key={index} onDoubleClick={statusClick} className="status">
             -
           </td>
         )

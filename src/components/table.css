@@ -2,13 +2,13 @@ div.tabel-container {
   padding: 30px 20px;
   background-color: var(--body-color);
   border-radius: 6px;
-  overflow-y: hidden;
 }
 
 div.table {
   overflow-x: auto;
   max-width: 100%;
-  min-width: 800px;
+  min-width: 600px;
+  min-height: 400px;
   overflow-y: hidden;
 }
 div.table .search input {
@@ -196,7 +196,6 @@ div.table tbody td div.options div.visit a {
 }
 
 div.table .pagination {
-  justify-content: flex-end;
   padding: 10px 15px;
   margin-top: 20px;
   gap: 10px;

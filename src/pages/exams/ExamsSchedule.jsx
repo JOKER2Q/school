@@ -6,7 +6,6 @@ const ExamSchedule = () => {
   const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [classesCount, setClassesCount] = useState(0);
   useEffect(() => {
     axios.get("http://localhost:8000/api/exams").then((res) => {
       const fltr = res.data.data.filter((e) => e.active);

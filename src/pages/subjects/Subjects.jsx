@@ -7,19 +7,52 @@ const Subjects = () => {
   const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [dataLength, setDataLength] = useState(0);
+  const [activePage, setActivePage] = useState(1);
+  const divsCount = 10;
+
+  function updateData(e) {
+    const pages = document.querySelectorAll("div.table .pagination h3");
+    pages.forEach((e) => e.classList.remove("active"));
+    e.target.classList.add("active");
+    setActivePage(+e.target.dataset.page);
+  }
+  const createPags = (dataCount, dataLength) => {
+    const pages = Math.ceil(dataLength / dataCount);
+    let h3Pages = [];
+    for (let i = 0; i < pages; i++) {
+      h3Pages.push(
+        <h3
+          onClick={updateData}
+          data-page={i + 1}
+          key={i}
+          className={`${i === 0 ? "active" : ""}`}
+        >
+          {i + 1}
+        </h3>
+      );
+    }
+
+    return h3Pages;
+  };
   const [form, setForm] = useState({
     name: "",
     code: "",
     yearLevel: "",
   });
   useEffect(() => {
-    axios.get("http://localhost:8000/api/subjects").then((res) => {
-      const fltr = res.data.data.filter((e) => e.active);
+    axios
+      .get(
+        `http://localhost:8000/api/subjects?limit=${divsCount}&page=${activePage}&active=true`
+      )
+      .then((res) => {
+        setDataLength(res.data.numberOfActiveSubjects);
 
-      setData(fltr);
-      setSearchData(fltr);
-    });
-  }, []);
+        const fltr = res.data.data.filter((e) => e.active);
+        setData(fltr);
+        setSearchData(fltr);
+      });
+  }, [activePage]);
 
   const openOptions = (e) => {
     e.stopPropagation();
@@ -133,12 +166,13 @@ const Subjects = () => {
   const handleClick = (e) => {
     e.target.classList.toggle("active");
   };
+
   return (
     <main>
       <div className="dashboard-container">
         <div className="container">
           <h1 className="title">all subjects</h1>
-          <div className="flex wrap subjects">
+          <div className="flex align-start wrap subjects">
             <form className="dashboard-form">
               <h1> add new subject</h1>
               <label htmlFor="name"> name </label>
@@ -207,8 +241,7 @@ const Subjects = () => {
                   <tbody>{tableData}</tbody>
                 </table>
                 <div className="pagination flex">
-                  <h3 className="active">1</h3>
-                  <h3>2</h3>
+                  {createPags(divsCount, dataLength)}
                 </div>
               </div>
             </div>

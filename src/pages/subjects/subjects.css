@@ -2,7 +2,7 @@
   gap: 30px;
 }
 .subjects .tabel-container {
-  flex: calc(100% - 550px);
+  flex: calc(100% - 450px);
 }
 .subjects form {
   flex: 300px;
