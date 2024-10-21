@@ -179,7 +179,6 @@ body.arabic {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(48%, 1fr));
   gap: 30px;
-  margin-top: 50px;
 }
 .grid-3 {
   display: grid;
@@ -273,9 +272,5 @@ body.arabic {
 @media (max-width: 500px) {
   .container {
     width: 96%;
-  }
-
-  .grid-2 {
-    margin-top: 30px;
   }
 }

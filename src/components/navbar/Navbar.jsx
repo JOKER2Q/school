@@ -16,6 +16,10 @@ const Navbar = () => {
       "aside.closed > div > .links.active"
     );
     linksDiv && linksDiv.classList.remove("active");
+    const inpDiv = document.querySelector(
+      "form.dashboard-form .selecte .inp.active"
+    );
+    inpDiv && inpDiv.classList.remove("active");
   };
 
   const modeFun = () => {
@@ -49,6 +53,8 @@ const Navbar = () => {
     const nav = document.querySelector("nav.closed");
     const container = document.querySelector(".dashboard-container");
     nav && container && container.classList.add("closed");
+    const activeArticle = document.querySelector("aside > div > .links.active");
+    activeArticle && activeArticle.classList.remove("active");
   }, [location.pathname]);
   const closeAside = () => {
     const nav = document.querySelector("nav");
@@ -142,20 +148,13 @@ const Navbar = () => {
             </article>
           </div>
 
-          <div className="links">
-            <div data-index="2" onClick={openDiv} className="center">
-              <i className="fa-solid fa-school-flag"></i>
-              <h1 className="flex-1">class</h1>
-              <i className="arrow fa-solid fa-chevron-right"></i>
-            </div>
-            <article>
-              <NavLink to={"all_classes"}>all class</NavLink>
-              <NavLink to={"add_class"}>add class</NavLink>
-            </article>
-          </div>
+          <NavLink to={"classes"} className="w-100 justify-start center">
+            <i className="fa-solid fa-school-flag"></i>
+            <h1>calsses</h1>
+          </NavLink>
 
           <div className="links">
-            <div data-index="3" onClick={openDiv} className="center">
+            <div data-index="2" onClick={openDiv} className="center">
               <i className="fa-solid fa-list-check"></i>
               <h1 className="flex-1">exam</h1>
               <i className="arrow fa-solid fa-chevron-right"></i>

@@ -38,7 +38,6 @@ const ExamSchedule = () => {
   };
 
   const checkAll = (e) => {
-    e.target.classList.toggle("active");
     const allActiveSelectors = document.querySelectorAll("td .checkbox.active");
     const allSelectors = document.querySelectorAll("td .checkbox");
     setSelectedItems([]);
@@ -48,12 +47,13 @@ const ExamSchedule = () => {
       allActiveSelectors.length !== allSelectors.length
     ) {
       allSelectors.forEach((e) => e.classList.add("active"));
-
+      e.target.classList.add("active");
       searchData.forEach((e) => {
         setSelectedItems((prev) => [...prev, e._id]);
       });
     } else {
       allSelectors.forEach((e) => e.classList.remove("active"));
+      e.target.classList.remove("active");
       setSelectedItems([]);
     }
   };
