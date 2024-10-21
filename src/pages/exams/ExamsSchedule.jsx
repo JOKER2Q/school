@@ -9,7 +9,6 @@ const ExamSchedule = () => {
   useEffect(() => {
     axios.get("http://localhost:8000/api/exams").then((res) => {
       const fltr = res.data.data.filter((e) => e.active);
-      console.log(fltr);
 
       setData(fltr);
       setSearchData(fltr);
