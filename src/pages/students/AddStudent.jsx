@@ -4,25 +4,32 @@ import axios from "axios";
 import FormLoading from "../../components/FormLoading";
 import SendData from "../../components/response/SendData";
 
-const AddTeacher = () => {
+const AddStudent = () => {
   const [form, setForm] = useState({
+    contactInfo: { email: "", phone: "" },
+    address: {
+      street: "",
+      city: "",
+    },
+    guardianContact: {
+      name: "",
+      phone: "",
+      relationship: "",
+    },
     firstName: "",
     middleName: "",
     lastName: "",
-    email: "",
-    phoneNumber: "",
     gender: "",
     yearLevel: "",
-    subjects: "",
-    classes: "",
+    dateOfBirth: "",
+    enrollmentDate: "",
+    classId: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [DataError, setDataError] = useState(false);
-  const [subject, setSubject] = useState([]);
-  const [subjectName, setSubjectName] = useState([]);
   const [classes, setClasses] = useState([]);
-  const [classesName, setClassesName] = useState([]);
+  const [classesName, setClassesName] = useState(false);
   const [overlay, setOverlay] = useState(false);
   const [response, setResponse] = useState(false);
 
@@ -43,8 +50,25 @@ const AddTeacher = () => {
   };
 
   const handleForm = (e) => {
-    setForm({ ...form, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+
+    if (id.includes(".")) {
+      const [parentKey, childKey] = id.split(".");
+      setForm((prevForm) => ({
+        ...prevForm,
+        [parentKey]: {
+          ...prevForm[parentKey],
+          [childKey]: value,
+        },
+      }));
+    } else {
+      setForm((prevForm) => ({
+        ...prevForm,
+        [id]: value,
+      }));
+    }
   };
+
   const handleClick = (e) => {
     e.stopPropagation();
     e.target.classList.toggle("active");
@@ -58,24 +82,17 @@ const AddTeacher = () => {
   function selectYears(e) {
     setForm({
       ...form,
-      yearLevel: [...new Set([...form.yearLevel, e.target.dataset.level])],
+      yearLevel: e.target.dataset.level,
     });
     setDataError(false);
   }
-  function selectSubjects(e, id) {
-    setForm({
-      ...form,
-      subjects: [...new Set([...form.subjects, id])],
-    });
-    setSubjectName((prev) => [...new Set([...prev, e.target.dataset.subject])]);
-    setDataError(false);
-  }
+
   function selectClasses(e, id) {
     setForm({
       ...form,
-      classes: [...new Set([...form.classes, id])],
+      classId: id,
     });
-    setClassesName((prev) => [...new Set([...prev, e.target.dataset.classes])]);
+    setClassesName(e.target.dataset.classes);
     setDataError(false);
   }
 
@@ -92,81 +109,49 @@ const AddTeacher = () => {
   }
 
   useEffect(() => {
-    const fetchSubjects = async () => {
-      try {
-        const allSubjects = await Promise.all(
-          form.yearLevel &&
-            form.yearLevel.map(async (yearLevel) => {
-              const response = await fetch(
-                `http://localhost:8000/api/subjects?yearLevel=${yearLevel}&active=true`
-              );
-              if (!response.ok) {
-                throw new Error(
-                  `Error fetching data for year level ${yearLevel}`
-                );
-              }
-              const data = await response.json();
-              return data.data;
-            })
-        );
-        setSubject(allSubjects.flat()); // Flatten the array if needed
-      } catch (error) {
-        console.error("Failed to fetch subjects:", error);
-      }
-    };
-
-    fetchSubjects();
+    form.yearLevel &&
+      axios
+        .get(
+          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`
+        )
+        .then((res) => {
+          setClasses(res.data.data);
+        });
   }, [form.yearLevel]);
 
-  useEffect(() => {
-    const fetchClasses = async () => {
-      try {
-        const allSubjects = await Promise.all(
-          form.yearLevel &&
-            form.yearLevel.map(async (yearLevel) => {
-              const response = await fetch(
-                `http://localhost:8000/api/classes?yearLevel=${yearLevel}&active=true`
-              );
-              if (!response.ok) {
-                throw new Error(
-                  `Error fetching data for year level ${yearLevel}`
-                );
-              }
-              const data = await response.json();
-              return data.data;
-            })
-        );
-        setClasses(allSubjects.flat()); // Flatten the array if needed
-      } catch (error) {
-        console.error("Failed to fetch subjects:", error);
-      }
-    };
-
-    fetchClasses();
-  }, [form.yearLevel]);
   const handelSubmit = async (e) => {
     e.preventDefault();
     if (!form.gender) setDataError("please choose a gender");
     else if (!form.yearLevel) setDataError("please choose a year level");
-    else if (!form.classes) setDataError("please choose a classes");
-    else if (!form.subjects) setDataError("please choose a subject");
+    else if (!form.classId) setDataError("please choose a classes");
     else {
       try {
         const data = await axios.post(
-          "http://localhost:8000/api/teachers",
+          "http://localhost:8000/api/students",
           form
         );
         setForm({
+          contactInfo: { email: "", phone: "" },
+          address: {
+            street: "",
+            city: "",
+          },
+          guardianContact: {
+            name: "",
+            phone: "",
+            relationship: "",
+          },
           firstName: "",
           middleName: "",
           lastName: "",
-          email: "",
-          phoneNumber: "",
           gender: "",
           yearLevel: "",
-          subjects: "",
-          classes: "",
+          dateOfBirth: "",
+          enrollmentDate: "",
+          classId: "",
         });
+        console.log(data);
+
         if (data.status === 201) {
           responseFun(true);
         }
@@ -179,15 +164,16 @@ const AddTeacher = () => {
       }
     }
   };
+
   return (
     <main>
       <div className="dashboard-container">
         <div className="container relative">
           {overlay && <SendData response={response} />}
-          <h1 className="title"> add teaher </h1>
+          <h1 className="title"> add student </h1>
           <form onSubmit={handelSubmit} className=" relative dashboard-form">
             {loading && <FormLoading />}
-            <h1>please complete the form to add a teacher</h1>
+            <h1>please complete the form to add a student</h1>
             <div className="flex wrap ">
               <div className="flex flex-direction">
                 <label htmlFor="firstName">first name</label>
@@ -244,35 +230,116 @@ const AddTeacher = () => {
               </div>
 
               <div className="flex flex-direction">
-                <label htmlFor="email">email</label>
+                <label htmlFor="contactInfo.email">email</label>
                 <input
                   required
                   onInput={handleForm}
-                  value={form.email}
+                  value={form.contactInfo.email}
                   type="email"
-                  id="email"
+                  id="contactInfo.email"
                   placeholder="please write your email"
                   className="inp"
                 />
               </div>
+
               <div className="flex flex-direction">
-                <label htmlFor="phoneNumber">phone</label>
+                <label htmlFor="contactInfo.phone">phone</label>
                 <input
                   required
                   onInput={handleForm}
-                  value={form.phoneNumber}
+                  value={form.contactInfo.phone}
                   type="text"
-                  id="phoneNumber"
+                  id="contactInfo.phone"
                   className="inp"
                   placeholder="please write your phone number"
                 />
               </div>
+
+              <div className="flex flex-direction">
+                <label htmlFor="dateOfBirth">date of birth</label>
+                <input
+                  required
+                  onInput={handleForm}
+                  value={form.dateOfBirth}
+                  type="date"
+                  id="dateOfBirth"
+                  className="inp"
+                />
+              </div>
+
+              <div className="flex flex-direction">
+                <label htmlFor="address.city">city</label>
+                <input
+                  required
+                  onInput={handleForm}
+                  value={form.address.city}
+                  type="text"
+                  id="address.city"
+                  className="inp"
+                  placeholder="please write your city"
+                />
+              </div>
+
+              <div className="flex flex-direction">
+                <label htmlFor="address.street">street</label>
+                <input
+                  required
+                  onInput={handleForm}
+                  value={form.address.street}
+                  type="text"
+                  id="address.street"
+                  className="inp"
+                  placeholder="please write your address"
+                />
+              </div>
+
+              <div className="flex flex-direction">
+                <label htmlFor="guardianContact.name">Guardian name</label>
+                <input
+                  required
+                  onInput={handleForm}
+                  value={form.guardianContact.name}
+                  type="text"
+                  id="guardianContact.name"
+                  className="inp"
+                  placeholder="please write your Guardian"
+                />
+              </div>
+
+              <div className="flex flex-direction">
+                <label htmlFor="guardianContact.relationship">
+                  relationship
+                </label>
+                <input
+                  required
+                  onInput={handleForm}
+                  value={form.guardianContact.relationship}
+                  type="text"
+                  id="guardianContact.relationship"
+                  className="inp"
+                  placeholder="ex : mother , father , bro..."
+                />
+              </div>
+
+              <div className="flex flex-direction">
+                <label htmlFor="guardianContact.phone">Guardian phone</label>
+                <input
+                  required
+                  onInput={handleForm}
+                  value={form.guardianContact.phone}
+                  type="text"
+                  id="guardianContact.phone"
+                  className="inp"
+                  placeholder="please write your Guardian phone"
+                />
+              </div>
+
               <div className="flex flex-direction">
                 <label>year level</label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
                     {form.yearLevel
-                      ? form.yearLevel.join(" , ")
+                      ? form.yearLevel
                       : "please selecte year level"}
                   </div>
                   <article className="grid-3">{createYearLeve()}</article>
@@ -284,9 +351,7 @@ const AddTeacher = () => {
                     <label>classes</label>
                     <div className="selecte">
                       <div onClick={handleClick} className="inp">
-                        {classesName.length > 0
-                          ? classesName.join(" , ")
-                          : "please select classes"}
+                        {classesName ? classesName : "please select classes"}
                       </div>
                       <article>
                         {classes.map((e, i) => {
@@ -303,31 +368,19 @@ const AddTeacher = () => {
                       </article>
                     </div>
                   </div>
-                  <div className="flex flex-direction">
-                    <label>subject</label>
-                    <div className="selecte">
-                      <div onClick={handleClick} className="inp">
-                        {subjectName.length > 0
-                          ? subjectName.join(" , ")
-                          : "please select subject"}
-                      </div>
-                      <article>
-                        {subject.map((e, i) => {
-                          return (
-                            <h2
-                              onClick={(event) => selectSubjects(event, e._id)}
-                              data-subject={e.name}
-                              key={i}
-                            >
-                              {e.name}
-                            </h2>
-                          );
-                        })}
-                      </article>
-                    </div>
-                  </div>
                 </>
               )}
+              <div className="flex flex-direction">
+                <label htmlFor="enrollmentDate">enrollment Date</label>
+                <input
+                  required
+                  onInput={handleForm}
+                  value={form.enrollmentDate}
+                  type="date"
+                  id="enrollmentDate"
+                  className="inp"
+                />
+              </div>
             </div>
             {DataError && <p className="error">{DataError}</p>}
             <button className="btn">save </button>
@@ -338,4 +391,4 @@ const AddTeacher = () => {
   );
 };
 
-export default AddTeacher;
+export default AddStudent;

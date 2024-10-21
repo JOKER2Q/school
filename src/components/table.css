@@ -220,6 +220,8 @@ div.table .pagination h3:hover {
 }
 div.table > h2 {
   color: var(--font-color);
+  text-transform: capitalize;
+  margin-bottom: 10px;
 }
 div.table table.attendence th {
   border: solid 1px var(--border-color);

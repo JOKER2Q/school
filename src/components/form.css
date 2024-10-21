@@ -127,6 +127,7 @@ form.dashboard-form .selecte > article {
   overflow-y: auto;
 }
 form.dashboard-form .selecte .inp.active + article {
+  transition: opacity 0.4s;
   opacity: 1;
   z-index: 2;
   pointer-events: all;
@@ -161,7 +162,9 @@ form.dashboard-form .error {
   border-radius: 10px;
   text-transform: capitalize;
 }
-
+.subjects form.dashboard-form .error {
+  width: auto;
+}
 form.dashboard-form .btn {
   margin-top: 20px;
 }

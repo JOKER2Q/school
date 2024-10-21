@@ -5,10 +5,11 @@ import AddTeacher from "./pages/teachers/AddTeacher";
 import TeacherProfile from "./pages/teachers/TeacherProfile";
 import Attendence from "./pages/students/Attendence";
 import AllStudents from "./pages/students/AllStudents";
-import AllClasses from "./pages/classes/AllClasses";
+import Classes from "./pages/classes/Classes";
 import Login from "./pages/Login";
 import Subjects from "./pages/subjects/Subjects";
 import ExamSchedule from "./pages/exams/ExamsSchedule";
+import AddStudent from "./pages/students/AddStudent";
 
 function App() {
   const location = useLocation();
@@ -22,8 +23,10 @@ function App() {
         <Route path="add_teacher" element={<AddTeacher />} />
         <Route path="teacher_profile" element={<TeacherProfile />} />
         <Route path="all_students" element={<AllStudents />} />
+        <Route path="add_student" element={<AddStudent />} />
         <Route path="attendence" element={<Attendence />} />
-        <Route path="all_classes" element={<AllClasses />} />
+        <Route path="classes" element={<Classes />} />
+        <Route path="add_student" element={<AddStudent />} />
         <Route path="subjects" element={<Subjects />} />
         <Route path="exams_schedule" element={<ExamSchedule />} />
       </Routes>
