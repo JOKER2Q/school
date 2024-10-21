@@ -29,10 +29,17 @@ const ExamSchedule = () => {
     e.target.classList.toggle("active");
     if (e.target.classList.contains("active")) {
       setSelectedItems((prevSelected) => [...prevSelected, element]);
+      const allActiveSelectors = document.querySelectorAll(
+        "td .checkbox.active"
+      );
+      const allSelectors = document.querySelectorAll("td .checkbox");
+      if (allSelectors.length === allActiveSelectors.length)
+        document.querySelector("th .checkbox").classList.add("active");
     } else {
       setSelectedItems((prevSelected) =>
         prevSelected.filter((item) => item !== element)
       );
+      document.querySelector("th .checkbox").classList.remove("active");
     }
   };
 

@@ -5,14 +5,12 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 const Subjects = () => {
   const [data, setData] = useState([]);
-  const [allData, setAllData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [dataLength, setDataLength] = useState(0);
   const [activePage, setActivePage] = useState(1);
-  const [searchValues, setSearchValues] = useState([]);
-  const [nameValue, setNameValue] = useState([]);
-  const [yearValue, setYearValue] = useState([]);
+  const [nameValue, setNameValue] = useState(false);
+  const [yearValue, setYearValue] = useState(false);
   const divsCount = 10;
 
   function updateData(e) {
@@ -45,35 +43,31 @@ const Subjects = () => {
     yearLevel: "",
   });
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/subjects`).then((res) => {
-      setAllData(res.data.data);
-    });
-    axios
-      .get(
-        `http://localhost:8000/api/subjects?limit=${divsCount}&page=${activePage}&active=true`
-      )
-      .then((res) => {
+    const fetchData = async () => {
+      try {
+        let url = `http://localhost:8000/api/subjects?limit=${divsCount}&page=${activePage}&active=true`;
+
+        if (nameValue) {
+          url += `&name=${nameValue}`;
+        }
+
+        if (yearValue) {
+          url += `&yearLevel=${yearValue}`;
+        }
+
+        const res = await axios.get(url);
         setDataLength(res.data.numberOfActiveSubjects);
 
         const fltr = res.data.data.filter((e) => e.active);
         setData(fltr);
         setSearchData(fltr);
-      });
-  }, [activePage]);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
 
-  // useEffect(() => {
-  //   axios
-  //     .get(
-  //       `http://localhost:8000/api/subjects?code=${nameValue}&yearLevel=${yearValue}&limit=${divsCount}&page=${activePage}&active=true`
-  //     )
-  //     .then((res) => {
-  //       setDataLength(res.data.numberOfActiveSubjects);
-
-  //       const fltr = res.data.data.filter((e) => e.active);
-  //       setAllData(fltr);
-  //       console.log(res)
-  //     });
-  // }, [nameValue, yearValue]);
+    fetchData();
+  }, [activePage, nameValue, yearValue]);
 
   const openOptions = (e) => {
     e.stopPropagation();
@@ -89,10 +83,17 @@ const Subjects = () => {
     e.target.classList.toggle("active");
     if (e.target.classList.contains("active")) {
       setSelectedItems((prevSelected) => [...prevSelected, element]);
+      const allActiveSelectors = document.querySelectorAll(
+        "td .checkbox.active"
+      );
+      const allSelectors = document.querySelectorAll("td .checkbox");
+      if (allSelectors.length === allActiveSelectors.length)
+        document.querySelector("th .checkbox").classList.add("active");
     } else {
       setSelectedItems((prevSelected) =>
         prevSelected.filter((item) => item !== element)
       );
+      document.querySelector("th .checkbox").classList.remove("active");
     }
   };
 
@@ -162,30 +163,14 @@ const Subjects = () => {
     const nameSearchValue = document
       .querySelector(`input[data-type="name"]`)
       .value.toLowerCase();
-    // setNameValue(nameSearchValue);
+    setNameValue(nameSearchValue);
 
     const yearLevelSearchValue = document.querySelector(
       `input[data-type="yearLevel"]`
     ).value;
-    // setYearValue(yearLevelSearchValue);
-
-    const fltr = data.filter((e) => {
-      const nameMatch = nameSearchValue
-        ? e.name.toLowerCase().includes(nameSearchValue)
-        : true;
-
-      const subjectMatch = yearLevelSearchValue
-        ? e.yearLevel == yearLevelSearchValue
-        : true;
-      return nameMatch && subjectMatch;
-    });
-
-    setSearchData(fltr);
-
-    if (!nameSearchValue && !yearLevelSearchValue) {
-      setSearchData(data);
-    }
+    setYearValue(+yearLevelSearchValue);
   };
+
   const handleClick = (e) => {
     e.target.classList.toggle("active");
   };
