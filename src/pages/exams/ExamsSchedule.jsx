@@ -83,7 +83,8 @@ const ExamSchedule = () => {
 
         <td>{e.subjectId.active ? e.subjectId.name : "deleted"}</td>
         <td> {e.yearLevel} </td>
-        <td> date </td>
+        <td dangerouslySetInnerHTML={date(e.date)} />
+
         <td> {e.classId.name} </td>
         <td>{e.duration}</td>
         <td>{e.totalMarks}</td>
@@ -122,7 +123,7 @@ const ExamSchedule = () => {
         : true;
 
       const subjectMatch = yearLevelSearchValue
-        ? e.yearLevel == yearLevelSearchValue
+        ? e.yearLevel === +yearLevelSearchValue
         : true;
 
       return nameMatch && subjectMatch;
@@ -191,3 +192,13 @@ const ExamSchedule = () => {
 };
 
 export default ExamSchedule;
+
+export const date = (time) => {
+  const fullTime = new Date(time);
+  const month = fullTime.getMonth() + 1;
+  const day = fullTime.getDate();
+  const hours = String(fullTime.getHours()).padStart(2, "0");
+  const minutes = String(fullTime.getMinutes()).padStart(2, "0");
+  const style = `${month} / ${day}<br>${hours}:${minutes}`;
+  return { __html: style }; // العودة بـ HTML
+};
