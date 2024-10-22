@@ -71,42 +71,46 @@ const ExamSchedule = () => {
     activeDiv && activeDiv.classList.remove("active-div");
   };
 
-  const tableData = searchData.map((e, i) => {
-    return (
-      <tr key={e._id}>
-        <td>
-          <div
-            onClick={(target) => checkOne(target, e._id)}
-            className="checkbox"
-          ></div>
-        </td>
+  const tableData =
+    searchData &&
+    searchData.map((e, i) => {
+      return (
+        <tr key={e._id}>
+          <td>
+            <div
+              onClick={(target) => checkOne(target, e._id)}
+              className="checkbox"
+            ></div>
+          </td>
 
-        <td>{e.subjectId.active ? e.subjectId.name : "deleted"}</td>
-        <td> {e.yearLevel} </td>
-        <td dangerouslySetInnerHTML={date(e.date)} />
+          <td>
+            {e.subjectId && e.subjectId.active ? e.subjectId.name : "deleted"}
+          </td>
+          <td> {e.yearLevel} </td>
+          <td dangerouslySetInnerHTML={date(e.date)} />
 
-        <td> {e.classId.name} </td>
-        <td>{e.duration}</td>
-        <td>{e.totalMarks}</td>
-        <td>
-          <i
-            onClick={openOptions}
-            className="options fa-solid fa-ellipsis"
-            data-index={i}
-          ></i>
-          <div className="options">
-            <div className="flex delete">
-              <i className="fa-solid fa-trash"></i> delete
+          <td> {e.classId.name} </td>
+          <td>{e.duration}</td>
+          <td>{e.totalMarks}</td>
+          <td>
+            <i
+              onClick={openOptions}
+              className="options fa-solid fa-ellipsis"
+              data-index={i}
+            ></i>
+            <div className="options">
+              <div className="flex delete">
+                <i className="fa-solid fa-trash"></i> delete
+              </div>
+              <div className="flex update">
+                <Link className="fa-regular fa-pen-to-square"></Link>
+                update
+              </div>
             </div>
-            <div className="flex update">
-              <Link className="fa-regular fa-pen-to-square"></Link>
-              update
-            </div>
-          </div>
-        </td>
-      </tr>
-    );
-  });
+          </td>
+        </tr>
+      );
+    });
   const handelInput = () => {
     const nameSearchValue = document
       .querySelector(`input[data-type="name"]`)

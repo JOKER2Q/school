@@ -1,14 +1,56 @@
 import React, { useEffect, useState } from "react";
 import "../../components/table.css";
+import axios from "axios";
 const Attendence = () => {
+  const [form, setForm] = useState({
+    date: "",
+    classId: "",
+  });
+
   const [data, setData] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [classesName, setClassesName] = useState("");
+  const [dataError, setDataError] = useState(false);
+
+  const selecteClass = (e) => {
+    setClassesName(`${e.yearLevel} : ${e.name}`);
+    setForm({ ...form, classId: e._id });
+    setDataError(false);
+  };
+
   useEffect(() => {
-    fetch("https://fakestoreapi.com/products")
-      .then((res) => res.json())
-      .then((data) => setData(data));
+    axios
+      .get("http://localhost:8000/api/classes")
+      .then((res) => setClasses(res.data.data));
   }, []);
 
+  const createClasses =
+    classes &&
+    classes.map((e) => {
+      return (
+        <h2 onClick={() => selecteClass(e)} key={e._id}>
+          {`${e.yearLevel} : ${e.name}`}
+        </h2>
+      );
+    });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.classId) setDataError("please choose a class");
+    else {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/attendances/time-filter?startDate=${form.date}&active=true&classId=${form.classId}`
+        );
+        setData(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   const handleClick = (e) => {
+    e.stopPropagation();
     e.target.classList.toggle("active");
   };
   const [overlay, setOverlay] = useState(false);
@@ -32,17 +74,21 @@ const Attendence = () => {
   window.onclick = () => {
     const overlay = document.querySelector(".overlay");
     overlay && setOverlay(false);
+    const selectDiv = document.querySelector(
+      "form.dashboard-form .selecte .inp.active"
+    );
+    selectDiv && selectDiv.classList.remove("active");
   };
-
+  console.log(data);
   function completeData(e) {
     let tds = [];
     for (let index = 0; index < daysInMonth; index++) {
       tds.push(
-        e.price > 100 && e.price < 300 ? (
+        e.status === "Present" ? (
           <td key={index} onDoubleClick={statusClick} className="status">
             <i className="true fa-solid fa-check"></i>
           </td>
-        ) : e.price > 350 ? (
+        ) : e.status === "Absent" ? (
           <td key={index} onDoubleClick={statusClick} className="status">
             <i className="false fa-solid fa-xmark"></i>
           </td>
@@ -56,16 +102,18 @@ const Attendence = () => {
     return tds;
   }
 
-  const tr = data.map((e) => {
-    return (
-      <tr key={e.id}>
-        <td>{e.category}</td>
+  const tr =
+    data &&
+    data.map((e) => {
+      return (
+        <tr key={e.id}>
+          <td>{`${e.studentId.firstName} ${e.studentId.middleName} ${e.studentId.lastName}`}</td>
 
-        {completeData(e)}
-      </tr>
-    );
-  });
-  
+          {completeData(e)}
+        </tr>
+      );
+    });
+
   return (
     <main>
       <div className="dashboard-container">
@@ -91,48 +139,30 @@ const Attendence = () => {
         <div className="container flex flex-direction gap-20">
           <h1 className="title">students attendence</h1>
           <div className="flex"></div>
-          <form className="dashboard-form">
+          <form onSubmit={handleSubmit} className="dashboard-form">
             <div className="flex wrap">
               <div className="flex flex-direction">
-                <label>select year</label>
-                <div className="selecte">
-                  <div onClick={handleClick} className="inp">
-                    please selecte studant year
-                  </div>
-                  <article>
-                    <h2>option 1</h2>
-                  </article>
-                </div>
+                <label htmlFor="date">date</label>
+                <input
+                  onInput={(e) => setForm({ ...form, date: e.target.value })}
+                  id="date"
+                  type="month"
+                  className="inp"
+                  required
+                />
               </div>
               <div className="flex flex-direction">
-                <label>select month</label>
+                <label>class</label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
-                    please selecte a month
+                    {classesName ? classesName : "please selecte a class"}
                   </div>
-                  <article>
-                    <h2>option 1</h2>
-                  </article>
-                </div>
-              </div>
-              <div className="flex flex-direction">
-                <label>select class</label>
-                <div className="selecte">
-                  <div onClick={handleClick} className="inp">
-                    please selecte a class
-                  </div>
-                  <article>
-                    <h2>1</h2>
-                    <h2>2</h2>
-                    <h2>3</h2>
-                    <h2>4</h2>
-                    <h2>5</h2>
-                    <h2>6</h2>
-                  </article>
+                  <article> {createClasses} </article>
                 </div>
               </div>
             </div>
-            <div className="btn">search</div>
+            {dataError && <p className="error"> {dataError} </p>}
+            <button className="btn">search</button>
           </form>
           <div className="tabel-container">
             <div className="table">

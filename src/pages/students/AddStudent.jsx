@@ -109,6 +109,8 @@ const AddStudent = () => {
   }
 
   useEffect(() => {
+    setClassesName("");
+    setForm({ ...form, classId: "" });
     form.yearLevel &&
       axios
         .get(

@@ -183,7 +183,7 @@ const Classes = () => {
         : true;
 
       const subjectMatch = yearLevelSearchValue
-        ? e.yearLevel == yearLevelSearchValue
+        ? e.yearLevel === +yearLevelSearchValue
         : true;
 
       return nameMatch && subjectMatch;

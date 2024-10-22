@@ -42,20 +42,22 @@ const Navbar = () => {
     const removeClass = document.querySelectorAll(
       "aside > div > .links > div.center"
     );
-    removeClass.forEach((e) => e.classList.remove("active"));
-    linksDiv.forEach((e) => {
-      e.childNodes[1].childNodes.forEach((a) => {
-        if (a.classList.contains("active")) {
-          e.childNodes[0].classList.add("active");
-        }
+    removeClass && removeClass.forEach((e) => e.classList.remove("active"));
+    linksDiv &&
+      linksDiv.forEach((e) => {
+        e.childNodes[1].childNodes.forEach((a) => {
+          if (a.classList.contains("active")) {
+            e.childNodes[0].classList.add("active");
+          }
+        });
       });
-    });
     const nav = document.querySelector("nav.closed");
     const container = document.querySelector(".dashboard-container");
     nav && container && container.classList.add("closed");
     const activeArticle = document.querySelector("aside > div > .links.active");
     activeArticle && activeArticle.classList.remove("active");
   }, [location.pathname]);
+
   const closeAside = () => {
     const nav = document.querySelector("nav");
     const aside = document.querySelector("aside");

@@ -3,6 +3,8 @@ import "../../components/table.css";
 import "./subjects.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import SendData from "../../components/response/SendData";
+import FormLoading from "../../components/FormLoading";
 const Subjects = () => {
   const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
@@ -43,31 +45,31 @@ const Subjects = () => {
     yearLevel: "",
   });
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let url = `http://localhost:8000/api/subjects?limit=${divsCount}&page=${activePage}&active=true`;
-
-        if (nameValue) {
-          url += `&name=${nameValue}`;
-        }
-
-        if (yearValue) {
-          url += `&yearLevel=${yearValue}`;
-        }
-
-        const res = await axios.get(url);
-        setDataLength(res.data.numberOfActiveSubjects);
-
-        const fltr = res.data.data.filter((e) => e.active);
-        setData(fltr);
-        setSearchData(fltr);
-      } catch (error) {
-        console.error("Error fetching data", error);
-      }
-    };
-
     fetchData();
   }, [activePage, nameValue, yearValue]);
+
+  const fetchData = async () => {
+    try {
+      let url = `http://localhost:8000/api/subjects?limit=${divsCount}&page=${activePage}&active=true`;
+
+      if (nameValue) {
+        url += `&name=${nameValue}`;
+      }
+
+      if (yearValue) {
+        url += `&yearLevel=${yearValue}`;
+      }
+
+      const res = await axios.get(url);
+      setDataLength(res.data.numberOfActiveSubjects);
+
+      const fltr = res.data.data.filter((e) => e.active);
+      setData(fltr);
+      setSearchData(fltr);
+    } catch (error) {
+      console.error("Error fetching data", error);
+    }
+  };
 
   const openOptions = (e) => {
     e.stopPropagation();
@@ -123,6 +125,11 @@ const Subjects = () => {
     );
 
     activeDiv && activeDiv.classList.remove("active-div");
+
+    const selecteDiv = document.querySelector(
+      "form.dashboard-form .selecte .inp.active"
+    );
+    selecteDiv && selecteDiv.classList.remove("active");
   };
 
   const tableData =
@@ -172,16 +179,89 @@ const Subjects = () => {
   };
 
   const handleClick = (e) => {
+    e.stopPropagation();
     e.target.classList.toggle("active");
+  };
+
+  const [DataError, setDataError] = useState(false);
+
+  function selectYears(e) {
+    setForm({
+      ...form,
+      yearLevel: e.target.dataset.level,
+    });
+    setDataError(false);
+  }
+
+  function createYearLeve() {
+    let h2 = [];
+    for (let index = 1; index < 13; index++) {
+      h2.push(
+        <h2 key={index} onClick={selectYears} data-level={index}>
+          {index}
+        </h2>
+      );
+    }
+    return h2;
+  }
+  const [loading, setLoading] = useState(false);
+  const [overlay, setOverlay] = useState(false);
+  const [response, setResponse] = useState(false);
+
+  const responseFun = (complete = false) => {
+    setOverlay(true);
+
+    complete === true
+      ? setResponse(true)
+      : complete === "reapeted data"
+      ? setResponse(400)
+      : setResponse(false);
+    window.onclick = () => {
+      setOverlay(false);
+    };
+    setTimeout(() => {
+      setOverlay(false);
+    }, 3000);
+  };
+
+  const handelSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.yearLevel) setDataError("please select a year");
+    else {
+      try {
+        const data = await axios.post(
+          "http://localhost:8000/api/subjects",
+          form
+        );
+        setForm({
+          name: "",
+          yearLevel: "",
+          code: "",
+        });
+
+        if (data.status === 201) {
+          responseFun(true);
+          fetchData();
+        }
+      } catch (error) {
+        console.log(error);
+        if (error.status === 400) responseFun("reapeted data");
+        else responseFun(false);
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   return (
     <main>
       <div className="dashboard-container">
         <div className="container">
+          {overlay && <SendData response={response} />}
           <h1 className="title">subjects</h1>
           <div className="flex align-start wrap subjects">
-            <form className="dashboard-form">
+            <form onSubmit={handelSubmit} className="dashboard-form">
+              {loading && <FormLoading />}
               <h1> add new subject</h1>
               <label htmlFor="name"> name </label>
               <input
@@ -203,16 +283,14 @@ const Subjects = () => {
                 className="inp"
                 placeholder="write a subject code"
               />
-              <label> subject </label>
+              <label> yearLevel </label>
               <div className="selecte">
                 <div onClick={handleClick} className="inp">
-                  select a subject year
+                  {form.yearLevel ? form.yearLevel : " select a year level"}
                 </div>
-                <article>
-                  <h2>1</h2>
-                  <h2>2</h2>
-                </article>
+                <article className="grid-3">{createYearLeve()}</article>
               </div>
+              {DataError && <p className="error">{DataError}</p>}
               <button className="btn"> submit </button>
             </form>
             <div className="tabel-container">
