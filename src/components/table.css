@@ -234,6 +234,9 @@ div.table table.attendence td.status {
   cursor: pointer;
   user-select: none;
 }
+div.table table.attendence td.status i {
+  pointer-events: none;
+}
 div.table .true {
   color: #0e9e32;
 }
@@ -243,7 +246,7 @@ div.table .false {
 .overlay > div {
   background-color: var(--section-color);
   color: var(--font-color);
-  padding: 30px 40px;
+  padding: 40px;
   border-radius: 10px;
   box-shadow: var(--box-shadow);
 }

@@ -1,23 +1,32 @@
 import React, { useEffect, useState } from "react";
 import "../../components/table.css";
 import axios from "axios";
+
 const Attendence = () => {
   const [form, setForm] = useState({
     date: "",
     classId: "",
   });
 
-  const [data, setData] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [classesName, setClassesName] = useState("");
+  const [data, setData] = useState([]); // Holds students data
+  const [classes, setClasses] = useState([]); // Holds class options
+  const [classesName, setClassesName] = useState(""); // Selected class name
   const [dataError, setDataError] = useState(false);
-
+  const [attendance, setAttendance] = useState([]); // Holds attendance data for each student
+  const [loading, setLoading] = useState(false); // Loading state
+  const [selectedStudent, setSelectedStudent] = useState({
+    student: "",
+    day: "",
+    update: false,
+    id: "",
+  });
   const selecteClass = (e) => {
     setClassesName(`${e.yearLevel} : ${e.name}`);
     setForm({ ...form, classId: e._id });
     setDataError(false);
   };
 
+  // Fetch classes
   useEffect(() => {
     axios
       .get("http://localhost:8000/api/classes")
@@ -36,28 +45,52 @@ const Attendence = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.classId) setDataError("please choose a class");
-    else {
+    if (!form.classId) {
+      setDataError("please choose a class");
+    } else {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/attendances/time-filter?startDate=${form.date}&active=true&classId=${form.classId}`
+          `http://localhost:8000/api/students?classId=${form.classId}&active=true&fields=_id,firstName,lastName,middleName`
         );
         setData(response.data.data);
+        fetchAttendanceData(response.data.data); // Fetch attendance after getting students
       } catch (error) {
         console.log(error);
       }
     }
   };
 
-  const handleClick = (e) => {
-    e.stopPropagation();
-    e.target.classList.toggle("active");
+  // Function to fetch attendance data for all students
+  const fetchAttendanceData = async (students) => {
+    setLoading(true);
+    const attendanceArray = []; // Array to hold attendance records for all students
+
+    try {
+      await Promise.all(
+        students.map(async (student) => {
+          const response = await axios.get(
+            `http://localhost:8000/api/attendances/time-filter?month=${form.date}&active=true&studentId=${student._id}`
+          );
+          attendanceArray.push({
+            studentId: student._id,
+            studentName: `${student.firstName} ${student.middleName} ${student.lastName}`,
+            attendance: response.data, // Assuming response.data contains an array of attendance records for the student
+          });
+        })
+      );
+      setAttendance(attendanceArray); // Set the attendance array in state
+    } catch (error) {
+      console.error("Error fetching attendance", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
   const [overlay, setOverlay] = useState(false);
+
   let currentDate = new Date();
   let currentMonth = currentDate.getMonth();
   let currentYear = currentDate.getFullYear();
-
   let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
   function createTH(length) {
@@ -65,12 +98,45 @@ const Attendence = () => {
     for (let i = 0; i < length; i++) {
       th.push(<th key={i}>{i + 1}</th>);
     }
-
     return th;
   }
-  const statusClick = () => {
+
+  const statusClick = (e, student, index, id) => {
+    setSelectedStudent({
+      student,
+      day: index,
+      update: e.target.classList.contains("status-check"),
+      id: id,
+    });
     setOverlay(true);
   };
+
+  const trueCheck = async () => {
+    try {
+      if (selectedStudent.update == true) {
+        console.log(1);
+        const data = await axios.patch(
+          `http://localhost:8000/api/attendances/${selectedStudent.id}`,
+          {
+            status: "Present",
+          }
+        );
+        console.log(data);
+      } else {
+        console.log(`${form.date}-${selectedStudent.day}`);
+        const data = await axios.post(`http://localhost:8000/api/attendances`, {
+          studentId: selectedStudent.student.studentId,
+          classId: form.classId,
+          date: `${form.date}-${selectedStudent.day}`,
+          status: "Present",
+        });
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   window.onclick = () => {
     const overlay = document.querySelector(".overlay");
     overlay && setOverlay(false);
@@ -79,40 +145,64 @@ const Attendence = () => {
     );
     selectDiv && selectDiv.classList.remove("active");
   };
-  console.log(data);
-  function completeData(e) {
-    let tds = [];
-    for (let index = 0; index < daysInMonth; index++) {
-      tds.push(
-        e.status === "Present" ? (
-          <td key={index} onDoubleClick={statusClick} className="status">
-            <i className="true fa-solid fa-check"></i>
+  const complteteData = (studen) => {
+    let td = [];
+    console.log(studen);
+
+    for (let index = 1; index <= daysInMonth; index++) {
+      const attendanceEntry = studen?.attendance?.data.find((entry) => {
+        const date = new Date(entry.date);
+
+        return date.getUTCDate() === index;
+      });
+
+      if (attendanceEntry) {
+        td.push(
+          <td
+            onDoubleClick={(e) =>
+              statusClick(e, studen, index, attendanceEntry._id)
+            }
+            className="status status-check"
+            key={index}
+          >
+            {attendanceEntry.status === "Present" ? (
+              <i className="true fa-solid fa-check"></i>
+            ) : (
+              <i className="false fa-solid fa-xmark"></i>
+            )}
           </td>
-        ) : e.status === "Absent" ? (
-          <td key={index} onDoubleClick={statusClick} className="status">
-            <i className="false fa-solid fa-xmark"></i>
-          </td>
-        ) : (
-          <td key={index} onDoubleClick={statusClick} className="status">
+        );
+      } else {
+        td.push(
+          <td
+            onDoubleClick={(e) =>
+              statusClick(e, studen, index, studen.studentId)
+            }
+            className="status"
+            key={index}
+          >
             -
           </td>
-        )
-      );
+        );
+      }
     }
-    return tds;
-  }
+
+    return td;
+  };
 
   const tr =
-    data &&
-    data.map((e) => {
-      return (
-        <tr key={e.id}>
-          <td>{`${e.studentId.firstName} ${e.studentId.middleName} ${e.studentId.lastName}`}</td>
+    attendance &&
+    attendance.map((student, i) => (
+      <tr key={student.studentId}>
+        <td>{student.studentName}</td>
+        {complteteData(student, i)}
+      </tr>
+    ));
 
-          {completeData(e)}
-        </tr>
-      );
-    });
+  function handleClick(e) {
+    e.stopPropagation();
+    e.target.classList.toggle("active");
+  }
 
   return (
     <main>
@@ -121,11 +211,13 @@ const Attendence = () => {
           <div className="overlay">
             <div className="change-status">
               <h1>
-                change status for student: <span>diyar direki</span>
+                change status for student:
+                <span>{`${selectedStudent.student.studentName} `}</span>
+                in day: {selectedStudent.day}
               </h1>
               <div className="flex gap-20">
-                <div className="true center">
-                  <h2>true</h2>
+                <div onClick={trueCheck} className="true center">
+                  <h2>Present</h2>
                   <i className="fa-solid fa-check"></i>
                 </div>
                 <div className="false center">
@@ -164,19 +256,25 @@ const Attendence = () => {
             {dataError && <p className="error"> {dataError} </p>}
             <button className="btn">search</button>
           </form>
-          <div className="tabel-container">
-            <div className="table">
-              <h2>Attendence Sheet Of Class One: Section A, April 2019</h2>
-              <table className="attendence">
-                <thead>
-                  <tr>
-                    <th>student</th> {createTH(daysInMonth)}
-                  </tr>
-                </thead>
-                <tbody>{tr}</tbody>
-              </table>
+
+          {data.length > 0 && (
+            <div className="tabel-container">
+              <div className="table">
+                <h2>
+                  Attendence Sheet Of Class {classesName}: Section A,
+                  {form.date}
+                </h2>
+                <table className="attendence">
+                  <thead>
+                    <tr>
+                      <th>student</th> {createTH(daysInMonth)}
+                    </tr>
+                  </thead>
+                  <tbody>{tr}</tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </main>
