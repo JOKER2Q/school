@@ -147,7 +147,8 @@ const Classes = () => {
         </td>
         <td>{e.yearLevel}</td>
         <td> {e.name} </td>
-        <td> {classesCount[e._id]} </td>
+
+        <td> {classesCount[e._id] >= 0 ? classesCount[e._id] : "..."} </td>
         <td>
           <i
             onClick={openOptions}
@@ -275,11 +276,11 @@ const Classes = () => {
   return (
     <main>
       <div className="dashboard-container">
-        <div className="container relative">
+        <div className="container ">
           {overlay && <SendData response={response} />}
           <h1 className="title">classes</h1>
           <div className="flex align-start wrap subjects">
-            <form onSubmit={handelSubmit} className="dashboard-form relative">
+            <form onSubmit={handelSubmit} className="dashboard-form ">
               {loading && <FormLoading />}
               <h1> add new class</h1>
               <label htmlFor="name"> name </label>
@@ -335,7 +336,15 @@ const Classes = () => {
                       <th></th>
                     </tr>
                   </thead>
-                  <tbody>{tableData}</tbody>
+                  <tbody
+                    className={`${tableData.length === 0 ? "relative" : ""}`}
+                  >
+                    {tableData.length > 0 ? (
+                      tableData
+                    ) : (
+                      <div className="table-loading">loading...</div>
+                    )}
+                  </tbody>
                 </table>
                 <div className="pagination flex">
                   {createPags(divsCount, dataLength)}

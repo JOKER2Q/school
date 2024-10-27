@@ -102,7 +102,6 @@ const AddExam = () => {
     return h2;
   }
 
-  console.log(form);
   useEffect(() => {
     setForm({ ...form, classId: "", subjectId: "" });
     setClassesName("");

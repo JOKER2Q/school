@@ -113,25 +113,45 @@ const Attendence = () => {
 
   const trueCheck = async () => {
     try {
-      if (selectedStudent.update == true) {
-        console.log(1);
-        const data = await axios.patch(
+      if (selectedStudent.update) {
+        await axios.patch(
           `http://localhost:8000/api/attendances/${selectedStudent.id}`,
           {
             status: "Present",
           }
         );
-        console.log(data);
       } else {
-        console.log(`${form.date}-${selectedStudent.day}`);
-        const data = await axios.post(`http://localhost:8000/api/attendances`, {
+        await axios.post(`http://localhost:8000/api/attendances`, {
           studentId: selectedStudent.student.studentId,
           classId: form.classId,
           date: `${form.date}-${selectedStudent.day}`,
           status: "Present",
         });
-        console.log(data);
       }
+      fetchAttendanceData(data); // Fetch updated attendance data
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const falseCheck = async () => {
+    try {
+      if (selectedStudent.update) {
+        await axios.patch(
+          `http://localhost:8000/api/attendances/${selectedStudent.id}`,
+          {
+            status: "Absent",
+          }
+        );
+      } else {
+        await axios.post(`http://localhost:8000/api/attendances`, {
+          studentId: selectedStudent.student.studentId,
+          classId: form.classId,
+          date: `${form.date}-${selectedStudent.day}`,
+          status: "Absent",
+        });
+      }
+      fetchAttendanceData(data); // Fetch updated attendance data
     } catch (error) {
       console.log(error);
     }
@@ -147,7 +167,6 @@ const Attendence = () => {
   };
   const complteteData = (studen) => {
     let td = [];
-    console.log(studen);
 
     for (let index = 1; index <= daysInMonth; index++) {
       const attendanceEntry = studen?.attendance?.data.find((entry) => {
@@ -220,7 +239,7 @@ const Attendence = () => {
                   <h2>Present</h2>
                   <i className="fa-solid fa-check"></i>
                 </div>
-                <div className="false center">
+                <div onClick={falseCheck} className="false center">
                   <h2>false</h2>
                   <i className="fa-solid fa-xmark"></i>
                 </div>

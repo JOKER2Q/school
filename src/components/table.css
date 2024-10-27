@@ -24,6 +24,7 @@ div.table table {
   border-spacing: 0px;
   margin: 20px 0 10px;
   width: 100%;
+  min-height: 300px;
 }
 div.table thead {
   background-color: #333;
@@ -36,14 +37,15 @@ div.table thead th {
   color: white;
   padding: 10px;
 }
+
 table .checkbox {
+  position: relative;
   width: 15px;
   height: 15px;
   margin: 0 auto;
   background-color: #ffffff;
   cursor: pointer;
   overflow: hidden;
-  position: relative;
   border-radius: 4px;
   border: solid 1px var(--font-color);
 }
@@ -86,6 +88,20 @@ table .checkbox.active::after {
   opacity: 1;
 }
 
+table .table-loading {
+  position: absolute;
+  background: var(--section-color);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: capitalize;
+  font-weight: 600;
+  font-size: 25px;
+  letter-spacing: 1px;
+}
+
 div.table tbody tr:nth-child(odd) {
   background-color: var(--section-color);
 }
@@ -104,6 +120,7 @@ div.table tbody td {
 }
 div.table tbody td:first-of-type {
   border-left: solid 2px var(--section-color);
+  position: static;
 }
 div.table tbody td:last-of-type {
   border-right: solid 2px var(--section-color);

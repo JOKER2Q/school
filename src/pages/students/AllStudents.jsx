@@ -215,7 +215,15 @@ const AllStudents = () => {
                     <th></th>
                   </tr>
                 </thead>
-                <tbody>{tableData}</tbody>
+                <tbody
+                  className={`${tableData.length === 0 ? "relative" : ""}`}
+                >
+                  {tableData.length > 0 ? (
+                    tableData
+                  ) : (
+                    <div className="table-loading">loading...</div>
+                  )}
+                </tbody>
               </table>
               <div className="pagination flex">
                 {createPags(divsCount, dataLength)}

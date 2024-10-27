@@ -11,6 +11,7 @@ import Subjects from "./pages/subjects/Subjects";
 import ExamSchedule from "./pages/exams/ExamsSchedule";
 import AddStudent from "./pages/students/AddStudent";
 import AddExam from "./pages/exams/AddExam";
+import StudentProfile from "./pages/students/StudentProfile";
 
 function App() {
   const location = useLocation();
@@ -23,6 +24,7 @@ function App() {
         <Route path="all_teachers" element={<AllTeachers />} />
         <Route path="add_teacher" element={<AddTeacher />} />
         <Route path="teacher_profile" element={<TeacherProfile />} />
+        <Route path="student_profile" element={<StudentProfile />} />
         <Route path="all_students" element={<AllStudents />} />
         <Route path="add_student" element={<AddStudent />} />
         <Route path="attendence" element={<Attendence />} />

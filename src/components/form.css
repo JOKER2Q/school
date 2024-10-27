@@ -123,7 +123,7 @@ form.dashboard-form .selecte > article {
   opacity: 0;
   z-index: -1;
   pointer-events: none;
-  max-height: 400px;
+  max-height: 300px;
   overflow-y: auto;
 }
 form.dashboard-form .selecte .inp.active + article {
@@ -133,6 +133,26 @@ form.dashboard-form .selecte .inp.active + article {
   pointer-events: all;
   top: 110%;
 }
+
+form.dashboard-form .selected-value {
+  gap: 5px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+form.dashboard-form .selected-value span {
+  background-color: var(--section-color);
+  padding: 5px 10px;
+  text-transform: capitalize;
+  cursor: pointer;
+  border-radius: 4px;
+  position: relative;
+}
+
+form.dashboard-form .selected-value span:hover {
+  color: white;
+  background-color: var(--main-color);
+}
+
 form.dashboard-form .selecte > article h2 {
   color: var(--font-color);
   text-transform: capitalize;

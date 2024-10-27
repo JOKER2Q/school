@@ -271,11 +271,27 @@ const AddTeacher = () => {
                 <label>year level</label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
-                    {form.yearLevel
+                    {form.yearLevel.length > 0
                       ? form.yearLevel.join(" , ")
                       : "please selecte year level"}
                   </div>
                   <article className="grid-3">{createYearLeve()}</article>
+                  <div className="selected-value flex">
+                    {form.yearLevel &&
+                      form.yearLevel.map((e) => (
+                        <span
+                          onClick={() => {
+                            const fltr = form.yearLevel.filter(
+                              (ele) => ele !== e
+                            );
+                            setForm({ ...form, yearLevel: fltr });
+                          }}
+                          key={e}
+                        >
+                          {e}
+                        </span>
+                      ))}
+                  </div>
                 </div>
               </div>
               {form.yearLevel && (
@@ -301,6 +317,27 @@ const AddTeacher = () => {
                           );
                         })}
                       </article>
+                      <div className="selected-value flex">
+                        {classesName.map((e, i) => {
+                          return (
+                            <span
+                              onClick={() => {
+                                const nameFltr = classesName.filter(
+                                  (name) => name !== e
+                                );
+                                setClassesName(nameFltr);
+                                const idFltr = form.classes.filter(
+                                  (e, index) => index !== i
+                                );
+                                setForm({ ...form, classes: idFltr });
+                              }}
+                              key={i}
+                            >
+                              {e}
+                            </span>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-direction">
@@ -324,6 +361,27 @@ const AddTeacher = () => {
                           );
                         })}
                       </article>
+                      <div className="selected-value flex">
+                        {subjectName.map((e, i) => {
+                          return (
+                            <span
+                              onClick={() => {
+                                const nameFltr = subjectName.filter(
+                                  (name) => name !== e
+                                );
+                                setSubjectName(nameFltr);
+                                const idFltr = form.subjects.filter(
+                                  (e, index) => index !== i
+                                );
+                                setForm({ ...form, subjects: idFltr });
+                              }}
+                              key={i}
+                            >
+                              {e}
+                            </span>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </>

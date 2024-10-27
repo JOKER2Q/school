@@ -38,6 +38,10 @@ main {
   width: 100%;
   justify-content: flex-end;
 }
+main.div-open {
+  z-index: -1;
+  position: relative;
+}
 main > div.dashboard-container {
   width: calc(100% - 290px);
   display: flex;

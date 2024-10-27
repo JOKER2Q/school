@@ -7,7 +7,7 @@ const Navbar = () => {
   const location = useLocation();
   const isClosed = localStorage.getItem("isClosed") || false;
 
-  window.onclick = () => {
+  window.addEventListener("click", () => {
     const langDiv = document.querySelector(
       "nav .setting .lang + div.languages.active-div"
     );
@@ -15,12 +15,15 @@ const Navbar = () => {
     const linksDiv = document.querySelector(
       "aside.closed > div > .links.active"
     );
-    linksDiv && linksDiv.classList.remove("active");
+    if (linksDiv) {
+      linksDiv.classList.remove("active");
+      document.querySelector("main").classList.remove("div-open");
+    }
     const inpDiv = document.querySelector(
       "form.dashboard-form .selecte .inp.active"
     );
     inpDiv && inpDiv.classList.remove("active");
-  };
+  });
 
   const modeFun = () => {
     document.body.classList.toggle("dark");
@@ -35,6 +38,10 @@ const Navbar = () => {
         e.parentElement.classList.remove("active");
     });
     ele.target.parentElement.classList.toggle("active");
+    if (document.querySelector("aside.closed")) {
+      const main = document.querySelector("main");
+      main && main.classList.toggle("div-open");
+    }
   };
 
   useEffect(() => {
