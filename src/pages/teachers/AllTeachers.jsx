@@ -222,6 +222,7 @@ const AllTeachers = () => {
                   <i className="fa-regular fa-square-plus"></i> add teacher
                 </Link>
               </div>
+
               <table>
                 <thead>
                   <tr>
@@ -250,6 +251,12 @@ const AllTeachers = () => {
                   )}
                 </tbody>
               </table>
+              {selectedItems.length > 1 && (
+                <div className="delete-all">
+                  <i className="fa-solid fa-trash"></i>delete all (
+                  {selectedItems.length})
+                </div>
+              )}
               <div className="pagination flex">
                 {createPags(divsCount, dataLength)}
               </div>

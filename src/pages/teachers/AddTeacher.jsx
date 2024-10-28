@@ -22,6 +22,7 @@ const AddTeacher = () => {
   const [subject, setSubject] = useState([]);
   const [subjectName, setSubjectName] = useState([]);
   const [classes, setClasses] = useState([]);
+
   const [classesName, setClassesName] = useState([]);
   const [overlay, setOverlay] = useState(false);
   const [response, setResponse] = useState(false);
@@ -144,6 +145,7 @@ const AddTeacher = () => {
 
     fetchClasses();
   }, [form.yearLevel]);
+
   const handelSubmit = async (e) => {
     e.preventDefault();
     if (!form.gender) setDataError("please choose a gender");
@@ -284,7 +286,14 @@ const AddTeacher = () => {
                             const fltr = form.yearLevel.filter(
                               (ele) => ele !== e
                             );
-                            setForm({ ...form, yearLevel: fltr });
+                            setClassesName([]);
+                            setSubjectName([]);
+                            setForm({
+                              ...form,
+                              yearLevel: fltr,
+                              classes: "",
+                              subjects: "",
+                            });
                           }}
                           key={e}
                         >

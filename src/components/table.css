@@ -20,6 +20,28 @@ div.table .search input {
   color: var(--font-color);
   border: solid 1px var(--border-color);
 }
+div.table .delete-all {
+  margin: 10px 0;
+  background-color: #e60404;
+  width: fit-content;
+  color: white;
+  gap: 5px;
+  display: flex;
+  text-transform: capitalize;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  letter-spacing: 1px;
+  align-items: center;
+  font-size: 16px;
+}
+div.table .delete-all:hover {
+  background-color: #ce0606;
+}
+div.table .delete-all i {
+  font-size: 14px;
+}
 div.table table {
   border-spacing: 0px;
   margin: 20px 0 10px;

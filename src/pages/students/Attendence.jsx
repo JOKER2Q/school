@@ -13,7 +13,6 @@ const Attendence = () => {
   const [classesName, setClassesName] = useState(""); // Selected class name
   const [dataError, setDataError] = useState(false);
   const [attendance, setAttendance] = useState([]); // Holds attendance data for each student
-  const [loading, setLoading] = useState(false); // Loading state
   const [selectedStudent, setSelectedStudent] = useState({
     student: "",
     day: "",
@@ -62,7 +61,6 @@ const Attendence = () => {
 
   // Function to fetch attendance data for all students
   const fetchAttendanceData = async (students) => {
-    setLoading(true);
     const attendanceArray = []; // Array to hold attendance records for all students
 
     try {
@@ -81,8 +79,6 @@ const Attendence = () => {
       setAttendance(attendanceArray); // Set the attendance array in state
     } catch (error) {
       console.error("Error fetching attendance", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -289,7 +285,13 @@ const Attendence = () => {
                       <th>student</th> {createTH(daysInMonth)}
                     </tr>
                   </thead>
-                  <tbody>{tr}</tbody>
+                  <tbody className={`${tr.length === 0 ? "relative" : ""}`}>
+                    {tr.length > 0 ? (
+                      tr
+                    ) : (
+                      <div className="table-loading">loading...</div>
+                    )}
+                  </tbody>
                 </table>
               </div>
             </div>

@@ -191,6 +191,12 @@ const ExamSchedule = () => {
                   )}
                 </tbody>
               </table>
+              {selectedItems.length > 1 && (
+                <div className="delete-all">
+                  <i className="fa-solid fa-trash"></i>delete all (
+                  {selectedItems.length})
+                </div>
+              )}
               <div className="pagination flex">
                 <h3 className="active">1</h3>
                 <h3>2</h3>
