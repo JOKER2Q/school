@@ -46,8 +46,12 @@ div.table table {
   border-spacing: 0px;
   margin: 20px 0 10px;
   width: 100%;
+}
+
+div.table table.loading {
   min-height: 300px;
 }
+
 div.table thead {
   background-color: #333;
 }
@@ -311,4 +315,11 @@ div.table .false {
   text-transform: capitalize;
   border-radius: 6px;
   padding: 8px;
+}
+table.exam thead {
+  background-color: transparent;
+}
+table.exam thead th {
+  border-bottom: solid 1px var(--border-color);
+  color: var(--font-color);
 }

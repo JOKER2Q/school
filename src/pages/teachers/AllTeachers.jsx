@@ -223,7 +223,7 @@ const AllTeachers = () => {
                 </Link>
               </div>
 
-              <table>
+              <table className={`${tableData.length === 0 ? "loading" : ""}`}>
                 <thead>
                   <tr>
                     <th>

@@ -12,6 +12,7 @@ import ExamSchedule from "./pages/exams/ExamsSchedule";
 import AddStudent from "./pages/students/AddStudent";
 import AddExam from "./pages/exams/AddExam";
 import StudentProfile from "./pages/students/StudentProfile";
+import ExamResult from "./pages/exams/ExamResult";
 
 function App() {
   const location = useLocation();
@@ -33,6 +34,7 @@ function App() {
         <Route path="subjects" element={<Subjects />} />
         <Route path="exams_schedule" element={<ExamSchedule />} />
         <Route path="add_exam" element={<AddExam />} />
+        <Route path="exams_result" element={<ExamResult />} />
       </Routes>
     </div>
   );
