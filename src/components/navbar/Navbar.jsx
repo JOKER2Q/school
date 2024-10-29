@@ -172,6 +172,7 @@ const Navbar = () => {
               <NavLink to={"exams_schedule"}>exams schedule</NavLink>
               <NavLink to={"add_exam"}>add exam</NavLink>
               <NavLink to={"exams_result"}>exams result</NavLink>
+              <NavLink to={"add_exam_result"}>add exams result</NavLink>
             </article>
           </div>
           <NavLink to={"subjects"} className="w-100 justify-start center">

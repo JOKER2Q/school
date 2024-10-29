@@ -34,6 +34,7 @@ function App() {
         <Route path="subjects" element={<Subjects />} />
         <Route path="exams_schedule" element={<ExamSchedule />} />
         <Route path="add_exam" element={<AddExam />} />
+        <Route path="add_exam_result" element={<AddExam />} />
         <Route path="exams_result" element={<ExamResult />} />
       </Routes>
     </div>

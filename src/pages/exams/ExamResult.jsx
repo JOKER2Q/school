@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import "../../components/table.css";
-import { Link } from "react-router-dom";
 import axios from "axios";
 const ExamResult = () => {
   const [data, setData] = useState([]);
@@ -65,7 +64,15 @@ const ExamResult = () => {
                   <th>third exam </th>
                   <th>score</th>
                 </thead>
-                <tbody>{tableData}</tbody>
+                <tbody
+                  className={`${tableData.length === 0 ? "relative" : ""}`}
+                >
+                  {tableData.length > 0 ? (
+                    tableData
+                  ) : (
+                    <div className="table-loading">loading...</div>
+                  )}
+                </tbody>
               </table>
             </div>
           </div>

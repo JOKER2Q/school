@@ -126,6 +126,7 @@ table .table-loading {
   font-weight: 600;
   font-size: 25px;
   letter-spacing: 1px;
+  color: var(--font-color);
 }
 
 div.table tbody tr:nth-child(odd) {
@@ -317,9 +318,9 @@ div.table .false {
   padding: 8px;
 }
 table.exam thead {
-  background-color: transparent;
+  background-color: var(--main-color);
 }
 table.exam thead th {
   border-bottom: solid 1px var(--border-color);
-  color: var(--font-color);
+  color: white;
 }
