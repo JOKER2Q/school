@@ -257,7 +257,7 @@ const Subjects = () => {
     <main>
       <div className="dashboard-container">
         <div className="container">
-          {overlay && <SendData response={response} />}
+          {overlay && <SendData data="subject" response={response} />}
           <h1 className="title">subjects</h1>
           <div className="flex align-start wrap subjects">
             <form onSubmit={handelSubmit} className="dashboard-form">

@@ -277,7 +277,7 @@ const Classes = () => {
     <main>
       <div className="dashboard-container">
         <div className="container ">
-          {overlay && <SendData response={response} />}
+          {overlay && <SendData response={response} data="class" />}
           <h1 className="title">classes</h1>
           <div className="flex align-start wrap subjects">
             <form onSubmit={handelSubmit} className="dashboard-form ">

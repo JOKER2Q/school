@@ -159,7 +159,7 @@ const AddExam = () => {
     <main>
       <div className="dashboard-container">
         <div className="container relative">
-          {overlay && <SendData response={response} />}
+          {overlay && <SendData data="exam" response={response} />}
           <h1 className="title"> add exam </h1>
           <form onSubmit={handelSubmit} className=" relative dashboard-form">
             {loading && <FormLoading />}

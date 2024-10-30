@@ -14,7 +14,7 @@ const SendData = (props) => {
         {props.response === true
           ? "send successfully"
           : props.response === 400
-          ? "the user has been already taken"
+          ? `the ${props.data} already exists`
           : "network error"}
       </h1>
     </div>
