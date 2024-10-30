@@ -13,6 +13,7 @@ import AddStudent from "./pages/students/AddStudent";
 import AddExam from "./pages/exams/AddExam";
 import StudentProfile from "./pages/students/StudentProfile";
 import ExamResult from "./pages/exams/ExamResult";
+import TimeTable from "./pages/students/timeTable";
 
 function App() {
   const location = useLocation();
@@ -29,6 +30,7 @@ function App() {
         <Route path="all_students" element={<AllStudents />} />
         <Route path="add_student" element={<AddStudent />} />
         <Route path="attendence" element={<Attendence />} />
+        <Route path="time_table" element={<TimeTable />} />
         <Route path="classes" element={<Classes />} />
         <Route path="add_student" element={<AddStudent />} />
         <Route path="subjects" element={<Subjects />} />

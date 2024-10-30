@@ -129,13 +129,13 @@ table .table-loading {
   color: var(--font-color);
 }
 
-div.table tbody tr:nth-child(odd) {
+div.table tbody tr:not(table.time-table tbody tr):nth-child(odd) {
   background-color: var(--section-color);
 }
-div.table tbody tr:hover {
+div.table tbody tr:not(table.time-table tbody tr):hover {
   background-color: var(--border-color);
 }
-div.table tbody tr:last-child td {
+div.table tbody tr:not(table.time-table tbody tr):last-child td {
   border-bottom: solid 1px var(--border-color);
 }
 div.table tbody td {
@@ -145,11 +145,11 @@ div.table tbody td {
   font-size: 18px;
   position: relative;
 }
-div.table tbody td:first-of-type {
+div.table tbody td:not(table.time-table tbody td):first-of-type {
   border-left: solid 2px var(--section-color);
   position: static;
 }
-div.table tbody td:last-of-type {
+div.table tbody td:not(table.time-table tbody td):last-of-type {
   border-right: solid 2px var(--section-color);
 }
 
@@ -323,4 +323,40 @@ table.exam thead {
 table.exam thead th {
   border-bottom: solid 1px var(--border-color);
   color: white;
+}
+.tabel-container .day {
+  border-radius: 20px;
+  overflow: hidden;
+}
+.tabel-container .day > div {
+  background-color: var(--section-color);
+  padding: 10px;
+  text-align: center;
+  font-weight: 600;
+  text-transform: capitalize;
+  cursor: pointer;
+  color: var(--font-color);
+}
+.tabel-container .day > div:not(:nth-child(2)):hover {
+  background-color: var(--border-color);
+}
+.tabel-container .day > div:nth-child(2) {
+  cursor: default;
+  background-color: var(--main-color);
+  color: white;
+}
+
+table.time-table thead {
+  background-color: transparent;
+}
+table.time-table thead th {
+  color: var(--font-color);
+  border-bottom: solid 1px var(--main-color);
+}
+table.time-table tbody tr:nth-child(odd) {
+  background-color: var(--section-color);
+}
+table.time-table tbody tr .update {
+  color: #4400ff;
+  font-size: 15px;
 }

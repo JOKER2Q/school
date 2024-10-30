@@ -157,11 +157,6 @@ const Navbar = () => {
             </article>
           </div>
 
-          <NavLink to={"classes"} className="w-100 justify-start center">
-            <i className="fa-solid fa-school-flag"></i>
-            <h1>calsses</h1>
-          </NavLink>
-
           <div className="links">
             <div data-index="2" onClick={openDiv} className="center">
               <i className="fa-solid fa-list-check"></i>
@@ -175,13 +170,25 @@ const Navbar = () => {
               <NavLink to={"add_exam_result"}>add exams result</NavLink>
             </article>
           </div>
+
+          <div className="links">
+            <div data-index="3" onClick={openDiv} className="center">
+              <i className="fa-regular fa-calendar-days"></i>
+              <h1 className="flex-1">activitys</h1>
+              <i className="arrow fa-solid fa-chevron-right"></i>
+            </div>
+            <article>
+              <NavLink to={"attendence"}>attendence</NavLink>
+              <NavLink to={"time_table"}>time table</NavLink>
+            </article>
+          </div>
           <NavLink to={"subjects"} className="w-100 justify-start center">
             <i className="fa-solid fa-pen-nib"></i>
             <h1>subjects</h1>
           </NavLink>
-          <NavLink to={"attendence"} className="w-100 justify-start center">
-            <i className="fa-solid fa-clipboard-user"></i>
-            <h1>attendence</h1>
+          <NavLink to={"classes"} className="w-100 justify-start center">
+            <i className="fa-solid fa-school-flag"></i>
+            <h1>calsses</h1>
           </NavLink>
         </div>
       </aside>
