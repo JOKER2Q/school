@@ -6,7 +6,7 @@ const TimeTable = () => {
   const date = new Date();
   const [data, setData] = useState([]);
   const [dayNumber, setDayNumber] = useState(date.getUTCDay() || 0);
-
+  const [loading, setLoading] = useState(true);
   const daysOfWeek = [
     "Sunday",
     "Monday",
@@ -17,13 +17,19 @@ const TimeTable = () => {
     "Saturday",
   ];
   useEffect(() => {
-    axios
-      .get(
-        `http://localhost:8000/api/time-table?active=true&classId=671383ab6ec6b9d374974c83&dayOfWeek=${daysOfWeek[dayNumber]}&sort=startTime`
-      )
-      .then((data) => {
-        setData(data.data.data);
-      });
+    async function getData() {
+      try {
+        const res = await axios.get(
+          `http://localhost:8000/api/time-table?active=true&classId=671383ab6ec6b9d374974c83&dayOfWeek=${daysOfWeek[dayNumber]}&sort=startTime`
+        );
+        setData(res.data.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    getData();
   }, [dayNumber]);
 
   const tableData =
@@ -46,9 +52,13 @@ const TimeTable = () => {
 
   const increment = () => {
     setDayNumber((prev) => (prev + 1) % 7);
+    setData([]);
+    setLoading(true);
   };
   const decrement = () => {
     setDayNumber((prev) => (prev - 1 + 7) % 7);
+    setData([]);
+    setLoading(true);
   };
 
   return (
@@ -66,7 +76,11 @@ const TimeTable = () => {
               </div>
             </div>
             <div className="table">
-              <table className="time-table">
+              <table
+                className={`${
+                  tableData.length === 0 ? "loading" : ""
+                } time-table`}
+              >
                 <thead>
                   <tr>
                     <th>room</th>
@@ -76,7 +90,16 @@ const TimeTable = () => {
                     <th></th>
                   </tr>
                 </thead>
-                <tbody>{tableData}</tbody>
+                <tbody
+                  className={`${tableData.length === 0 ? "relative" : ""}`}
+                >
+                  {tableData.length > 0
+                    ? tableData
+                    : !loading && (
+                        <div className="table-loading">no data to show</div>
+                      )}
+                  {loading && <div className="table-loading">loading</div>}
+                </tbody>
               </table>
             </div>
           </div>
