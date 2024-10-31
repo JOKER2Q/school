@@ -35,19 +35,19 @@ const AllTeachers = () => {
 
     return h3Pages;
   };
+  const fetchData = async () => {
+    const data = await axios.get(
+      `http://localhost:8000/api/teachers/details?limit=${divsCount}&page=${activePage}&active=true`
+    );
+    const fltr = data.data.data.filter((e) => e.active);
+
+    setDataLength(data.data.numberOfActiveTeachers);
+
+    setData(fltr);
+    setSearchData(fltr);
+  };
   useEffect(() => {
-    axios
-      .get(
-        `http://localhost:8000/api/teachers/details?limit=${divsCount}&page=${activePage}&active=true`
-      )
-      .then((res) => {
-        const fltr = res.data.data.filter((e) => e.active);
-
-        setDataLength(res.data.numberOfActiveTeachers);
-
-        setData(fltr);
-        setSearchData(fltr);
-      });
+    fetchData();
   }, [activePage]);
 
   const openOptions = (e) => {
@@ -106,53 +106,55 @@ const AllTeachers = () => {
     activeDiv && activeDiv.classList.remove("active-div");
   };
 
-  const tableData = searchData.map((e, i) => {
-    return (
-      <tr key={e._id}>
-        <td>
-          <div
-            onClick={(target) => checkOne(target, e._id)}
-            className="checkbox"
-          ></div>
-        </td>
-        <td>
-          <i className="center photo fa-solid fa-user"></i>
-        </td>
-        <td>{`${e.firstName} ${e.lastName}`}</td>
-        <td> {e.gender} </td>
-        <td>
-          {e.classes.map((el) => {
-            return `${el.yearLevel}:${el.name},`;
-          })}
-        </td>
-        <td>
-          {e.subjects.map((el) => {
-            return `${el.name},`;
-          })}
-        </td>
-        <td> {e.phoneNumber} </td>
-        <td>
-          <i
-            onClick={openOptions}
-            className="options fa-solid fa-ellipsis"
-            data-index={i}
-          ></i>
-          <div className="options">
-            <div className="flex delete">
-              <i className="fa-solid fa-trash"></i> delete
+  const tableData =
+    searchData &&
+    searchData.map((e, i) => {
+      return (
+        <tr key={e._id}>
+          <td>
+            <div
+              onClick={(target) => checkOne(target, e._id)}
+              className="checkbox"
+            ></div>
+          </td>
+          <td>
+            <i className="center photo fa-solid fa-user"></i>
+          </td>
+          <td>{`${e.firstName} ${e.lastName}`}</td>
+          <td> {e.gender} </td>
+          <td>
+            {e.classes.map((el) => {
+              return `${el.yearLevel}:${el.name},`;
+            })}
+          </td>
+          <td>
+            {e.subjects.map((el) => {
+              return `${el.name},`;
+            })}
+          </td>
+          <td> {e.phoneNumber} </td>
+          <td>
+            <i
+              onClick={openOptions}
+              className="options fa-solid fa-ellipsis"
+              data-index={i}
+            ></i>
+            <div className="options">
+              <div className="flex delete">
+                <i className="fa-solid fa-trash"></i> delete
+              </div>
+              <div className="flex update">
+                <Link className="fa-regular fa-pen-to-square"></Link>
+                update
+              </div>
+              <div className="flex visit">
+                <Link className="fa-solid fa-circle-user"></Link> visit
+              </div>
             </div>
-            <div className="flex update">
-              <Link className="fa-regular fa-pen-to-square"></Link>
-              update
-            </div>
-            <div className="flex visit">
-              <Link className="fa-solid fa-circle-user"></Link> visit
-            </div>
-          </div>
-        </td>
-      </tr>
-    );
-  });
+          </td>
+        </tr>
+      );
+    });
   const handelInput = () => {
     const nameSearchValue = document
       .querySelector(`input[data-type="name"]`)
@@ -190,6 +192,21 @@ const AllTeachers = () => {
 
     if (!nameSearchValue && !classSearchValue && !subjectSearchValue) {
       setSearchData(data);
+    }
+  };
+  const deleteAll = async () => {
+    try {
+      const data = await axios.patch(
+        "http://localhost:8000/api/teachers/deleteTeachers",
+        {
+          teacherIds: selectedItems,
+        }
+      );
+      data && fetchData();
+
+      selectedItems.length = 0;
+    } catch (error) {
+      console.log(error);
     }
   };
   return (
@@ -252,7 +269,7 @@ const AllTeachers = () => {
                 </tbody>
               </table>
               {selectedItems.length > 1 && (
-                <div className="delete-all">
+                <div onClick={deleteAll} className="delete-all">
                   <i className="fa-solid fa-trash"></i>delete all (
                   {selectedItems.length})
                 </div>

@@ -152,6 +152,21 @@ const Attendence = () => {
       console.log(error);
     }
   };
+  const noneCheck = async () => {
+    try {
+      if (selectedStudent.update) {
+        await axios.patch(
+          `http://localhost:8000/api/attendances/deactivate/${selectedStudent.id}`,
+          {
+            active: "false",
+          }
+        );
+      }
+      fetchAttendanceData(data); // Fetch updated attendance data
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   window.onclick = () => {
     const overlay = document.querySelector(".overlay");
@@ -239,6 +254,10 @@ const Attendence = () => {
                 <div onClick={falseCheck} className="false center">
                   <h2>false</h2>
                   <i className="fa-solid fa-xmark"></i>
+                </div>
+                <div onClick={noneCheck} className="none center">
+                  <h2>None</h2>
+                  <i class="fa-solid fa-ban"></i>
                 </div>
               </div>
             </div>

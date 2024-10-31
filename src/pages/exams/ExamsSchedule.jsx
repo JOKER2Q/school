@@ -6,13 +6,21 @@ const ExamSchedule = () => {
   const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
-  useEffect(() => {
-    axios.get("http://localhost:8000/api/exams").then((res) => {
-      const fltr = res.data.data.filter((e) => e.active);
 
+  const fetchData = async () => {
+    try {
+      const data = await axios.get(
+        "http://localhost:8000/api/exams?sort=-date"
+      );
+      const fltr = data.data.data.filter((e) => e.active);
       setData(fltr);
       setSearchData(fltr);
-    });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
   }, []);
 
   const openOptions = (e) => {
@@ -139,6 +147,21 @@ const ExamSchedule = () => {
       setSearchData(data);
     }
   };
+  const deleteAll = async () => {
+    try {
+      const data = await axios.patch(
+        "http://localhost:8000/api/exams/deactivate-many",
+        {
+          ids: selectedItems,
+        }
+      );
+      data && fetchData();
+
+      selectedItems.length = 0;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <main>
       <div className="dashboard-container">
@@ -192,7 +215,7 @@ const ExamSchedule = () => {
                 </tbody>
               </table>
               {selectedItems.length > 1 && (
-                <div className="delete-all">
+                <div onClick={deleteAll} className="delete-all">
                   <i className="fa-solid fa-trash"></i>delete all (
                   {selectedItems.length})
                 </div>
