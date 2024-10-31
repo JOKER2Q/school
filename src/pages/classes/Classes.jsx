@@ -272,7 +272,21 @@ const Classes = () => {
       }
     }
   };
+  const deleteAll = async () => {
+    try {
+      const data = await axios.patch(
+        "http://localhost:8000/api/classes/deactivateMany",
+        {
+          Ids: selectedItems,
+        }
+      );
+      data && fetchData();
 
+      selectedItems.length = 0;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <main>
       <div className="dashboard-container">
@@ -347,7 +361,7 @@ const Classes = () => {
                   </tbody>
                 </table>
                 {selectedItems.length > 1 && (
-                  <div className="delete-all">
+                  <div onClick={deleteAll} className="delete-all">
                     <i className="fa-solid fa-trash"></i>delete all (
                     {selectedItems.length})
                   </div>

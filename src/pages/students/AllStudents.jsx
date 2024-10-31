@@ -34,18 +34,19 @@ const AllStudents = () => {
 
     return h3Pages;
   };
-  useEffect(() => {
-    axios
-      .get(
-        `http://localhost:8000/api/students?limit=${divsCount}&page=${activePage}&active=true`
-      )
-      .then((res) => {
-        setDataLength(res.data.numberOfActiveStudents);
+  const fetchData = async () => {
+    const data = await axios.get(
+      `http://localhost:8000/api/students?limit=${divsCount}&page=${activePage}&active=true`
+    );
+    const fltr = data.data.data.filter((e) => e.active);
 
-        const fltr = res.data.data.filter((e) => e.active);
-        setData(fltr);
-        setSearchData(fltr);
-      });
+    setDataLength(data.data.numberOfActiveStudents);
+
+    setData(fltr);
+    setSearchData(fltr);
+  };
+  useEffect(() => {
+    fetchData();
   }, [activePage]);
 
   const openOptions = (e) => {
@@ -172,6 +173,20 @@ const AllStudents = () => {
       setSearchData(data);
     }
   };
+  const deleteAll = async () => {
+    try {
+      const data = await axios.patch(
+        "http://localhost:8000/api/students/deleteStudents",
+        {
+          ids: selectedItems,
+        }
+      );
+      data && fetchData();
+      selectedItems.length = 0;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <main>
       <div className="dashboard-container">
@@ -226,7 +241,7 @@ const AllStudents = () => {
                 </tbody>
               </table>
               {selectedItems.length > 1 && (
-                <div className="delete-all">
+                <div onClick={deleteAll} className="delete-all">
                   <i className="fa-solid fa-trash"></i>delete all (
                   {selectedItems.length})
                 </div>

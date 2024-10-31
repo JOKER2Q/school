@@ -287,6 +287,17 @@ div.table .true {
 div.table .false {
   color: #e60404;
 }
+.overlay > div .none {
+  background-color: #666666;
+  color: white;
+  width: 50%;
+  margin-top: 20px;
+  cursor: pointer;
+  gap: 10px;
+  text-transform: capitalize;
+  border-radius: 6px;
+  padding: 8px;
+}
 .overlay > div {
   background-color: var(--section-color);
   color: var(--font-color);
