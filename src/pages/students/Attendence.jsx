@@ -161,6 +161,7 @@ const Attendence = () => {
     );
     selectDiv && selectDiv.classList.remove("active");
   };
+  
   const complteteData = (studen) => {
     let td = [];
 

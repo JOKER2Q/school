@@ -359,4 +359,25 @@ table.time-table tbody tr:nth-child(odd) {
 table.time-table tbody tr .update {
   color: #4400ff;
   font-size: 15px;
+  cursor: pointer;
+}
+table.time-table tbody tr .delete {
+  color: #e60404;
+  font-size: 15px;
+  cursor: pointer;
+}
+.table.flex {
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.table .green-btn {
+  background-color: #07a12e;
+  font-size: 17px;
+}
+.table .green-btn:hover {
+  background-color: #057220;
+}
+.table .green-btn i {
+  font-size: 15px;
 }

@@ -219,7 +219,29 @@ i.password {
   border-color: var(--main-color) transparent;
   animation: 1s rotate linear infinite;
 }
-
+.overlay form {
+  border-radius: 10px;
+}
+.overlay form label {
+  margin: 0;
+}
+.overlay form input {
+  margin: 5px 0;
+}
+.overlay form.dashboard-form .flex-direction {
+  gap: 10px;
+}
+.overlay form.dashboard-form .btn {
+  margin: 0;
+  width: 100%;
+  font-size: 20px;
+  padding: 8px;
+}
+.overlay form.dashboard-form .error {
+  padding: 10px;
+  width: 100%;
+  margin-top: 0px;
+}
 @keyframes rotate {
   100% {
     rotate: 365deg;

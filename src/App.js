@@ -14,6 +14,7 @@ import AddExam from "./pages/exams/AddExam";
 import StudentProfile from "./pages/students/StudentProfile";
 import ExamResult from "./pages/exams/ExamResult";
 import TimeTable from "./pages/students/timeTable";
+import AddExamResult from "./pages/exams/AddExamResult";
 
 function App() {
   const location = useLocation();
@@ -36,7 +37,7 @@ function App() {
         <Route path="subjects" element={<Subjects />} />
         <Route path="exams_schedule" element={<ExamSchedule />} />
         <Route path="add_exam" element={<AddExam />} />
-        <Route path="add_exam_result" element={<AddExam />} />
+        <Route path="add_exam_result" element={<AddExamResult />} />
         <Route path="exams_result" element={<ExamResult />} />
       </Routes>
     </div>
