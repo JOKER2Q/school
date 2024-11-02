@@ -3,8 +3,20 @@ import "../../components/form.css";
 import axios from "axios";
 import FormLoading from "../../components/FormLoading";
 import SendData from "../../components/response/SendData";
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddTeacher = () => {
+const UpdateTeacher = () => {
+  const params = useParams();
+  const [loading, setLoading] = useState(false);
+  const [DataError, setDataError] = useState(false);
+  const [subject, setSubject] = useState([]);
+  const [subjectName, setSubjectName] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const nav = useNavigate();
+  const [classesName, setClassesName] = useState([]);
+  const [overlay, setOverlay] = useState(false);
+  const [response, setResponse] = useState(false);
+
   const [form, setForm] = useState({
     firstName: "",
     middleName: "",
@@ -17,16 +29,31 @@ const AddTeacher = () => {
     classes: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  const [DataError, setDataError] = useState(false);
-  const [subject, setSubject] = useState([]);
-  const [subjectName, setSubjectName] = useState([]);
-  const [classes, setClasses] = useState([]);
+  useEffect(() => {
+    axios.get(`http://localhost:8000/api/teachers/${params.id}`).then((res) => {
+      const data = res.data.teacher;
+      const subjects = data.subjects.map((e) => {
+        setSubjectName((prev) => [...new Set([...prev, e.name])]);
+        return e._id;
+      });
+      const classes = data.classes.map((e) => {
+        setClassesName((prev) => [...new Set([...prev, e.name])]);
+        return e._id;
+      });
 
-  const [classesName, setClassesName] = useState([]);
-
-  const [overlay, setOverlay] = useState(false);
-  const [response, setResponse] = useState(false);
+      setForm({
+        subjects: subjects,
+        firstName: data.firstName,
+        middleName: data.middleName,
+        lastName: data.lastName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        gender: data.gender,
+        yearLevel: data.yearLevel,
+        classes: classes,
+      });
+    });
+  }, []);
 
   const responseFun = (complete = false) => {
     setOverlay(true);
@@ -155,8 +182,8 @@ const AddTeacher = () => {
     else if (!form.subjects) setDataError("please choose a subject");
     else {
       try {
-        const data = await axios.post(
-          "http://localhost:8000/api/teachers",
+        const data = await axios.patch(
+          `http://localhost:8000/api/teachers/${params.id}`,
           form
         );
         setForm({
@@ -170,8 +197,10 @@ const AddTeacher = () => {
           subjects: "",
           classes: "",
         });
-        if (data.status === 201) {
+
+        if (data.status === 200) {
           responseFun(true);
+          nav("/all_teachers");
         }
       } catch (error) {
         console.log(error);
@@ -337,7 +366,7 @@ const AddTeacher = () => {
                                 );
                                 setClassesName(nameFltr);
                                 const idFltr = form.classes.filter(
-                                  (e, index) => index !== i
+                                  (_, index) => index !== i
                                 );
                                 setForm({ ...form, classes: idFltr });
                               }}
@@ -406,4 +435,4 @@ const AddTeacher = () => {
   );
 };
 
-export default AddTeacher;
+export default UpdateTeacher;

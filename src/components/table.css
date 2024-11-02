@@ -197,7 +197,7 @@ div.table tbody td div.options div.delete {
   font-weight: 500;
   font-size: 16px;
 }
-div.table tbody td div.options div.update {
+div.table tbody td div.options .update {
   font-weight: 500;
   gap: 10px;
   color: var(--font-color);
@@ -220,7 +220,7 @@ div.table tbody td div.options div.visit {
 div.table tbody td div.options div.delete:hover {
   background-color: #ce06061c;
 }
-div.table tbody td div.options div.update:hover {
+div.table tbody td div.options .update:hover {
   background-color: #0011ff1f;
 }
 div.table tbody td div.options div.visit:hover {
@@ -230,7 +230,7 @@ div.table tbody td div.options div.delete i {
   color: #ce0606;
   font-size: 16px;
 }
-div.table tbody td div.options div.update a {
+div.table tbody td div.options .update i {
   color: #4400ff;
   font-size: 16px;
 }
@@ -334,6 +334,29 @@ table.exam thead {
 table.exam thead th {
   border-bottom: solid 1px var(--border-color);
   color: white;
+}
+table.exam tbody td:hover i {
+  opacity: 1;
+}
+table.exam tbody .icon {
+  font-size: 13px;
+  cursor: pointer;
+  margin-right: 5px;
+  opacity: 0;
+}
+table.exam tbody .icon:first-child {
+  margin-left: 10px;
+}
+
+table.exam tbody .icon.delete {
+  color: #e60404;
+}
+table.exam tbody .icon.update {
+  color: #4400ff;
+}
+
+div.table table.exam tbody tr:not(table.time-table tbody tr):last-child td {
+  border-bottom: none;
 }
 .tabel-container .day {
   border-radius: 20px;

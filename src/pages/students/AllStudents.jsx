@@ -7,10 +7,30 @@ const AllStudents = () => {
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [dataLength, setDataLength] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [activePage, setActivePage] = useState(1);
+  const [overlay, setOverlay] = useState(false);
   const divsCount = 10;
 
+  window.addEventListener("click", () => {
+    const overlayDiv = document.querySelector(".overlay");
+    if (overlayDiv) {
+      setOverlay(false);
+      if (selectedItems.length <= 1) {
+        setSelectedItems([]);
+      }
+      const allSelectors = document.querySelectorAll("td .checkbox");
+      allSelectors.forEach((e) => e.classList.remove("active"));
+    }
+  });
+
   function updateData(e) {
+    setData([]);
+    setSearchData([]);
+    setSelectedItems([]);
+    setLoading(true);
+    const check = document.querySelector("th .checkbox.active");
+    check && check.classList.remove("active");
     const pages = document.querySelectorAll("div.table .pagination h3");
     pages.forEach((e) => e.classList.remove("active"));
     e.target.classList.add("active");
@@ -44,6 +64,7 @@ const AllStudents = () => {
 
     setData(fltr);
     setSearchData(fltr);
+    setLoading(false);
   };
   useEffect(() => {
     fetchData();
@@ -130,7 +151,16 @@ const AllStudents = () => {
             data-index={i}
           ></i>
           <div className="options">
-            <div className="flex delete">
+            <div
+              onClick={(event) => {
+                event.stopPropagation();
+                setOverlay(true);
+                const allSelectors = document.querySelectorAll("td .checkbox");
+                allSelectors.forEach((e) => e.classList.remove("active"));
+                setSelectedItems([e._id]);
+              }}
+              className="flex delete"
+            >
               <i className="fa-solid fa-trash"></i> delete
             </div>
             <div className="flex update">
@@ -173,6 +203,22 @@ const AllStudents = () => {
       setSearchData(data);
     }
   };
+
+  const deleteOne = async () => {
+    try {
+      const data = await axios.patch(
+        `http://localhost:8000/api/students/deactivate/${selectedItems[0]}`
+      );
+      data && fetchData();
+
+      setSelectedItems([]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setOverlay(false);
+    }
+  };
+
   const deleteAll = async () => {
     try {
       const data = await axios.patch(
@@ -185,11 +231,42 @@ const AllStudents = () => {
       selectedItems.length = 0;
     } catch (error) {
       console.log(error);
+    } finally {
+      setOverlay(false);
     }
   };
   return (
     <main>
       <div className="dashboard-container">
+        {overlay && (
+          <div className="overlay">
+            <div className="change-status">
+              <h1>{`confirm delete (${selectedItems.length}) students`}</h1>
+              <div className="flex gap-20">
+                <div
+                  onClick={() => {
+                    setOverlay(false);
+                    if (selectedItems.length === 1) setSelectedItems([]);
+                  }}
+                  className="none center"
+                >
+                  <h2>cancel</h2>
+                  <i className="fa-solid fa-ban"></i>
+                </div>
+                <div
+                  onClick={() => {
+                    if (selectedItems.length === 1) deleteOne();
+                    else deleteAll();
+                  }}
+                  className="false center"
+                >
+                  <h2>delete</h2>
+                  <i className="fa-solid fa-trash"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="container">
           <h1 className="title">all students</h1>
           <div className="tabel-container">
@@ -211,7 +288,7 @@ const AllStudents = () => {
                   <i className="fa-regular fa-square-plus"></i> add student
                 </Link>
               </div>
-              <table>
+              <table className={`${tableData.length === 0 ? "loading" : ""}`}>
                 <thead>
                   <tr>
                     <th>
@@ -233,15 +310,22 @@ const AllStudents = () => {
                 <tbody
                   className={`${tableData.length === 0 ? "relative" : ""}`}
                 >
-                  {tableData.length > 0 ? (
-                    tableData
-                  ) : (
-                    <div className="table-loading">loading...</div>
-                  )}
+                  {tableData.length > 0
+                    ? tableData
+                    : !loading && (
+                        <div className="table-loading">no data to show</div>
+                      )}
+                  {loading && <div className="table-loading">loading</div>}
                 </tbody>
               </table>
               {selectedItems.length > 1 && (
-                <div onClick={deleteAll} className="delete-all">
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOverlay(true);
+                  }}
+                  className="delete-all"
+                >
                   <i className="fa-solid fa-trash"></i>delete all (
                   {selectedItems.length})
                 </div>

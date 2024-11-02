@@ -15,6 +15,7 @@ import StudentProfile from "./pages/students/StudentProfile";
 import ExamResult from "./pages/exams/ExamResult";
 import TimeTable from "./pages/students/timeTable";
 import AddExamResult from "./pages/exams/AddExamResult";
+import UpdateTeacher from "./pages/teachers/UpdateTeacher";
 
 function App() {
   const location = useLocation();
@@ -26,6 +27,7 @@ function App() {
         {/* <Route path="/" element={<Login />} /> */}
         <Route path="all_teachers" element={<AllTeachers />} />
         <Route path="add_teacher" element={<AddTeacher />} />
+        <Route path="update_teacher/:id" element={<UpdateTeacher />} />
         <Route path="teacher_profile" element={<TeacherProfile />} />
         <Route path="student_profile" element={<StudentProfile />} />
         <Route path="all_students" element={<AllStudents />} />

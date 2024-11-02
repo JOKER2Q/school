@@ -5,7 +5,7 @@ import { Context } from "../../context/Context";
 const Navbar = () => {
   const context = useContext(Context);
   const location = useLocation();
-  const isClosed = localStorage.getItem("isClosed") || false;
+  const isClosed = JSON.parse(localStorage.getItem("isClosed")) || false;
 
   window.addEventListener("click", () => {
     const langDiv = document.querySelector(

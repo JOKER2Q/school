@@ -21,6 +21,7 @@ const AddExamResult = () => {
   const [overlay, setOverlay] = useState(false);
   const [response, setResponse] = useState(false);
   const [maxScore, setMaxScore] = useState(100);
+  
 
   const [dataNames, setDataNames] = useState({
     classesName: "",

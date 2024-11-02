@@ -11,9 +11,28 @@ const Classes = () => {
   const [classesCount, setClassesCount] = useState(0);
   const [dataLength, setDataLength] = useState(0);
   const [activePage, setActivePage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const divsCount = 10;
+  const [overlay, setOverlay] = useState(false);
+  window.addEventListener("click", () => {
+    const overlayDiv = document.querySelector(".overlay");
+    if (overlayDiv) {
+      setOverlay(false);
+      if (selectedItems.length <= 1) {
+        setSelectedItems([]);
+      }
+      const allSelectors = document.querySelectorAll("td .checkbox");
+      allSelectors.forEach((e) => e.classList.remove("active"));
+    }
+  });
 
   function updateData(e) {
+    setData([]);
+    setSearchData([]);
+    setSelectedItems([]);
+    setLoading(true);
+    const check = document.querySelector("th .checkbox.active");
+    check && check.classList.remove("active");
     const pages = document.querySelectorAll("div.table .pagination h3");
     pages.forEach((e) => e.classList.remove("active"));
     e.target.classList.add("active");
@@ -49,6 +68,9 @@ const Classes = () => {
         const fltr = res.data.data.filter((e) => e.active);
         setData(fltr);
         setSearchData(fltr);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -156,7 +178,16 @@ const Classes = () => {
             data-index={i}
           ></i>
           <div className="options">
-            <div className="flex delete">
+            <div
+              onClick={(event) => {
+                event.stopPropagation();
+                setOverlay(true);
+                const allSelectors = document.querySelectorAll("td .checkbox");
+                allSelectors.forEach((e) => e.classList.remove("active"));
+                setSelectedItems([e._id]);
+              }}
+              className="flex delete"
+            >
               <i className="fa-solid fa-trash"></i> delete
             </div>
             <div className="flex update">
@@ -225,12 +256,12 @@ const Classes = () => {
     }
     return h2;
   }
-  const [loading, setLoading] = useState(false);
-  const [overlay, setOverlay] = useState(false);
+  const [formLoading, setFormLoading] = useState(false);
+  const [dataOverlay, setDataOverlay] = useState(false);
   const [response, setResponse] = useState(false);
 
   const responseFun = (complete = false) => {
-    setOverlay(true);
+    setDataOverlay(true);
 
     complete === true
       ? setResponse(true)
@@ -238,10 +269,10 @@ const Classes = () => {
       ? setResponse(400)
       : setResponse(false);
     window.onclick = () => {
-      setOverlay(false);
+      setDataOverlay(false);
     };
     setTimeout(() => {
-      setOverlay(false);
+      setDataOverlay(false);
     }, 3000);
   };
 
@@ -268,8 +299,22 @@ const Classes = () => {
         if (error.status === 400) responseFun("reapeted data");
         else responseFun(false);
       } finally {
-        setLoading(false);
+        setFormLoading(false);
       }
+    }
+  };
+  const deleteOne = async () => {
+    try {
+      const data = await axios.patch(
+        `http://localhost:8000/api/classes/deactivate/${selectedItems[0]}`
+      );
+      data && fetchData();
+
+      setSelectedItems([]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setOverlay(false);
     }
   };
   const deleteAll = async () => {
@@ -285,17 +330,48 @@ const Classes = () => {
       selectedItems.length = 0;
     } catch (error) {
       console.log(error);
+    } finally {
+      setOverlay(false);
     }
   };
   return (
     <main>
       <div className="dashboard-container">
         <div className="container ">
-          {overlay && <SendData response={response} data="class" />}
+          {dataOverlay && <SendData response={response} data="class" />}
+          {overlay && (
+            <div className="overlay">
+              <div className="change-status">
+                <h1>{`confirm delete (${selectedItems.length}) students`}</h1>
+                <div className="flex gap-20">
+                  <div
+                    onClick={() => {
+                      setOverlay(false);
+                      if (selectedItems.length === 1) setSelectedItems([]);
+                    }}
+                    className="none center"
+                  >
+                    <h2>cancel</h2>
+                    <i className="fa-solid fa-ban"></i>
+                  </div>
+                  <div
+                    onClick={() => {
+                      if (selectedItems.length === 1) deleteOne();
+                      else deleteAll();
+                    }}
+                    className="false center"
+                  >
+                    <h2>delete</h2>
+                    <i className="fa-solid fa-trash"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           <h1 className="title">classes</h1>
           <div className="flex align-start wrap subjects">
             <form onSubmit={handelSubmit} className="dashboard-form ">
-              {loading && <FormLoading />}
+              {formLoading && <FormLoading />}
               <h1> add new class</h1>
               <label htmlFor="name"> name </label>
               <input
@@ -335,7 +411,7 @@ const Classes = () => {
                     placeholder="search by year level"
                   />
                 </div>
-                <table>
+                <table className={`${tableData.length === 0 ? "loading" : ""}`}>
                   <thead>
                     <tr>
                       <th>
@@ -353,15 +429,22 @@ const Classes = () => {
                   <tbody
                     className={`${tableData.length === 0 ? "relative" : ""}`}
                   >
-                    {tableData.length > 0 ? (
-                      tableData
-                    ) : (
-                      <div className="table-loading">loading...</div>
-                    )}
+                    {tableData.length > 0
+                      ? tableData
+                      : !loading && (
+                          <div className="table-loading">no data to show</div>
+                        )}
+                    {loading && <div className="table-loading">loading</div>}
                   </tbody>
                 </table>
                 {selectedItems.length > 1 && (
-                  <div onClick={deleteAll} className="delete-all">
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOverlay(true);
+                    }}
+                    className="delete-all"
+                  >
                     <i className="fa-solid fa-trash"></i>delete all (
                     {selectedItems.length})
                   </div>

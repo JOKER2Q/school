@@ -12,6 +12,7 @@ const Attendence = () => {
   const [classes, setClasses] = useState([]); // Holds class options
   const [classesName, setClassesName] = useState(""); // Selected class name
   const [dataError, setDataError] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [attendance, setAttendance] = useState([]); // Holds attendance data for each student
   const [selectedStudent, setSelectedStudent] = useState({
     student: "",
@@ -176,7 +177,7 @@ const Attendence = () => {
     );
     selectDiv && selectDiv.classList.remove("active");
   };
-  
+
   const complteteData = (studen) => {
     let td = [];
 
@@ -257,7 +258,7 @@ const Attendence = () => {
                 </div>
                 <div onClick={noneCheck} className="none center">
                   <h2>None</h2>
-                  <i class="fa-solid fa-ban"></i>
+                  <i classn="fa-solid fa-ban"></i>
                 </div>
               </div>
             </div>

@@ -8,14 +8,33 @@ const AllTeachers = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [dataLength, setDataLength] = useState(0);
   const [activePage, setActivePage] = useState(1);
+  const [overlay, setOverlay] = useState(false);
+  const [loading, setLoading] = useState(true);
   const divsCount = 10;
-
+  window.addEventListener("click", () => {
+    const overlayDiv = document.querySelector(".overlay");
+    if (overlayDiv) {
+      setOverlay(false);
+      if (selectedItems.length <= 1) {
+        setSelectedItems([]);
+      }
+      const allSelectors = document.querySelectorAll("td .checkbox");
+      allSelectors.forEach((e) => e.classList.remove("active"));
+    }
+  });
   function updateData(e) {
+    setData([]);
+    setSearchData([]);
+    setSelectedItems([]);
+    setLoading(true);
+    const check = document.querySelector("th .checkbox.active");
+    check && check.classList.remove("active");
     const pages = document.querySelectorAll("div.table .pagination h3");
     pages.forEach((e) => e.classList.remove("active"));
     e.target.classList.add("active");
     setActivePage(+e.target.dataset.page);
   }
+
   const createPags = (dataCount, dataLength) => {
     const pages = Math.ceil(dataLength / dataCount);
     let h3Pages = [];
@@ -35,16 +54,37 @@ const AllTeachers = () => {
 
     return h3Pages;
   };
+
+  const deleteOne = async () => {
+    try {
+      const data = await axios.patch(
+        `http://localhost:8000/api/teachers/deactivate/${selectedItems[0]}`
+      );
+      data && fetchData();
+
+      setSelectedItems([]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setOverlay(false);
+    }
+  };
+
   const fetchData = async () => {
-    const data = await axios.get(
-      `http://localhost:8000/api/teachers/details?limit=${divsCount}&page=${activePage}&active=true`
-    );
-    const fltr = data.data.data.filter((e) => e.active);
+    try {
+      const data = await axios.get(
+        `http://localhost:8000/api/teachers/details?limit=${divsCount}&page=${activePage}&active=true`
+      );
+      const fltr = data.data.data.filter((e) => e.active);
 
-    setDataLength(data.data.numberOfActiveTeachers);
-
-    setData(fltr);
-    setSearchData(fltr);
+      setDataLength(data.data.numberOfActiveTeachers);
+      setData(fltr);
+      setSearchData(fltr);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => {
     fetchData();
@@ -140,13 +180,23 @@ const AllTeachers = () => {
               data-index={i}
             ></i>
             <div className="options">
-              <div className="flex delete">
+              <div
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setOverlay(true);
+                  const allSelectors =
+                    document.querySelectorAll("td .checkbox");
+                  allSelectors.forEach((e) => e.classList.remove("active"));
+                  setSelectedItems([e._id]);
+                }}
+                className="flex delete"
+              >
                 <i className="fa-solid fa-trash"></i> delete
               </div>
-              <div className="flex update">
-                <Link className="fa-regular fa-pen-to-square"></Link>
+              <Link to={`/update_teacher/${e._id}`} className="flex update">
+                <i className="fa-regular fa-pen-to-square"></i>
                 update
-              </div>
+              </Link>
               <div className="flex visit">
                 <Link className="fa-solid fa-circle-user"></Link> visit
               </div>
@@ -155,6 +205,7 @@ const AllTeachers = () => {
         </tr>
       );
     });
+
   const handelInput = () => {
     const nameSearchValue = document
       .querySelector(`input[data-type="name"]`)
@@ -204,14 +255,45 @@ const AllTeachers = () => {
       );
       data && fetchData();
 
-      selectedItems.length = 0;
+      setSelectedItems([]);
     } catch (error) {
       console.log(error);
+    } finally {
+      setOverlay(false);
     }
   };
   return (
     <main>
       <div className="dashboard-container">
+        {overlay && (
+          <div className="overlay">
+            <div className="change-status">
+              <h1>{`confirm delete (${selectedItems.length}) teachers`}</h1>
+              <div className="flex gap-20">
+                <div
+                  onClick={() => {
+                    setOverlay(false);
+                    if (selectedItems.length === 1) setSelectedItems([]);
+                  }}
+                  className="none center"
+                >
+                  <h2>cancel</h2>
+                  <i className="fa-solid fa-ban"></i>
+                </div>
+                <div
+                  onClick={() => {
+                    if (selectedItems.length === 1) deleteOne();
+                    else deleteAll();
+                  }}
+                  className="false center"
+                >
+                  <h2>delete</h2>
+                  <i className="fa-solid fa-trash"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="container">
           <h1 className="title">all Teachers</h1>
           <div className="tabel-container">
@@ -261,15 +343,22 @@ const AllTeachers = () => {
                 <tbody
                   className={`${tableData.length === 0 ? "relative" : ""}`}
                 >
-                  {tableData.length > 0 ? (
-                    tableData
-                  ) : (
-                    <div className="table-loading">loading...</div>
-                  )}
+                  {tableData.length > 0
+                    ? tableData
+                    : !loading && (
+                        <div className="table-loading">no data to show</div>
+                      )}
+                  {loading && <div className="table-loading">loading</div>}
                 </tbody>
               </table>
               {selectedItems.length > 1 && (
-                <div onClick={deleteAll} className="delete-all">
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOverlay(true);
+                  }}
+                  className="delete-all"
+                >
                   <i className="fa-solid fa-trash"></i>delete all (
                   {selectedItems.length})
                 </div>
