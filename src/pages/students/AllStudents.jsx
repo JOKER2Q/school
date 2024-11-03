@@ -55,16 +55,21 @@ const AllStudents = () => {
     return h3Pages;
   };
   const fetchData = async () => {
-    const data = await axios.get(
-      `http://localhost:8000/api/students?limit=${divsCount}&page=${activePage}&active=true`
-    );
-    const fltr = data.data.data.filter((e) => e.active);
+    try {
+      const data = await axios.get(
+        `http://localhost:8000/api/students?limit=${divsCount}&page=${activePage}&active=true`
+      );
+      const fltr = data.data.data.filter((e) => e.active);
 
-    setDataLength(data.data.numberOfActiveStudents);
+      setDataLength(data.data.numberOfActiveStudents);
 
-    setData(fltr);
-    setSearchData(fltr);
-    setLoading(false);
+      setData(fltr);
+      setSearchData(fltr);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => {
     fetchData();
@@ -163,13 +168,13 @@ const AllStudents = () => {
             >
               <i className="fa-solid fa-trash"></i> delete
             </div>
-            <div className="flex update">
-              <Link className="fa-regular fa-pen-to-square"></Link>
+            <Link to={`/update_student/${e._id}`} className="flex update">
+              <i className="fa-regular fa-pen-to-square"></i>
               update
-            </div>
-            <div className="flex visit">
-              <Link className="fa-solid fa-circle-user"></Link> visit
-            </div>
+            </Link>
+            <Link to={`/student_profile/${e._id}`} className="flex visit">
+              <i className="fa-solid fa-circle-user"></i> visit
+            </Link>
           </div>
         </td>
       </tr>
@@ -245,16 +250,6 @@ const AllStudents = () => {
               <div className="flex gap-20">
                 <div
                   onClick={() => {
-                    setOverlay(false);
-                    if (selectedItems.length === 1) setSelectedItems([]);
-                  }}
-                  className="none center"
-                >
-                  <h2>cancel</h2>
-                  <i className="fa-solid fa-ban"></i>
-                </div>
-                <div
-                  onClick={() => {
                     if (selectedItems.length === 1) deleteOne();
                     else deleteAll();
                   }}
@@ -262,6 +257,16 @@ const AllStudents = () => {
                 >
                   <h2>delete</h2>
                   <i className="fa-solid fa-trash"></i>
+                </div>
+                <div
+                  onClick={() => {
+                    setOverlay(false);
+                    if (selectedItems.length === 1) setSelectedItems([]);
+                  }}
+                  className="none center"
+                >
+                  <h2>cancel</h2>
+                  <i className="fa-solid fa-ban"></i>
                 </div>
               </div>
             </div>

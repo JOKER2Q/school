@@ -16,6 +16,8 @@ import ExamResult from "./pages/exams/ExamResult";
 import TimeTable from "./pages/students/timeTable";
 import AddExamResult from "./pages/exams/AddExamResult";
 import UpdateTeacher from "./pages/teachers/UpdateTeacher";
+import UpdateExamSchedule from "./pages/exams/UpdateExamSchedule";
+import UpdateStudent from "./pages/students/UpdateStudent";
 
 function App() {
   const location = useLocation();
@@ -28,16 +30,18 @@ function App() {
         <Route path="all_teachers" element={<AllTeachers />} />
         <Route path="add_teacher" element={<AddTeacher />} />
         <Route path="update_teacher/:id" element={<UpdateTeacher />} />
-        <Route path="teacher_profile" element={<TeacherProfile />} />
-        <Route path="student_profile" element={<StudentProfile />} />
+        <Route path="teacher_profile/:id" element={<TeacherProfile />} />
+        <Route path="student_profile/:id" element={<StudentProfile />} />
         <Route path="all_students" element={<AllStudents />} />
         <Route path="add_student" element={<AddStudent />} />
+        <Route path="update_student/:id" element={<UpdateStudent />} />
         <Route path="attendence" element={<Attendence />} />
         <Route path="time_table" element={<TimeTable />} />
         <Route path="classes" element={<Classes />} />
         <Route path="add_student" element={<AddStudent />} />
         <Route path="subjects" element={<Subjects />} />
         <Route path="exams_schedule" element={<ExamSchedule />} />
+        <Route path="update_exam/:id" element={<UpdateExamSchedule />} />
         <Route path="add_exam" element={<AddExam />} />
         <Route path="add_exam_result" element={<AddExamResult />} />
         <Route path="exams_result" element={<ExamResult />} />

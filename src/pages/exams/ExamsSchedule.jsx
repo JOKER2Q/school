@@ -136,10 +136,10 @@ const ExamSchedule = () => {
               >
                 <i className="fa-solid fa-trash"></i> delete
               </div>
-              <div className="flex update">
-                <Link className="fa-regular fa-pen-to-square"></Link>
+              <Link to={`/update_exam/${e._id}`} className="flex update">
+                <i className="fa-regular fa-pen-to-square"></i>
                 update
-              </div>
+              </Link>
             </div>
           </td>
         </tr>
@@ -215,16 +215,6 @@ const ExamSchedule = () => {
               <div className="flex gap-20">
                 <div
                   onClick={() => {
-                    setOverlay(false);
-                    if (selectedItems.length === 1) setSelectedItems([]);
-                  }}
-                  className="none center"
-                >
-                  <h2>cancel</h2>
-                  <i className="fa-solid fa-ban"></i>
-                </div>
-                <div
-                  onClick={() => {
                     if (selectedItems.length === 1) deleteOne();
                     else deleteAll();
                   }}
@@ -232,6 +222,16 @@ const ExamSchedule = () => {
                 >
                   <h2>delete</h2>
                   <i className="fa-solid fa-trash"></i>
+                </div>
+                <div
+                  onClick={() => {
+                    setOverlay(false);
+                    if (selectedItems.length === 1) setSelectedItems([]);
+                  }}
+                  className="none center"
+                >
+                  <h2>cancel</h2>
+                  <i className="fa-solid fa-ban"></i>
                 </div>
               </div>
             </div>

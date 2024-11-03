@@ -36,25 +36,45 @@ const ExamResult = () => {
       setOverlay(false);
       setSelectedItems([]);
     }
+    const td = document.querySelector("td.input");
+    td && td.classList.remove("input");
   };
 
   const maxResultsLength = Math.max(...data.map((e) => e.results.length));
 
   const deleteExam = async () => {
     try {
-      console.log(selectedItems);
-
       const data = await axios.patch(
         `http://localhost:8000/api/exam-results/deactivate/${selectedItems}`
       );
       data && fetchData();
-      console.log(data);
 
       setSelectedItems([]);
     } catch (error) {
       console.log(error);
     } finally {
       setOverlay(false);
+    }
+  };
+
+  const handelSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const inpValue = parseInt(document.querySelector("td.input input").value);
+
+      const res = await axios.patch(
+        `http://localhost:8000/api/exam-results/${selectedItems}`,
+        { score: inpValue }
+      );
+
+      if (res.status === 200) {
+        setSelectedItems([]);
+        const td = document.querySelector("td.input");
+        td && td.classList.remove("input");
+        fetchData();
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -72,7 +92,21 @@ const ExamResult = () => {
           <td>{e._id}</td>
           {e.results.map((score, i) => (
             <td key={i}>
-              {score.score + "/" + score.totalMarks}
+              <span> {score.score + "/" + score.totalMarks}</span>
+              <form
+                onSubmit={handelSubmit}
+                onClick={(e) => e.stopPropagation()}
+                className="div-input"
+              >
+                <input
+                  className="update-input"
+                  type="number"
+                  min={0}
+                  max={score.totalMarks}
+                  required
+                />
+                <button className="fa-solid fa-arrow-right"></button>
+              </form>
               <i
                 onClick={(event) => {
                   event.stopPropagation();
@@ -81,7 +115,22 @@ const ExamResult = () => {
                 }}
                 className="delete icon fa-regular fa-trash-can"
               ></i>
-              <i className="update icon fa-regular fa-pen-to-square"></i>
+              <i
+                onClick={(event) => {
+                  event.stopPropagation();
+                  const td = document.querySelectorAll("td.input");
+                  td.forEach((e, i) => {
+                    e !== event.target.parentNode &&
+                      e.classList.remove("input");
+                  });
+                  event.target.parentNode.classList.toggle("input");
+                  const inp = document.querySelector("td.input input");
+                  inp && (inp.value = score.score);
+                  inp && inp.focus();
+                  setSelectedItems(score.examResultId);
+                }}
+                className="update icon fa-regular fa-pen-to-square"
+              ></i>
             </td>
           ))}
 
@@ -125,6 +174,7 @@ const ExamResult = () => {
                     <h2>cancel</h2>
                     <i className="fa-solid fa-ban"></i>
                   </div>
+
                   <div
                     onClick={() => {
                       deleteExam();
@@ -138,6 +188,36 @@ const ExamResult = () => {
               </div>
             </div>
           )}
+
+          {overlay && (
+            <div className="overlay">
+              <div className="change-status">
+                <h1>{`confirm delete exam`}</h1>
+                <div className="flex gap-20">
+                  <div
+                    onClick={() => {
+                      deleteExam();
+                    }}
+                    className="false center"
+                  >
+                    <h2>delete</h2>
+                    <i className="fa-solid fa-trash"></i>
+                  </div>
+                  <div
+                    onClick={() => {
+                      setOverlay(false);
+                      setSelectedItems([]);
+                    }}
+                    className="none center"
+                  >
+                    <h2>cancel</h2>
+                    <i className="fa-solid fa-ban"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="tabel-container">
             <div className="table">
               <table

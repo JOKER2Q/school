@@ -9,6 +9,7 @@ const Subjects = () => {
   const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedId, setSelectedId] = useState(false);
   const [dataLength, setDataLength] = useState(0);
   const [activePage, setActivePage] = useState(1);
   const [nameValue, setNameValue] = useState(false);
@@ -64,6 +65,22 @@ const Subjects = () => {
     code: "",
     yearLevel: "",
   });
+
+  useEffect(() => {
+    if (selectedId) {
+      axios
+        .get(`http://localhost:8000/api/subjects/${selectedId}`)
+        .then((res) => {
+          const data = res.data.data;
+          setForm({
+            name: data.name,
+            code: data.code,
+            yearLevel: data.yearLevel,
+          });
+        });
+    }
+  }, [selectedId]);
+
   useEffect(() => {
     fetchData();
   }, [activePage, nameValue, yearValue]);
@@ -189,15 +206,21 @@ const Subjects = () => {
               >
                 <i className="fa-solid fa-trash"></i> delete
               </div>
-              <div className="flex update">
-                <Link className="fa-regular fa-pen-to-square"></Link>
+              <Link
+                onClick={() => {
+                  setSelectedId(e._id);
+                }}
+                className="flex update"
+              >
+                <i className="fa-regular fa-pen-to-square"></i>
                 update
-              </div>
+              </Link>
             </div>
           </td>
         </tr>
       );
     });
+
   const handelInput = () => {
     const nameSearchValue = document
       .querySelector(`input[data-type="name"]`)
@@ -261,20 +284,28 @@ const Subjects = () => {
     if (!form.yearLevel) setDataError("please select a year");
     else {
       try {
-        const data = await axios.post(
-          "http://localhost:8000/api/subjects",
-          form
-        );
+        if (!selectedId) {
+          const data = await axios.post(
+            "http://localhost:8000/api/subjects",
+            form
+          );
+
+          if (data.status === 201) {
+            responseFun(true);
+          }
+        } else {
+          await axios.patch(
+            `http://localhost:8000/api/subjects/${selectedId}`,
+            form
+          );
+        }
         setForm({
           name: "",
           yearLevel: "",
           code: "",
         });
-
-        if (data.status === 201) {
-          responseFun(true);
-          fetchData();
-        }
+        setSelectedId(false);
+        fetchData();
       } catch (error) {
         console.log(error);
         if (error.status === 400) responseFun("reapeted data");
@@ -329,16 +360,6 @@ const Subjects = () => {
                 <div className="flex gap-20">
                   <div
                     onClick={() => {
-                      setOverlay(false);
-                      if (selectedItems.length === 1) setSelectedItems([]);
-                    }}
-                    className="none center"
-                  >
-                    <h2>cancel</h2>
-                    <i className="fa-solid fa-ban"></i>
-                  </div>
-                  <div
-                    onClick={() => {
                       if (selectedItems.length === 1) deleteOne();
                       else deleteAll();
                     }}
@@ -346,6 +367,16 @@ const Subjects = () => {
                   >
                     <h2>delete</h2>
                     <i className="fa-solid fa-trash"></i>
+                  </div>
+                  <div
+                    onClick={() => {
+                      setOverlay(false);
+                      if (selectedItems.length === 1) setSelectedItems([]);
+                    }}
+                    className="none center"
+                  >
+                    <h2>cancel</h2>
+                    <i className="fa-solid fa-ban"></i>
                   </div>
                 </div>
               </div>
@@ -384,7 +415,7 @@ const Subjects = () => {
                 <article className="grid-3">{createYearLeve()}</article>
               </div>
               {DataError && <p className="error">{DataError}</p>}
-              <button className="btn"> submit </button>
+              <button className="btn">{selectedId ? "save" : "create"}</button>
             </form>
             <div className="tabel-container">
               <div className="table">

@@ -258,7 +258,7 @@ const Attendence = () => {
                 </div>
                 <div onClick={noneCheck} className="none center">
                   <h2>None</h2>
-                  <i classn="fa-solid fa-ban"></i>
+                  <i className="fa-solid fa-ban"></i>
                 </div>
               </div>
             </div>

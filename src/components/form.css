@@ -146,6 +146,7 @@ form.dashboard-form .selected-value span {
   cursor: pointer;
   border-radius: 4px;
   position: relative;
+  color: var(--font-color);
 }
 
 form.dashboard-form .selected-value span:hover {

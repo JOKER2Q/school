@@ -13,17 +13,25 @@ div.profile .image .photo {
   width: 270px;
   height: 270px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 50%;
+  color: var(--font-color);
+  background: var(--section-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 80px;
 }
 
 div.profile .image .center {
   margin-top: 5px;
-  text-transform: capitalize;
   background-color: var(--section-color);
+  text-transform: capitalize;
   color: var(--font-color);
   font-weight: 500;
   padding: 10px 15px;
+  display: flex;
   border-radius: 6px;
+  margin-top: 10px;
 }
 div.profile .image .center:hover {
   color: white;

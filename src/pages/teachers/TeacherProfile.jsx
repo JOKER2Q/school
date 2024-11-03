@@ -1,70 +1,95 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../../components/profile.css";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
 const TeacherProfile = () => {
+  const [data, setData] = useState({
+    classes: [],
+    email: "",
+    firstName: "",
+    gender: "",
+    lastName: "",
+    middleName: "",
+    phoneNumber: "",
+    subjects: [],
+    yearLevel: [],
+  });
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    axios.get(`http://localhost:8000/api/teachers/${id}`).then((res) => {
+      const data = res.data.teacher;
+      setData({
+        classes: data.classes,
+        email: data.email,
+        firstName: data.firstName,
+        gender: data.gender,
+        lastName: data.lastName,
+        middleName: data.middleName,
+        phoneNumber: data.phoneNumber,
+        subjects: data.subjects,
+        yearLevel: data.yearLevel,
+      });
+    });
+  }, []);
+
   return (
     <main>
       <div className="dashboard-container">
         <div className="container">
-          <h1 className="title">diyar's profile</h1>
           <div className="profile">
             <div className="image">
-              <img
-                className="photo"
-                src={require("./pexels-fauxels-3184416.jpg")}
-                alt=""
-              />
-              <Link className="center gap-10">
+              <i className=" photo fa-solid fa-user"></i>
+              <Link to={`/update_teacher/${id}`} className="center gap-10">
+                edit <i className="fa-regular fa-pen-to-square"></i>
               </Link>
             </div>
             <div className="info">
               <h2 className="name">
-                diyar direki
-                <Link>
+                {data.firstName + " " + data.lastName}
+                <Link to={`/update_teacher/${id}`}>
                   <i className="fa-regular fa-pen-to-square"></i>
                 </Link>
               </h2>
-              <h3 className="baio">
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Natus
-                fuga nulla ut, vitae consequuntur voluptatem perferendis! Non
-                aspernatur ratione recusandae eligendi mollitia, veniam,
-                officiis possimus officia, quo reiciendis eos. Ut.
-              </h3>
+
               <div className="flex">
-                <h2>father name:</h2>
-                <p>berzani</p>
+                <h2>first name:</h2>
+                <p> {data.firstName} </p>
+              </div>
+              <div className="flex">
+                <h2>middle name:</h2>
+                <p>{data.middleName}</p>
+              </div>
+              <div className="flex">
+                <h2>last name:</h2>
+                <p> {data.lastName} </p>
               </div>
               <div className="flex">
                 <h2>gender:</h2>
-                <p>male</p>
+                <p>{data.gender}</p>
               </div>
-              <div className="flex">
-                <h2>mother name:</h2>
-                <p>sicrt</p>
-              </div>
-              <div className="flex">
-                <h2>birth date:</h2>
-                <p>2003/10/11</p>
-              </div>
+
               <div className="flex">
                 <h2>email:</h2>
-                <p className="email">diyardireki111@gmail.com</p>
+                <p className="email"> {data.email} </p>
               </div>
               <div className="flex">
                 <h2>Class:</h2>
-                <p>2</p>
+                <p> {data.classes.join(" , ")} </p>
               </div>
               <div className="flex">
                 <h2>subject:</h2>
-                <p>english</p>
+                <p>{data.subjects.join(" , ")}</p>
               </div>
               <div className="flex">
-                <h2>address:</h2>
-                <p>syria qamishlo</p>
+                <h2>yearLevel:</h2>
+                <p>{data.yearLevel.join(" , ")}</p>
               </div>
+
               <div className="flex">
                 <h2>phone:</h2>
-                <p>+963 936 038 904</p>
+                <p>{data.phoneNumber}</p>
               </div>
             </div>
           </div>

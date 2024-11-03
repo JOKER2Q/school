@@ -207,7 +207,7 @@ div.table tbody td div.options .update {
   align-items: center;
   font-size: 16px;
 }
-div.table tbody td div.options div.visit {
+div.table tbody td div.options .visit {
   font-weight: 500;
   gap: 10px;
   color: var(--font-color);
@@ -223,7 +223,7 @@ div.table tbody td div.options div.delete:hover {
 div.table tbody td div.options .update:hover {
   background-color: #0011ff1f;
 }
-div.table tbody td div.options div.visit:hover {
+div.table tbody td div.options .visit:hover {
   background-color: #0e9e3225;
 }
 div.table tbody td div.options div.delete i {
@@ -234,7 +234,7 @@ div.table tbody td div.options .update i {
   color: #4400ff;
   font-size: 16px;
 }
-div.table tbody td div.options div.visit a {
+div.table tbody td div.options .visit i {
   color: #0e9e32;
   font-size: 16px;
 }
@@ -286,6 +286,13 @@ div.table .true {
 }
 div.table .false {
   color: #e60404;
+}
+.overlay h1 {
+  text-transform: capitalize;
+  font-size: 25px;
+}
+.overlay h2 {
+  font-size: 20px;
 }
 .overlay > div .none {
   background-color: #666666;
@@ -357,6 +364,43 @@ table.exam tbody .icon.update {
 
 div.table table.exam tbody tr:not(table.time-table tbody tr):last-child td {
   border-bottom: none;
+}
+
+div.table table.exam td span {
+  margin-right: 5px;
+}
+div.table table.exam td .div-input {
+  display: none;
+}
+div.table table.exam td.input span {
+  display: none;
+}
+div.table table.exam td.input .div-input {
+  display: inline-block;
+  border: solid 1px var(--border-color);
+  padding: 0 3px;
+  border-radius: 4px;
+  position: relative;
+  background-color: var(--body-color);
+  width: 100px;
+}
+
+div.table table.exam td .div-input input {
+  padding: 0 5px;
+  background-color: transparent;
+  border: none;
+  color: var(--font-color);
+}
+div.table table.exam td .div-input button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 5px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  color: var(--font-color);
 }
 .tabel-container .day {
   border-radius: 20px;

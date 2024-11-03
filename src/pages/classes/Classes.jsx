@@ -12,6 +12,7 @@ const Classes = () => {
   const [dataLength, setDataLength] = useState(0);
   const [activePage, setActivePage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [selectedId, setSelectedId] = useState(false);
   const divsCount = 10;
   const [overlay, setOverlay] = useState(false);
   window.addEventListener("click", () => {
@@ -190,10 +191,10 @@ const Classes = () => {
             >
               <i className="fa-solid fa-trash"></i> delete
             </div>
-            <div className="flex update">
-              <Link className="fa-regular fa-pen-to-square"></Link>
+            <Link onClick={() => setSelectedId(e._id)} className="flex update">
+              <i className="fa-regular fa-pen-to-square"></i>
               update
-            </div>
+            </Link>
           </div>
         </td>
       </tr>
@@ -231,6 +232,21 @@ const Classes = () => {
     name: "",
     yearLevel: "",
   });
+
+  useEffect(() => {
+    if (selectedId) {
+      axios
+        .get(`http://localhost:8000/api/classes/${selectedId}`)
+        .then((res) => {
+          const data = res.data.data;
+          setForm({
+            name: data.name,
+            yearLevel: data.yearLevel,
+          });
+        });
+    }
+  }, [selectedId]);
+
   const handleClick = (e) => {
     e.stopPropagation();
     e.target.classList.toggle("active");
@@ -281,19 +297,26 @@ const Classes = () => {
     if (!form.yearLevel) setDataError("please select a year");
     else {
       try {
-        const data = await axios.post(
-          "http://localhost:8000/api/classes",
-          form
-        );
+        if (!selectedId) {
+          const data = await axios.post(
+            "http://localhost:8000/api/classes",
+            form
+          );
+
+          if (data.status === 201) {
+            responseFun(true);
+          }
+        } else {
+          await axios.patch(
+            `http://localhost:8000/api/classes/${selectedId}`,
+            form
+          );
+        }
+        fetchData();
         setForm({
           name: "",
           yearLevel: "",
         });
-
-        if (data.status === 201) {
-          responseFun(true);
-          fetchData();
-        }
       } catch (error) {
         console.log(error);
         if (error.status === 400) responseFun("reapeted data");
@@ -334,6 +357,7 @@ const Classes = () => {
       setOverlay(false);
     }
   };
+
   return (
     <main>
       <div className="dashboard-container">
@@ -346,16 +370,6 @@ const Classes = () => {
                 <div className="flex gap-20">
                   <div
                     onClick={() => {
-                      setOverlay(false);
-                      if (selectedItems.length === 1) setSelectedItems([]);
-                    }}
-                    className="none center"
-                  >
-                    <h2>cancel</h2>
-                    <i className="fa-solid fa-ban"></i>
-                  </div>
-                  <div
-                    onClick={() => {
                       if (selectedItems.length === 1) deleteOne();
                       else deleteAll();
                     }}
@@ -363,6 +377,16 @@ const Classes = () => {
                   >
                     <h2>delete</h2>
                     <i className="fa-solid fa-trash"></i>
+                  </div>
+                  <div
+                    onClick={() => {
+                      setOverlay(false);
+                      if (selectedItems.length === 1) setSelectedItems([]);
+                    }}
+                    className="none center"
+                  >
+                    <h2>cancel</h2>
+                    <i className="fa-solid fa-ban"></i>
                   </div>
                 </div>
               </div>
@@ -392,7 +416,7 @@ const Classes = () => {
                 <article className="grid-3">{createYearLeve()}</article>
               </div>
               {DataError && <p className="error">{DataError}</p>}
-              <button className="btn"> submit </button>
+              <button className="btn">{selectedId ? "save" : "create"}</button>
             </form>
             <div className="tabel-container">
               <div className="table">

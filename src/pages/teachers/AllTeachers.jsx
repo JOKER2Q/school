@@ -197,9 +197,9 @@ const AllTeachers = () => {
                 <i className="fa-regular fa-pen-to-square"></i>
                 update
               </Link>
-              <div className="flex visit">
-                <Link className="fa-solid fa-circle-user"></Link> visit
-              </div>
+              <Link to={`/teacher_profile/${e._id}`} className="flex visit">
+                <i className="fa-solid fa-circle-user"></i> visit
+              </Link>
             </div>
           </td>
         </tr>
@@ -272,16 +272,6 @@ const AllTeachers = () => {
               <div className="flex gap-20">
                 <div
                   onClick={() => {
-                    setOverlay(false);
-                    if (selectedItems.length === 1) setSelectedItems([]);
-                  }}
-                  className="none center"
-                >
-                  <h2>cancel</h2>
-                  <i className="fa-solid fa-ban"></i>
-                </div>
-                <div
-                  onClick={() => {
                     if (selectedItems.length === 1) deleteOne();
                     else deleteAll();
                   }}
@@ -289,6 +279,16 @@ const AllTeachers = () => {
                 >
                   <h2>delete</h2>
                   <i className="fa-solid fa-trash"></i>
+                </div>
+                <div
+                  onClick={() => {
+                    setOverlay(false);
+                    if (selectedItems.length === 1) setSelectedItems([]);
+                  }}
+                  className="none center"
+                >
+                  <h2>cancel</h2>
+                  <i className="fa-solid fa-ban"></i>
                 </div>
               </div>
             </div>
