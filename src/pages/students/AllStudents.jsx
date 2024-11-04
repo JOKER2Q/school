@@ -140,9 +140,7 @@ const AllStudents = () => {
             className="checkbox"
           ></div>
         </td>
-        <td>
-          <i className="center photo fa-solid fa-user"></i>
-        </td>
+
         <td>{`${e.firstName} ${e.lastName}`}</td>
         <td> {e.contactInfo.phone} </td>
         <td> {e.gender} </td>
@@ -302,7 +300,6 @@ const AllStudents = () => {
                         className="checkbox select-all"
                       ></div>
                     </th>
-                    <th>photo</th>
                     <th>name</th>
                     <th>phone</th>
                     <th>gander</th>
