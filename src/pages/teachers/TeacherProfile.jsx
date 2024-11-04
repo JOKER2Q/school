@@ -38,6 +38,7 @@ const TeacherProfile = () => {
     <main>
       <div className="dashboard-container">
         <div className="container">
+          <h1 className="title"> {data.firstName + " " + data.lastName} </h1>
           <div className="profile">
             <div className="image">
               <i className=" photo fa-solid fa-user"></i>
@@ -47,7 +48,6 @@ const TeacherProfile = () => {
             </div>
             <div className="info">
               <h2 className="name">
-                {data.firstName + " " + data.lastName}
                 <Link to={`/update_teacher/${id}`}>
                   <i className="fa-regular fa-pen-to-square"></i>
                 </Link>

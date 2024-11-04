@@ -5,16 +5,24 @@ import axios from "axios";
 
 const StudentProfile = () => {
   const [data, setData] = useState({
-    classId:"",
+    classId: "",
     email: "",
     firstName: "",
     gender: "",
     lastName: "",
     middleName: "",
     phoneNumber: "",
-    street:"",
-    city:"",
-    yearLevel: [],
+    street: "",
+    city: "",
+    yearLevel: "",
+    dateOfBirth: "",
+    yearRepeated: [],
+    enrollmentDate: "",
+    guardianContact: {
+      name: "",
+      phone: "",
+      relationship: "",
+    },
   });
 
   const { id } = useParams();
@@ -22,19 +30,35 @@ const StudentProfile = () => {
   useEffect(() => {
     axios.get(`http://localhost:8000/api/students/${id}`).then((res) => {
       const data = res.data.data;
-      console.log(data);
+      const birthDateCount = new Date(data.dateOfBirth);
+      const dateOfBirth = `${birthDateCount.getFullYear()}/${birthDateCount.getMonth()}/${birthDateCount.getDay()}`;
+      const enrollmentDateCount = new Date(data.enrollmentDate);
+      const enrollmentDate = `${enrollmentDateCount.getFullYear()}/${enrollmentDateCount.getMonth()}/${enrollmentDateCount.getDay()}`;
 
-      //   setData({
-      //     classes: data.classes,
-      //     email: data.email,
-      //     firstName: data.firstName,
-      //     gender: data.gender,
-      //     lastName: data.lastName,
-      //     middleName: data.middleName,
-      //     phoneNumber: data.phoneNumber,
-      //     subjects: data.subjects,
-      //     yearLevel: data.yearLevel,
-      // });
+      const updateForm = {
+        ...data,
+        email: data.contactInfo.email,
+        firstName: data.firstName,
+        gender: data.gender,
+        lastName: data.lastName,
+        middleName: data.middleName,
+        phoneNumber: data.contactInfo.phone,
+        yearLevel: data.yearLevel,
+        street: data.address.street,
+        city: data.address.city,
+        dateOfBirth: dateOfBirth,
+        enrollmentDate: enrollmentDate,
+        guardianContact: {
+          name: data.guardianContact.name,
+          phone: data.guardianContact.phone,
+          relationship: data.guardianContact.relationship,
+        },
+        yearRepeated: data.yearRepeated,
+      };
+      if (data.classId) {
+        updateForm.classId = data.classId.name;
+      }
+      setData(updateForm);
     });
   }, []);
 
@@ -42,71 +66,88 @@ const StudentProfile = () => {
     <main>
       <div className="dashboard-container">
         <div className="container">
-          <h1 className="title">diyar's profile</h1>
+          <h1 className="title"> {data.firstName + " " + data.lastName} </h1>
           <div className="profile">
             <div className="image">
               <i className="photo fa-solid fa-user"></i>
-              <Link className="center gap-10">
+              <Link to={`/update_student/${id}`} className="center gap-10">
                 edit <i className="fa-regular fa-pen-to-square"></i>
               </Link>
             </div>
             <div className="info">
               <h2 className="name">
-                diyar direki
-                <Link>
+                <Link to={`/update_student/${id}`}>
                   <i className="fa-regular fa-pen-to-square"></i>
                 </Link>
               </h2>
 
               <div className="flex">
-                <h2>father name:</h2>
-                <p>berzani</p>
+                <h2>first name:</h2>
+                <p> {data.firstName} </p>
               </div>
               <div className="flex">
-                <h2>gender:</h2>
-                <p>male</p>
+                <h2>middle name:</h2>
+                <p> {data.middleName} </p>
               </div>
               <div className="flex">
-                <h2>mother name:</h2>
-                <p>sicrt</p>
-              </div>
-              <div className="flex">
-                <h2>birth date:</h2>
-                <p>2003/10/11</p>
-              </div>
-              <div className="flex">
-                <h2>year level:</h2>
-                <p>1</p>
-              </div>
-              <div className="flex">
-                <h2>class:</h2>
-                <p>room 3</p>
-              </div>
-              <div className="flex">
-                <h2>enrollmentDate:</h2>
-                <p>23</p>
+                <h2>last name:</h2>
+                <p> {data.lastName} </p>
               </div>
               <div className="flex">
                 <h2>email:</h2>
-                <p className="email">diyardireki111@gmail.com</p>
+                <p className="email">{data.email}</p>
               </div>
               <div className="flex">
                 <h2>phone:</h2>
-                <p>+963 936 038 904</p>
+                <p>{data.phoneNumber}</p>
+              </div>
+              <div className="flex">
+                <h2>gender:</h2>
+                <p> {data.gender} </p>
+              </div>
+
+              <div className="flex">
+                <h2>birth date:</h2>
+                <p> {data.dateOfBirth} </p>
+              </div>
+              <div className="flex">
+                <h2>year level:</h2>
+                <p>{data.yearLevel}</p>
+              </div>
+              <div className="flex">
+                <h2>class:</h2>
+                <p>{data.classId}</p>
+              </div>
+              <div className="flex">
+                <h2>enrollmentDate:</h2>
+                <p>{data.enrollmentDate}</p>
               </div>
 
               <div className="flex">
                 <h2>city:</h2>
-                <p>syria qamishlo</p>
+                <p>{data.city}</p>
               </div>
               <div className="flex">
                 <h2>street:</h2>
-                <p>123 Main St</p>
+                <p>{data.street}</p>
               </div>
               <div className="flex">
                 <h2>guardian info:</h2>
                 <p>
-                  Mother : Jane Doe <br /> 987-654-3210
+                  {data.guardianContact.relationship} :
+                  {data.guardianContact.name} <br />
+                  {data.guardianContact.phone}
+                </p>
+              </div>
+              <div className="flex">
+                <h2>year repeated:</h2>
+                <p>
+                  {data.yearRepeated
+                    .map(
+                      (e) =>
+                        `year : ${e.yearLevel} ; repeated count : ${e.yearCount}`
+                    )
+                    .join(<br />)}
                 </p>
               </div>
             </div>
