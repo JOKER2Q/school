@@ -11,7 +11,8 @@ div.table {
   min-height: 400px;
   overflow-y: hidden;
 }
-div.table .search input {
+div.table .search input,
+.table .selecte {
   flex: 1;
   padding: 10px;
   border: none;
@@ -137,6 +138,12 @@ div.table tbody tr:not(table.time-table tbody tr):hover {
 }
 div.table tbody tr:not(table.time-table tbody tr):last-child td {
   border-bottom: solid 1px var(--border-color);
+}
+div.table tbody tr:last-child td div.options.active-div {
+  top: -130px;
+}
+div.table tbody tr:last-child td div.options {
+  top: -90px;
 }
 div.table tbody td {
   padding: 10px;

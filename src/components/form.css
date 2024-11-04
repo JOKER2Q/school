@@ -90,10 +90,10 @@ form.dashboard-form .flex-direction .inp {
   color: var(--font-color);
 }
 
-form.dashboard-form .selecte {
+.selecte {
   position: relative;
 }
-form.dashboard-form .selecte .inp {
+.selecte .inp {
   color: #777;
   cursor: pointer;
   position: relative;
@@ -102,7 +102,7 @@ form.dashboard-form .selecte .inp {
   text-wrap: nowrap;
   padding-right: 20px;
 }
-form.dashboard-form .selecte .inp::before {
+.selecte .inp::before {
   position: absolute;
   content: "\f078";
   font-weight: 900;
@@ -113,7 +113,7 @@ form.dashboard-form .selecte .inp::before {
   transform: translateY(-50%);
   pointer-events: none;
 }
-form.dashboard-form .selecte > article {
+.selecte > article {
   background-color: var(--body-color);
   box-shadow: var(--box-shadow);
   position: absolute;
@@ -126,7 +126,7 @@ form.dashboard-form .selecte > article {
   max-height: 300px;
   overflow-y: auto;
 }
-form.dashboard-form .selecte .inp.active + article {
+.selecte .inp.active + article {
   transition: opacity 0.4s;
   opacity: 1;
   z-index: 2;
@@ -134,12 +134,12 @@ form.dashboard-form .selecte .inp.active + article {
   top: 110%;
 }
 
-form.dashboard-form .selected-value {
+.selected-value {
   gap: 5px;
   margin-top: 10px;
   flex-wrap: wrap;
 }
-form.dashboard-form .selected-value span {
+.selected-value span {
   background-color: var(--section-color);
   padding: 5px 10px;
   text-transform: capitalize;
@@ -149,27 +149,23 @@ form.dashboard-form .selected-value span {
   color: var(--font-color);
 }
 
-form.dashboard-form .selected-value span:hover {
+.selected-value span:hover {
   color: white;
   background-color: var(--main-color);
 }
 
-form.dashboard-form .selecte > article h2 {
+.selecte > article h2 {
   color: var(--font-color);
   text-transform: capitalize;
   margin-bottom: 10px;
   cursor: pointer;
   font-size: 16px;
 }
-form.dashboard-form .selecte > article:hover h2 {
+.selecte > article:hover h2 {
   opacity: 0.5;
 }
-form.dashboard-form .selecte > article h2:hover {
+.selecte > article h2:hover {
   opacity: 1;
-}
-form.dashboard-form input[type="file"] {
-  color: var(--font-color);
-  font-size: 15px;
 }
 
 form.dashboard-form .error {
@@ -243,6 +239,11 @@ i.password {
   width: 100%;
   margin-top: 0px;
 }
+
+form.exam-result {
+  margin-bottom: 30px;
+}
+
 @keyframes rotate {
   100% {
     rotate: 365deg;
