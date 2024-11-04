@@ -83,7 +83,7 @@ const Navbar = () => {
             <input
               type="text"
               className="flex-1"
-              placeholder="write somthing"
+              placeholder="write something"
             />
             <i className="fa-solid fa-magnifying-glass"></i>
           </div>
