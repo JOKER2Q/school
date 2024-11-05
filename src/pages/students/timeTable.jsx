@@ -15,6 +15,7 @@ const TimeTable = () => {
   const [subjectName, setSubjectName] = useState("");
   const [formLoading, setFormLoading] = useState(false);
   const [selectedId, setSelectedId] = useState("");
+
   const daysOfWeek = [
     "Sunday",
     "Monday",
@@ -28,45 +29,48 @@ const TimeTable = () => {
   const [form, setForm] = useState({
     startTime: "",
     endTime: "",
-    classId: "671383ab6ec6b9d374974c83",
+    classId: "",
     subjectId: "",
     dayOfWeek: daysOfWeek[dayNumber],
-    yearLevel: "1",
+    yearLevel: "",
   });
 
   async function getData() {
-    try {
-      const res = await axios.get(
-        `http://localhost:8000/api/time-table?active=true&classId=671383ab6ec6b9d374974c83&dayOfWeek=${daysOfWeek[dayNumber]}&sort=startTime`
-      );
-      setData(res.data.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+    if (form.classId) {
+      try {
+        const res = await axios.get(
+          `http://localhost:8000/api/time-table?active=true&classId=${form.classId}&dayOfWeek=${daysOfWeek[dayNumber]}&sort=startTime`
+        );
+        setData(res.data.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     }
   }
   useEffect(() => {
     getData();
+
     setForm({ ...form, dayOfWeek: daysOfWeek[dayNumber] });
-  }, [dayNumber]);
+  }, [dayNumber, form.classId]);
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/api/subjects?active=true&yearLevel=1`)
+      .get(
+        `http://localhost:8000/api/subjects?active=true&yearLevel=${form.yearLevel}`
+      )
       .then((res) => setSubjects(res.data.data));
-  }, []);
+  }, [form.yearLevel]);
 
   useEffect(() => {
     if (selectedId) {
       setSubjectName(selectedId.subjectId.name);
       setForm({
+        ...form,
         startTime: selectedId.startTime,
         endTime: selectedId.endTime,
-        classId: selectedId.classId._id,
         subjectId: selectedId.subjectId._id,
-        dayOfWeek: selectedId.dayOfWeek,
-        yearLevel: selectedId.yearLevel,
       });
     }
   }, [selectedId]);
@@ -124,18 +128,19 @@ const TimeTable = () => {
   };
   window.onclick = () => {
     const overlay = document.querySelector(".overlay");
-    overlay && setOverlay(false);
-    setIsUpdate(false);
-    setSelectedId("");
-    setForm({
-      startTime: "",
-      endTime: "",
-      classId: "671383ab6ec6b9d374974c83",
-      subjectId: "",
-      dayOfWeek: daysOfWeek[dayNumber],
-      yearLevel: "1",
-    });
-    setSubjectName("");
+    if (overlay) {
+      setOverlay(false);
+      setIsUpdate(false);
+      setSelectedId("");
+      setSubjectName("");
+      setForm({
+        ...form,
+        startTime: "",
+        endTime: "",
+        subjectId: "",
+      });
+      setDataError(false);
+    }
   };
   const handleClick = (e) => {
     e.stopPropagation();
@@ -159,25 +164,19 @@ const TimeTable = () => {
       try {
         if (!isUpdate) {
           await axios.post(`http://localhost:8000/api/time-table`, form);
+          getData();
         } else {
           await axios.patch(
             `http://localhost:8000/api/time-table/${selectedId._id}`,
             form
           );
+          getData();
         }
+
         setOverlay(false);
         setIsUpdate(false);
-        selectedId("");
-        setSubjectName("");
-        getData();
-        setForm({
-          startTime: "",
-          endTime: "",
-          classId: "671383ab6ec6b9d374974c83",
-          subjectId: "",
-          dayOfWeek: daysOfWeek[dayNumber],
-          yearLevel: "1",
-        });
+        setSelectedId("");
+        setForm({ ...form, startTime: "", endTime: "", subjectId: "" });
       } catch (error) {
         console.log(error);
       } finally {
@@ -185,6 +184,47 @@ const TimeTable = () => {
       }
     }
   };
+
+  const [classes, setClasses] = useState([]);
+  const [classesName, setClassesName] = useState("");
+  function selectClasses(e, id) {
+    setForm({
+      ...form,
+      classId: id,
+    });
+    setClassesName(e.target.dataset.classes);
+  }
+
+  function selectYears(e) {
+    setForm({
+      ...form,
+      yearLevel: e.target.dataset.level,
+    });
+  }
+  function createYearLeve() {
+    let h2 = [];
+    for (let index = 1; index < 13; index++) {
+      h2.push(
+        <h2 key={index} onClick={selectYears} data-level={index}>
+          {index}
+        </h2>
+      );
+    }
+    return h2;
+  }
+  useEffect(() => {
+    setForm({ ...form, classId: "" });
+    setClassesName("");
+    if (form.yearLevel) {
+      axios
+        .get(
+          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`
+        )
+        .then((res) => {
+          setClasses(res.data.data);
+        });
+    }
+  }, [form.yearLevel]);
 
   return (
     <main>
@@ -201,7 +241,7 @@ const TimeTable = () => {
                 <label htmlFor="subject">subject</label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
-                    {subjectName ? subjectName : "please selecte gander"}
+                    {subjectName ? subjectName : "please selecte subject"}
                   </div>
                   <article>
                     {subjects.map((e) => {
@@ -240,53 +280,97 @@ const TimeTable = () => {
           </div>
         )}
         <div className="container">
-          <div className="tabel-container">
-            <div className="day flex">
-              <div onClick={decrement} className="flex-1">
-                prev day
+          <form className="exam-result dashboard-form">
+            <div className="flex wrap ">
+              <div className="flex flex-direction">
+                <label>year level</label>
+                <div className="selecte">
+                  <div onClick={handleClick} className="inp">
+                    {form.yearLevel
+                      ? form.yearLevel
+                      : "please selecte year level"}
+                  </div>
+                  <article className="grid-3">{createYearLeve()}</article>
+                </div>
               </div>
-              <div className="flex-1"> {daysOfWeek[dayNumber]} </div>
-              <div onClick={increment} className="flex-1">
-                next day
-              </div>
+
+              {form.yearLevel && (
+                <>
+                  <div className="flex flex-direction">
+                    <label>classes</label>
+                    <div className="selecte">
+                      <div onClick={handleClick} className="inp">
+                        {classesName ? classesName : "please select classes"}
+                      </div>
+                      <article>
+                        {classes.map((e, i) => {
+                          return (
+                            <h2
+                              onClick={(event) => selectClasses(event, e._id)}
+                              data-classes={`${e.yearLevel} : ${e.name}`}
+                              key={i}
+                            >
+                              {`${e.yearLevel} : ${e.name}`}
+                            </h2>
+                          );
+                        })}
+                      </article>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
-            <div className="table flex">
-              <table
-                className={`${
-                  tableData.length === 0 ? "loading" : ""
-                } time-table`}
-              >
-                <thead>
-                  <tr>
-                    <th>room</th>
-                    <th>period start</th>
-                    <th>period end</th>
-                    <th>subject</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody
-                  className={`${tableData.length === 0 ? "relative" : ""}`}
+          </form>
+
+          {form.classId && (
+            <div className="tabel-container">
+              <div className="day flex">
+                <div onClick={decrement} className="flex-1">
+                  prev day
+                </div>
+                <div className="flex-1"> {daysOfWeek[dayNumber]} </div>
+                <div onClick={increment} className="flex-1">
+                  next day
+                </div>
+              </div>
+              <div className="table flex">
+                <table
+                  className={`${
+                    tableData.length === 0 ? "loading" : ""
+                  } time-table`}
                 >
-                  {tableData.length > 0
-                    ? tableData
-                    : !loading && (
-                        <div className="table-loading">no data to show</div>
-                      )}
-                  {loading && <div className="table-loading">loading</div>}
-                </tbody>
-              </table>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOverlay(true);
-                }}
-                className="btn green-btn"
-              >
-                add new lesson <i className="fa-solid fa-plus"></i>
-              </button>
+                  <thead>
+                    <tr>
+                      <th>room</th>
+                      <th>period start</th>
+                      <th>period end</th>
+                      <th>subject</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    className={`${tableData.length === 0 ? "relative" : ""}`}
+                  >
+                    {tableData.length > 0
+                      ? tableData
+                      : !loading && (
+                          <div className="table-loading">no data to show</div>
+                        )}
+                    {loading && <div className="table-loading">loading</div>}
+                  </tbody>
+                </table>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOverlay(true);
+                  }}
+                  className="btn green-btn"
+                >
+                  add new lesson <i className="fa-solid fa-plus"></i>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </main>

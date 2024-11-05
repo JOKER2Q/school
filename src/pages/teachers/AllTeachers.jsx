@@ -3,13 +3,16 @@ import "../../components/table.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 const AllTeachers = () => {
-  const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [dataLength, setDataLength] = useState(0);
   const [activePage, setActivePage] = useState(1);
   const [overlay, setOverlay] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [gender, setGender] = useState(false);
+  const [yearLevel, setYearLevel] = useState(false);
+  const [form, setForm] = useState("");
+
   const divsCount = 10;
   window.addEventListener("click", () => {
     const overlayDiv = document.querySelector(".overlay");
@@ -23,7 +26,6 @@ const AllTeachers = () => {
     }
   });
   function updateData(e) {
-    setData([]);
     setSearchData([]);
     setSelectedItems([]);
     setLoading(true);
@@ -75,10 +77,11 @@ const AllTeachers = () => {
       const data = await axios.get(
         `http://localhost:8000/api/teachers/details?limit=${divsCount}&page=${activePage}&active=true`
       );
+      // console.log(data.data.data);
+
       const fltr = data.data.data.filter((e) => e.active);
 
       setDataLength(data.data.numberOfActiveTeachers);
-      setData(fltr);
       setSearchData(fltr);
     } catch (error) {
       console.log(error);
@@ -204,45 +207,6 @@ const AllTeachers = () => {
       );
     });
 
-  const handelInput = () => {
-    const nameSearchValue = document
-      .querySelector(`input[data-type="name"]`)
-      .value.toLowerCase();
-
-    const classSearchValue = document
-      .querySelector(`input[data-type="class"]`)
-      .value.toLowerCase();
-    const subjectSearchValue = document
-      .querySelector(`input[data-type="subject"]`)
-      .value.toLowerCase();
-
-    const fltr = data.filter((e) => {
-      const nameMatch = nameSearchValue
-        ? e.firstName.toLowerCase().includes(nameSearchValue) ||
-          e.lastName.toLowerCase().includes(nameSearchValue)
-        : true;
-
-      const classMatch = classSearchValue
-        ? e.classes.some((cls) =>
-            cls.name.toLowerCase().includes(classSearchValue)
-          )
-        : true;
-
-      const subjectMatch = subjectSearchValue
-        ? e.subjects.some((subject) =>
-            subject.name.toLowerCase().includes(subjectSearchValue)
-          )
-        : true;
-
-      return nameMatch && classMatch && subjectMatch;
-    });
-
-    setSearchData(fltr);
-
-    if (!nameSearchValue && !classSearchValue && !subjectSearchValue) {
-      setSearchData(data);
-    }
-  };
   const deleteAll = async () => {
     try {
       const data = await axios.patch(
@@ -260,6 +224,29 @@ const AllTeachers = () => {
       setOverlay(false);
     }
   };
+  const handleClick = (e) => {
+    e.stopPropagation();
+    e.target.classList.toggle("active");
+  };
+  const selectYears = (e) => {
+    setYearLevel(parseInt(e.target.dataset.level));
+  };
+  const selectGender = (e) => {
+    if (e.target.dataset.gender !== "0") setGender(e.target.dataset.gender);
+    else setGender(false);
+  };
+  function createYearLeve() {
+    let h2 = [];
+    for (let index = 1; index < 13; index++) {
+      h2.push(
+        <h2 onClick={selectYears} key={index} data-level={index}>
+          {index}
+        </h2>
+      );
+    }
+    return h2;
+  }
+
   return (
     <main>
       <div className="dashboard-container">
@@ -296,29 +283,53 @@ const AllTeachers = () => {
           <h1 className="title">all Teachers</h1>
           <div className="tabel-container">
             <div className="table">
-              <div className="flex search gap-20">
+              <form className="flex search gap-20">
                 <input
-                  data-type="name"
-                  onInput={handelInput}
+                  onInput={(e) => setForm(e.target.value)}
+                  value={form}
+                  required
                   type="text"
                   placeholder="search by name"
                 />
-                <input
-                  data-type="class"
-                  onInput={handelInput}
-                  type="text"
-                  placeholder="search by class"
-                />
-                <input
-                  data-type="subject"
-                  onInput={handelInput}
-                  type="text"
-                  placeholder="search by subject"
-                />
+                <div className="flex flex-direction">
+                  <div className="selecte">
+                    <div onClick={handleClick} className="inp">
+                      {yearLevel
+                        ? "yearl level: " + yearLevel
+                        : "yearl level: all level"}
+                    </div>
+                    <article className="grid-3">
+                      <h2 data-level={false} onClick={selectYears}>
+                        all level
+                      </h2>
+                      {createYearLeve()}
+                    </article>
+                  </div>
+                </div>
+                <div className="flex flex-direction">
+                  <div className="selecte">
+                    <div onClick={handleClick} className="inp">
+                      {gender ? "gender: " + gender : "gender: all gender"}
+                    </div>
+                    <article>
+                      <h2 onClick={selectGender} data-gender={0}>
+                        all gender
+                      </h2>
+                      <h2 onClick={selectGender} data-gender="male">
+                        male
+                      </h2>
+                      <h2 onClick={selectGender} data-gender="female">
+                        female
+                      </h2>
+                    </article>
+                  </div>
+                </div>
+
+                <button className="btn fa-solid fa-magnifying-glass"></button>
                 <Link className="btn" to={"/add_teacher"}>
                   <i className="fa-regular fa-square-plus"></i> add teacher
                 </Link>
-              </div>
+              </form>
 
               <table className={`${tableData.length === 0 ? "loading" : ""}`}>
                 <thead>

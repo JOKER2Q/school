@@ -1,17 +1,23 @@
 import { useEffect, useState } from "react";
 import "../../components/table.css";
+import "../../components/form.css";
 import axios from "axios";
 const ExamResult = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState([]);
   const [overlay, setOverlay] = useState(false);
+  const [form, setForm] = useState({
+    yearLevel: "",
+    classId: "",
+    student: "",
+  });
   async function fetchData() {
+    setData([]);
+    setLoading(true);
     try {
       await axios
-        .get(
-          "http://localhost:8000/api/exam-results/details/6718965cffb0a03a5452e664"
-        )
+        .get(`http://localhost:8000/api/exam-results/details/${form.student}`)
         .then((res) => {
           setData(res.data.data);
         });
@@ -23,7 +29,7 @@ const ExamResult = () => {
   }
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [form.student]);
 
   window.onclick = () => {
     const activeDiv = document.querySelector(
@@ -155,6 +161,73 @@ const ExamResult = () => {
     return th;
   };
 
+  const handleClick = (e) => {
+    e.stopPropagation();
+    e.target.classList.toggle("active");
+  };
+  function selectYears(e) {
+    setForm({
+      ...form,
+      yearLevel: e.target.dataset.level,
+    });
+  }
+  function createYearLeve() {
+    let h2 = [];
+    for (let index = 1; index < 13; index++) {
+      h2.push(
+        <h2 key={index} onClick={selectYears} data-level={index}>
+          {index}
+        </h2>
+      );
+    }
+    return h2;
+  }
+  const [dataNames, setDataNames] = useState({
+    classesName: "",
+    studentName: "",
+  });
+  const [classes, setClasses] = useState([]);
+  function selectClasses(e, id) {
+    setForm({
+      ...form,
+      classId: id,
+    });
+    setDataNames({ ...dataNames, classesName: e.target.dataset.classes });
+  }
+  const [students, setStudents] = useState([]);
+  function selectStudent(e, id) {
+    setForm({
+      ...form,
+      student: id,
+    });
+    setDataNames({ ...dataNames, studentName: e.target.dataset.student });
+  }
+  useEffect(() => {
+    setForm({ ...form, classId: "" });
+    setDataNames({ ...dataNames, classesName: "" });
+    if (form.yearLevel) {
+      axios
+        .get(
+          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`
+        )
+        .then((res) => {
+          setClasses(res.data.data);
+        });
+    }
+  }, [form.yearLevel]);
+
+  useEffect(() => {
+    if (form.classId) {
+      axios
+        .get(
+          `http://localhost:8000/api/students?classId=${form.classId}&active=true`
+        )
+        .then((res) => {
+          setStudents(res.data.data);
+        });
+    }
+  }, [form.classId]);
+
   return (
     <main>
       <div className="dashboard-container">
@@ -166,36 +239,6 @@ const ExamResult = () => {
                 <div className="flex gap-20">
                   <div
                     onClick={() => {
-                      setOverlay(false);
-                      setSelectedItems([]);
-                    }}
-                    className="none center"
-                  >
-                    <h2>cancel</h2>
-                    <i className="fa-solid fa-ban"></i>
-                  </div>
-
-                  <div
-                    onClick={() => {
-                      deleteExam();
-                    }}
-                    className="false center"
-                  >
-                    <h2>delete</h2>
-                    <i className="fa-solid fa-trash"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {overlay && (
-            <div className="overlay">
-              <div className="change-status">
-                <h1>{`confirm delete exam`}</h1>
-                <div className="flex gap-20">
-                  <div
-                    onClick={() => {
                       deleteExam();
                     }}
                     className="false center"
@@ -217,6 +260,77 @@ const ExamResult = () => {
               </div>
             </div>
           )}
+          <form className="exam-result dashboard-form">
+            <div className="flex wrap ">
+              <div className="flex flex-direction">
+                <label>year level</label>
+                <div className="selecte">
+                  <div onClick={handleClick} className="inp">
+                    {form.yearLevel
+                      ? form.yearLevel
+                      : "please selecte year level"}
+                  </div>
+                  <article className="grid-3">{createYearLeve()}</article>
+                </div>
+              </div>
+
+              {form.yearLevel && (
+                <>
+                  <div className="flex flex-direction">
+                    <label>classes</label>
+                    <div className="selecte">
+                      <div onClick={handleClick} className="inp">
+                        {dataNames.classesName
+                          ? dataNames.classesName
+                          : "please select classes"}
+                      </div>
+                      <article>
+                        {classes.map((e, i) => {
+                          return (
+                            <h2
+                              onClick={(event) => selectClasses(event, e._id)}
+                              data-classes={`${e.yearLevel} : ${e.name}`}
+                              key={i}
+                            >
+                              {`${e.yearLevel} : ${e.name}`}
+                            </h2>
+                          );
+                        })}
+                      </article>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {form.classId && (
+                <>
+                  <div className="flex flex-direction">
+                    <label>studen</label>
+                    <div className="selecte">
+                      <div onClick={handleClick} className="inp">
+                        {dataNames.studentName
+                          ? dataNames.studentName
+                          : "please select student"}
+                      </div>
+                      <article>
+                        {students.map((e, i) => {
+                          return (
+                            <h2
+                              onClick={(event) => selectStudent(event, e._id)}
+                              data-student={`${e.firstName} ${e.middleName} ${e.lastName}`}
+                              key={i}
+                            >
+                              {`${e.firstName} ${e.middleName} ${e.lastName}`}
+                            </h2>
+                          );
+                        })}
+                      </article>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </form>
 
           <div className="tabel-container">
             <div className="table">
