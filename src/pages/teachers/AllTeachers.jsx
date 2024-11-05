@@ -197,7 +197,7 @@ const AllTeachers = () => {
             className="options fa-solid fa-ellipsis"
             data-index={i}
           ></i>
-          <div className="options">
+          <div className="options has-visit">
             <div
               onClick={(event) => {
                 event.stopPropagation();

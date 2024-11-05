@@ -4,6 +4,7 @@ import { useContext, useEffect } from "react";
 import { Context } from "../../context/Context";
 const Navbar = () => {
   const context = useContext(Context);
+
   const location = useLocation();
   const isClosed = JSON.parse(localStorage.getItem("isClosed")) || false;
 
@@ -75,6 +76,10 @@ const Navbar = () => {
     container && container.classList.toggle("closed");
   };
 
+  const selectLang = (e) => {
+    context.setLanguage(e.target.dataset.lang);
+  };
+
   return (
     <>
       <nav className={`${!isClosed === false ? "closed" : ""} center`}>
@@ -83,7 +88,7 @@ const Navbar = () => {
             <input
               type="text"
               className="flex-1"
-              placeholder="write somthing"
+              placeholder="write something"
             />
             <i className="fa-solid fa-magnifying-glass"></i>
           </div>
@@ -110,12 +115,14 @@ const Navbar = () => {
                 className="lang center "
               >
                 <i className="fa-solid fa-earth-americas"></i>
-                <span>EN</span>
+                <span className="lang-span">EN</span>
                 <i className="fa-solid fa-chevron-down"></i>
               </div>
               <div className="languages">
-                <h2 data-lang="AR">عربي</h2>
-                <h2 className="active" data-lang="EN">
+                <h2 onClick={selectLang} data-lang="AR">
+                  عربي
+                </h2>
+                <h2 onClick={selectLang} className="active" data-lang="EN">
                   english
                 </h2>
               </div>

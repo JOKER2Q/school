@@ -3,7 +3,6 @@ import "../../components/table.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 const AllStudents = () => {
-  const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [dataLength, setDataLength] = useState(0);
@@ -31,7 +30,6 @@ const AllStudents = () => {
   });
 
   function updateData(e) {
-    setData([]);
     setSearchData([]);
     setSelectedItems([]);
     setLoading(true);
@@ -87,7 +85,6 @@ const AllStudents = () => {
 
       setDataLength(data.data.numberOfActiveStudents);
 
-      setData(fltr);
       setSearchData(fltr);
     } catch (error) {
       console.log(error);
@@ -179,7 +176,7 @@ const AllStudents = () => {
             className="options fa-solid fa-ellipsis"
             data-index={i}
           ></i>
-          <div className="options">
+          <div className="options has-visit">
             <div
               onClick={(event) => {
                 event.stopPropagation();

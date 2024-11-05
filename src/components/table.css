@@ -139,11 +139,12 @@ div.table tbody tr:not(table.time-table tbody tr):hover {
 div.table tbody tr:not(table.time-table tbody tr):last-child td {
   border-bottom: solid 1px var(--border-color);
 }
-div.table tbody tr:last-child td div.options.active-div {
+
+div.table tbody tr:last-child td div.options.active-div.has-visit {
   top: -130px;
 }
 div.table tbody tr:last-child td div.options {
-  top: -90px;
+  top: -85px;
 }
 div.table tbody td {
   padding: 10px;
