@@ -145,9 +145,9 @@ const Classes = () => {
       for (let e of searchData) {
         try {
           const res = await axios.get(
-            `http://localhost:8000/api/students?limit=1&classId=${e._id}&active=true`
+            `http://localhost:8000/api/students/count-students?classId=${e._id}`
           );
-          counts[e._id] = res.data.data.length;
+          counts[e._id] = res.data.numberOfDocuments;
         } catch (error) {
           console.error(`Error fetching data for class ${e._id}`, error);
           counts[e._id] = 0; // Default to 0 on error
