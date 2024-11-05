@@ -3,11 +3,45 @@ import "../../components/table.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 const ExamSchedule = () => {
-  const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [overlay, setOverlay] = useState(false);
+  const [dataLength, setDataLength] = useState(0);
+  const [yearLevel, setYearLevel] = useState(false);
+  const [activePage, setActivePage] = useState(1);
+  const divsCount = 10;
+  const createPags = (dataCount, dataLength) => {
+    const pages = Math.ceil(dataLength / dataCount);
+    let h3Pages = [];
+
+    for (let i = 0; i < pages; i++) {
+      h3Pages.push(
+        <h3
+          onClick={updateData}
+          data-page={i + 1}
+          key={i}
+          className={`${i === 0 ? "active" : ""}`}
+        >
+          {i + 1}
+        </h3>
+      );
+    }
+
+    return h3Pages;
+  };
+
+  function updateData(e) {
+    setSearchData([]);
+    setSelectedItems([]);
+    setLoading(true);
+    const check = document.querySelector("th .checkbox.active");
+    check && check.classList.remove("active");
+    const pages = document.querySelectorAll("div.table .pagination h3");
+    pages.forEach((e) => e.classList.remove("active"));
+    e.target.classList.add("active");
+    setActivePage(+e.target.dataset.page);
+  }
 
   window.addEventListener("click", () => {
     const overlayDiv = document.querySelector(".overlay");
@@ -19,16 +53,17 @@ const ExamSchedule = () => {
       const allSelectors = document.querySelectorAll("td .checkbox");
       allSelectors.forEach((e) => e.classList.remove("active"));
     }
+    const selectDiv = document.querySelector(".selecte .inp.active");
+    selectDiv && selectDiv.classList.remove("active");
   });
 
   const fetchData = async () => {
+    let URL = `http://localhost:8000/api/exams?limit=${divsCount}&page=${activePage}&sort=-date&active=true`;
+    if (yearLevel) URL += `&yearLevel=${yearLevel}`;
     try {
-      const data = await axios.get(
-        "http://localhost:8000/api/exams?sort=-date"
-      );
-      const fltr = data.data.data.filter((e) => e.active);
-      setData(fltr);
-      setSearchData(fltr);
+      const data = await axios.get(URL);
+      setDataLength(data.data.numberOfActiveExams);
+      setSearchData(data.data.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -37,7 +72,7 @@ const ExamSchedule = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [activePage, yearLevel]);
 
   const openOptions = (e) => {
     e.stopPropagation();
@@ -145,34 +180,7 @@ const ExamSchedule = () => {
         </tr>
       );
     });
-  const handelInput = () => {
-    const nameSearchValue = document
-      .querySelector(`input[data-type="name"]`)
-      .value.toLowerCase();
 
-    const yearLevelSearchValue = document.querySelector(
-      `input[data-type="yearLevel"]`
-    ).value;
-
-    const fltr = data.filter((e) => {
-      const nameMatch = nameSearchValue
-        ? e.subjectId.active &&
-          e.subjectId.name.toLowerCase().includes(nameSearchValue)
-        : true;
-
-      const subjectMatch = yearLevelSearchValue
-        ? e.yearLevel === +yearLevelSearchValue
-        : true;
-
-      return nameMatch && subjectMatch;
-    });
-
-    setSearchData(fltr);
-
-    if (!nameSearchValue && !yearLevelSearchValue) {
-      setSearchData(data);
-    }
-  };
   const deleteOne = async () => {
     try {
       const data = await axios.patch(
@@ -204,6 +212,24 @@ const ExamSchedule = () => {
       setOverlay(false);
     }
   };
+  const handleClick = (e) => {
+    e.stopPropagation();
+    e.target.classList.toggle("active");
+  };
+  const selectYears = (e) => {
+    setYearLevel(parseInt(e.target.dataset.level));
+  };
+  function createYearLeve() {
+    let h2 = [];
+    for (let index = 1; index < 13; index++) {
+      h2.push(
+        <h2 onClick={selectYears} key={index} data-level={index}>
+          {index}
+        </h2>
+      );
+    }
+    return h2;
+  }
 
   return (
     <main>
@@ -241,23 +267,27 @@ const ExamSchedule = () => {
           <h1 className="title">Exam Schedule</h1>
           <div className="tabel-container">
             <div className="table">
-              <div className="flex search gap-20">
-                <input
-                  data-type="name"
-                  onInput={handelInput}
-                  type="text"
-                  placeholder="search by name"
-                />
-                <input
-                  data-type="yearLevel"
-                  onInput={handelInput}
-                  type="text"
-                  placeholder="search by year level"
-                />
+              <form className="flex search gap-20">
+                <div className="flex flex-direction">
+                  <div className="selecte">
+                    <div onClick={handleClick} className="inp">
+                      {yearLevel
+                        ? "yearl level: " + yearLevel
+                        : "yearl level: all level"}
+                    </div>
+                    <article className="grid-3">
+                      <h2 data-level={false} onClick={selectYears}>
+                        all level
+                      </h2>
+                      {createYearLeve()}
+                    </article>
+                  </div>
+                </div>
+
                 <Link className="btn" to={"/add_exam"}>
                   <i className="fa-regular fa-square-plus"></i> add exam
                 </Link>
-              </div>
+              </form>
               <table className={`${tableData.length === 0 ? "loading" : ""}`}>
                 <thead>
                   <tr>
@@ -300,8 +330,7 @@ const ExamSchedule = () => {
                 </div>
               )}
               <div className="pagination flex">
-                <h3 className="active">1</h3>
-                <h3>2</h3>
+                {createPags(divsCount, dataLength)}
               </div>
             </div>
           </div>

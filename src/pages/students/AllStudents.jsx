@@ -10,6 +10,10 @@ const AllStudents = () => {
   const [loading, setLoading] = useState(true);
   const [activePage, setActivePage] = useState(1);
   const [overlay, setOverlay] = useState(false);
+  const [form, setForm] = useState("");
+  const [gender, setGender] = useState(false);
+  const [search, setSearch] = useState(false);
+  const [yearLevel, setYearLevel] = useState(false);
   const divsCount = 10;
 
   window.addEventListener("click", () => {
@@ -22,6 +26,8 @@ const AllStudents = () => {
       const allSelectors = document.querySelectorAll("td .checkbox");
       allSelectors.forEach((e) => e.classList.remove("active"));
     }
+    const selectDiv = document.querySelector(".selecte .inp.active");
+    selectDiv && selectDiv.classList.remove("active");
   });
 
   function updateData(e) {
@@ -54,11 +60,29 @@ const AllStudents = () => {
 
     return h3Pages;
   };
-  const fetchData = async () => {
+
+  const getSearchData = async () => {
+    let URL = `http://localhost:8000/api/students/search/${form}?page=${activePage}&limit=${divsCount}&active=true`;
+    if (yearLevel) URL += `&yearLevel=${yearLevel}`;
+    if (gender) URL += `&gender=${gender}`;
     try {
-      const data = await axios.get(
-        `http://localhost:8000/api/students?limit=${divsCount}&page=${activePage}&active=true`
-      );
+      const data = await axios.get(URL);
+
+      setDataLength(data.data.totalResults);
+      setSearchData(data.data.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchData = async () => {
+    let URL = `http://localhost:8000/api/students?limit=${divsCount}&page=${activePage}&active=true`;
+    if (yearLevel) URL += `&yearLevel=${yearLevel}`;
+    if (gender) URL += `&gender=${gender}`;
+    try {
+      const data = await axios.get(URL);
       const fltr = data.data.data.filter((e) => e.active);
 
       setDataLength(data.data.numberOfActiveStudents);
@@ -71,9 +95,11 @@ const AllStudents = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
-    fetchData();
-  }, [activePage]);
+    if (search) getSearchData();
+    else fetchData();
+  }, [activePage, yearLevel, gender, search]);
 
   const openOptions = (e) => {
     e.stopPropagation();
@@ -178,34 +204,6 @@ const AllStudents = () => {
       </tr>
     );
   });
-  const handelInput = () => {
-    const nameSearchValue = document
-      .querySelector(`input[data-type="name"]`)
-      .value.toLowerCase();
-
-    const yearLevelSearchValue = document.querySelector(
-      `input[data-type="yearLevel"]`
-    ).value;
-
-    const fltr = data.filter((e) => {
-      const nameMatch = nameSearchValue
-        ? e.firstName.toLowerCase().includes(nameSearchValue) ||
-          e.lastName.toLowerCase().includes(nameSearchValue)
-        : true;
-
-      const subjectMatch = yearLevelSearchValue
-        ? e.yearLevel == yearLevelSearchValue
-        : true;
-
-      return nameMatch && subjectMatch;
-    });
-
-    setSearchData(fltr);
-
-    if (!nameSearchValue && !yearLevelSearchValue) {
-      setSearchData(data);
-    }
-  };
 
   const deleteOne = async () => {
     try {
@@ -238,6 +236,34 @@ const AllStudents = () => {
       setOverlay(false);
     }
   };
+
+  const handelSubmit = (e) => {
+    e.preventDefault();
+    setSearch(true);
+  };
+
+  const handleClick = (e) => {
+    e.stopPropagation();
+    e.target.classList.toggle("active");
+  };
+  const selectYears = (e) => {
+    setYearLevel(parseInt(e.target.dataset.level));
+  };
+  const selectGender = (e) => {
+    if (e.target.dataset.gender !== "0") setGender(e.target.dataset.gender);
+    else setGender(false);
+  };
+  function createYearLeve() {
+    let h2 = [];
+    for (let index = 1; index < 13; index++) {
+      h2.push(
+        <h2 onClick={selectYears} key={index} data-level={index}>
+          {index}
+        </h2>
+      );
+    }
+    return h2;
+  }
   return (
     <main>
       <div className="dashboard-container">
@@ -274,23 +300,56 @@ const AllStudents = () => {
           <h1 className="title">all students</h1>
           <div className="tabel-container">
             <div className="table">
-              <div className="flex search gap-20">
+              <form onSubmit={handelSubmit} className="flex search gap-20">
                 <input
-                  data-type="name"
-                  onInput={handelInput}
+                  onInput={(e) => {
+                    setForm(e.target.value);
+                    if (!e.target.value) setSearch(false);
+                  }}
+                  value={form}
+                  required
                   type="text"
                   placeholder="search by name"
                 />
-                <input
-                  data-type="yearLevel"
-                  onInput={handelInput}
-                  type="text"
-                  placeholder="search by year level"
-                />
+                <div className="flex flex-direction">
+                  <div className="selecte">
+                    <div onClick={handleClick} className="inp">
+                      {yearLevel
+                        ? "yearl level: " + yearLevel
+                        : "yearl level: all level"}
+                    </div>
+                    <article className="grid-3">
+                      <h2 data-level={false} onClick={selectYears}>
+                        all level
+                      </h2>
+                      {createYearLeve()}
+                    </article>
+                  </div>
+                </div>
+                <div className="flex flex-direction">
+                  <div className="selecte">
+                    <div onClick={handleClick} className="inp">
+                      {gender ? "gender: " + gender : "gender: all gender"}
+                    </div>
+                    <article>
+                      <h2 onClick={selectGender} data-gender={0}>
+                        all gender
+                      </h2>
+                      <h2 onClick={selectGender} data-gender="Male">
+                        male
+                      </h2>
+                      <h2 onClick={selectGender} data-gender="Female">
+                        female
+                      </h2>
+                    </article>
+                  </div>
+                </div>
+
+                <button className="btn fa-solid fa-magnifying-glass"></button>
                 <Link className="btn" to={"/add_student"}>
                   <i className="fa-regular fa-square-plus"></i> add student
                 </Link>
-              </div>
+              </form>
               <table className={`${tableData.length === 0 ? "loading" : ""}`}>
                 <thead>
                   <tr>

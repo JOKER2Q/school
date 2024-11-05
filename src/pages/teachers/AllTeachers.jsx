@@ -11,6 +11,7 @@ const AllTeachers = () => {
   const [loading, setLoading] = useState(true);
   const [gender, setGender] = useState(false);
   const [yearLevel, setYearLevel] = useState(false);
+  const [search, setSearch] = useState(false);
   const [form, setForm] = useState("");
 
   const divsCount = 10;
@@ -72,17 +73,31 @@ const AllTeachers = () => {
     }
   };
 
-  const fetchData = async () => {
+  const getSearchData = async () => {
+    let URL = `http://localhost:8000/api/teachers/search/${form}?page=${activePage}&limit=${divsCount}&active=true`;
+    if (yearLevel) URL += `&yearLevel=${yearLevel}`;
+    if (gender) URL += `&gender=${gender}`;
     try {
-      const data = await axios.get(
-        `http://localhost:8000/api/teachers/details?limit=${divsCount}&page=${activePage}&active=true`
-      );
-      // console.log(data.data.data);
+      const data = await axios.get(URL);
 
-      const fltr = data.data.data.filter((e) => e.active);
+      setDataLength(data.data.totalResults);
+      setSearchData(data.data.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const fetchData = async () => {
+    let URL = `http://localhost:8000/api/teachers?limit=${divsCount}&page=${activePage}&active=true`;
+    if (yearLevel) URL += `&yearLevel=${yearLevel}`;
+    if (gender) URL += `&gender=${gender}`;
+
+    try {
+      const data = await axios.get(URL);
       setDataLength(data.data.numberOfActiveTeachers);
-      setSearchData(fltr);
+      setSearchData(data.data.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -90,8 +105,9 @@ const AllTeachers = () => {
     }
   };
   useEffect(() => {
-    fetchData();
-  }, [activePage]);
+    if (search) getSearchData();
+    else fetchData();
+  }, [activePage, yearLevel, gender, search]);
 
   const openOptions = (e) => {
     e.stopPropagation();
@@ -147,65 +163,65 @@ const AllTeachers = () => {
     );
 
     activeDiv && activeDiv.classList.remove("active-div");
+
+    const selectDiv = document.querySelector(".selecte .inp.active");
+    selectDiv && selectDiv.classList.remove("active");
   };
 
-  const tableData =
-    searchData &&
-    searchData.map((e, i) => {
-      return (
-        <tr key={e._id}>
-          <td>
-            <div
-              onClick={(target) => checkOne(target, e._id)}
-              className="checkbox"
-            ></div>
-          </td>
+  const tableData = searchData?.map((e, i) => {
+    return (
+      <tr key={e._id}>
+        <td>
+          <div
+            onClick={(target) => checkOne(target, e._id)}
+            className="checkbox"
+          ></div>
+        </td>
 
-          <td>{`${e.firstName} ${e.lastName}`}</td>
-          <td> {e.gender} </td>
-          <td>
-            {e.classes.map((el) => {
-              return `${el.yearLevel}:${el.name},`;
-            })}
-          </td>
-          <td>
-            {e.subjects.map((el) => {
-              return `${el.name},`;
-            })}
-          </td>
-          <td> {e.phoneNumber} </td>
-          <td>
-            <i
-              onClick={openOptions}
-              className="options fa-solid fa-ellipsis"
-              data-index={i}
-            ></i>
-            <div className="options">
-              <div
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setOverlay(true);
-                  const allSelectors =
-                    document.querySelectorAll("td .checkbox");
-                  allSelectors.forEach((e) => e.classList.remove("active"));
-                  setSelectedItems([e._id]);
-                }}
-                className="flex delete"
-              >
-                <i className="fa-solid fa-trash"></i> delete
-              </div>
-              <Link to={`/update_teacher/${e._id}`} className="flex update">
-                <i className="fa-regular fa-pen-to-square"></i>
-                update
-              </Link>
-              <Link to={`/teacher_profile/${e._id}`} className="flex visit">
-                <i className="fa-solid fa-circle-user"></i> visit
-              </Link>
+        <td>{`${e.firstName} ${e.lastName}`}</td>
+        <td> {e.gender} </td>
+        <td>
+          {e.classes.map((el) => {
+            return `${el.yearLevel}:${el.name},`;
+          })}
+        </td>
+        <td>
+          {e.subjects.map((el) => {
+            return `${el.name},`;
+          })}
+        </td>
+        <td> {e.phoneNumber} </td>
+        <td>
+          <i
+            onClick={openOptions}
+            className="options fa-solid fa-ellipsis"
+            data-index={i}
+          ></i>
+          <div className="options">
+            <div
+              onClick={(event) => {
+                event.stopPropagation();
+                setOverlay(true);
+                const allSelectors = document.querySelectorAll("td .checkbox");
+                allSelectors.forEach((e) => e.classList.remove("active"));
+                setSelectedItems([e._id]);
+              }}
+              className="flex delete"
+            >
+              <i className="fa-solid fa-trash"></i> delete
             </div>
-          </td>
-        </tr>
-      );
-    });
+            <Link to={`/update_teacher/${e._id}`} className="flex update">
+              <i className="fa-regular fa-pen-to-square"></i>
+              update
+            </Link>
+            <Link to={`/teacher_profile/${e._id}`} className="flex visit">
+              <i className="fa-solid fa-circle-user"></i> visit
+            </Link>
+          </div>
+        </td>
+      </tr>
+    );
+  });
 
   const deleteAll = async () => {
     try {
@@ -247,6 +263,11 @@ const AllTeachers = () => {
     return h2;
   }
 
+  const handelSubmit = (e) => {
+    e.preventDefault();
+    setSearch(true);
+  };
+
   return (
     <main>
       <div className="dashboard-container">
@@ -283,9 +304,12 @@ const AllTeachers = () => {
           <h1 className="title">all Teachers</h1>
           <div className="tabel-container">
             <div className="table">
-              <form className="flex search gap-20">
+              <form onSubmit={handelSubmit} className="flex search gap-20">
                 <input
-                  onInput={(e) => setForm(e.target.value)}
+                  onInput={(e) => {
+                    setForm(e.target.value);
+                    if (!e.target.value) setSearch(false);
+                  }}
                   value={form}
                   required
                   type="text"
@@ -315,10 +339,10 @@ const AllTeachers = () => {
                       <h2 onClick={selectGender} data-gender={0}>
                         all gender
                       </h2>
-                      <h2 onClick={selectGender} data-gender="male">
+                      <h2 onClick={selectGender} data-gender="Male">
                         male
                       </h2>
-                      <h2 onClick={selectGender} data-gender="female">
+                      <h2 onClick={selectGender} data-gender="Female">
                         female
                       </h2>
                     </article>
@@ -331,7 +355,7 @@ const AllTeachers = () => {
                 </Link>
               </form>
 
-              <table className={`${tableData.length === 0 ? "loading" : ""}`}>
+              <table className={`${tableData?.length === 0 ? "loading" : ""}`}>
                 <thead>
                   <tr>
                     <th>
@@ -349,9 +373,9 @@ const AllTeachers = () => {
                   </tr>
                 </thead>
                 <tbody
-                  className={`${tableData.length === 0 ? "relative" : ""}`}
+                  className={`${tableData?.length === 0 ? "relative" : ""}`}
                 >
-                  {tableData.length > 0
+                  {tableData?.length > 0
                     ? tableData
                     : !loading && (
                         <div className="table-loading">no data to show</div>

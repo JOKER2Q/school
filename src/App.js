@@ -18,9 +18,13 @@ import AddExamResult from "./pages/exams/AddExamResult";
 import UpdateTeacher from "./pages/teachers/UpdateTeacher";
 import UpdateExamSchedule from "./pages/exams/UpdateExamSchedule";
 import UpdateStudent from "./pages/students/UpdateStudent";
+import { useEffect } from "react";
 
 function App() {
   const location = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
   return (
     <div className="App">
       {/* {location.pathname !== "/" && <Navbar />} */}

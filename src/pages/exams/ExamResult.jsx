@@ -16,11 +16,12 @@ const ExamResult = () => {
     setData([]);
     setLoading(true);
     try {
-      await axios
-        .get(`http://localhost:8000/api/exam-results/details/${form.student}`)
-        .then((res) => {
-          setData(res.data.data);
-        });
+      if (form.student)
+        await axios
+          .get(`http://localhost:8000/api/exam-results/details/${form.student}`)
+          .then((res) => {
+            setData(res.data.data);
+          });
     } catch (error) {
       console.log(error);
     } finally {
@@ -98,7 +99,15 @@ const ExamResult = () => {
           <td>{e._id}</td>
           {e.results.map((score, i) => (
             <td key={i}>
-              <span> {score.score + "/" + score.totalMarks}</span>
+              <span
+                onDoubleClick={(e) => {
+                  e.stopPropagation();
+                  if (e.target.nextSibling)
+                    e.target.nextSibling.nextSibling.nextSibling.click();
+                }}
+              >
+                {score.score + "/" + score.totalMarks}
+              </span>
               <form
                 onSubmit={handelSubmit}
                 onClick={(e) => e.stopPropagation()}
@@ -125,7 +134,7 @@ const ExamResult = () => {
                 onClick={(event) => {
                   event.stopPropagation();
                   const td = document.querySelectorAll("td.input");
-                  td.forEach((e, i) => {
+                  td.forEach((e) => {
                     e !== event.target.parentNode &&
                       e.classList.remove("input");
                   });

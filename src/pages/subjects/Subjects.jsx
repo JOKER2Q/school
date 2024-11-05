@@ -6,15 +6,13 @@ import axios from "axios";
 import SendData from "../../components/response/SendData";
 import FormLoading from "../../components/FormLoading";
 const Subjects = () => {
-  const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedId, setSelectedId] = useState(false);
   const [dataLength, setDataLength] = useState(0);
   const [activePage, setActivePage] = useState(1);
-  const [nameValue, setNameValue] = useState(false);
-  const [yearValue, setYearValue] = useState(false);
   const [overlay, setOverlay] = useState(false);
+  const [yearLevel, setYearLevel] = useState(false);
   const [loading, setLoading] = useState(true);
   const divsCount = 10;
 
@@ -31,7 +29,6 @@ const Subjects = () => {
   });
 
   function updateData(e) {
-    setData([]);
     setSearchData([]);
     setSelectedItems([]);
     setLoading(true);
@@ -83,25 +80,21 @@ const Subjects = () => {
 
   useEffect(() => {
     fetchData();
-  }, [activePage, nameValue, yearValue]);
+  }, [activePage, yearLevel]);
 
   const fetchData = async () => {
     try {
       let url = `http://localhost:8000/api/subjects?limit=${divsCount}&page=${activePage}&active=true`;
 
-      if (nameValue) {
-        url += `&name=${nameValue}`;
-      }
-
-      if (yearValue) {
-        url += `&yearLevel=${yearValue}`;
+      if (yearLevel) {
+        url += `&yearLevel=${yearLevel}`;
       }
 
       const res = await axios.get(url);
+
       setDataLength(res.data.numberOfActiveSubjects);
 
       const fltr = res.data.data.filter((e) => e.active);
-      setData(fltr);
       setSearchData(fltr);
     } catch (error) {
       console.error("Error fetching data", error);
@@ -165,10 +158,8 @@ const Subjects = () => {
 
     activeDiv && activeDiv.classList.remove("active-div");
 
-    const selecteDiv = document.querySelector(
-      "form.dashboard-form .selecte .inp.active"
-    );
-    selecteDiv && selecteDiv.classList.remove("active");
+    const selectDiv = document.querySelector(".selecte .inp.active");
+    selectDiv && selectDiv.classList.remove("active");
   };
 
   const tableData =
@@ -221,18 +212,6 @@ const Subjects = () => {
       );
     });
 
-  const handelInput = () => {
-    const nameSearchValue = document
-      .querySelector(`input[data-type="name"]`)
-      .value.toLowerCase();
-    setNameValue(nameSearchValue);
-
-    const yearLevelSearchValue = document.querySelector(
-      `input[data-type="yearLevel"]`
-    ).value;
-    setYearValue(+yearLevelSearchValue);
-  };
-
   const handleClick = (e) => {
     e.stopPropagation();
     e.target.classList.toggle("active");
@@ -247,6 +226,9 @@ const Subjects = () => {
     });
     setDataError(false);
   }
+  function selectFilterYears(e) {
+    setYearLevel(parseInt(e.target.dataset.level));
+  }
 
   function createYearLeve() {
     let h2 = [];
@@ -259,6 +241,18 @@ const Subjects = () => {
     }
     return h2;
   }
+  function createYearLeveFltr() {
+    let h2 = [];
+    for (let index = 1; index < 13; index++) {
+      h2.push(
+        <h2 key={index} onClick={selectFilterYears} data-level={index}>
+          {index}
+        </h2>
+      );
+    }
+    return h2;
+  }
+
   const [formLoading, setFormLoading] = useState(false);
   const [dataOverlay, setDataOverlay] = useState(false);
   const [response, setResponse] = useState(false);
@@ -421,18 +415,21 @@ const Subjects = () => {
               <div className="table">
                 <h2> all subjects </h2>
                 <div className="flex search gap-20">
-                  <input
-                    data-type="name"
-                    onInput={handelInput}
-                    type="text"
-                    placeholder="search by name"
-                  />
-                  <input
-                    data-type="yearLevel"
-                    onInput={handelInput}
-                    type="text"
-                    placeholder="search by year level"
-                  />
+                  <div className="flex flex-direction">
+                    <div className="selecte">
+                      <div onClick={handleClick} className="inp">
+                        {yearLevel
+                          ? "yearl level: " + yearLevel
+                          : "yearl level: all level"}
+                      </div>
+                      <article className="grid-3">
+                        <h2 data-level={false} onClick={selectFilterYears}>
+                          all level
+                        </h2>
+                        {createYearLeveFltr()}
+                      </article>
+                    </div>
+                  </div>
                 </div>
                 <table className={`${tableData.length === 0 ? "loading" : ""}`}>
                   <thead>

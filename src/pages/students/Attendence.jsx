@@ -45,6 +45,7 @@ const Attendence = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!form.classId) {
       setDataError("please choose a class");
     } else {
@@ -52,6 +53,7 @@ const Attendence = () => {
         const response = await axios.get(
           `http://localhost:8000/api/students?classId=${form.classId}&active=true&fields=_id,firstName,lastName,middleName`
         );
+
         setData(response.data.data);
         fetchAttendanceData(response.data.data); // Fetch attendance after getting students
       } catch (error) {
@@ -80,6 +82,8 @@ const Attendence = () => {
       setAttendance(attendanceArray); // Set the attendance array in state
     } catch (error) {
       console.error("Error fetching attendance", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -300,18 +304,21 @@ const Attendence = () => {
                   Attendence Sheet Of Class {classesName}: Section A,
                   {form.date}
                 </h2>
-                <table className="attendence">
+                <table
+                  className={`${data.length === 0 ? "loading" : ""}attendence`}
+                >
                   <thead>
                     <tr>
                       <th>student</th> {createTH(daysInMonth)}
                     </tr>
                   </thead>
                   <tbody className={`${tr.length === 0 ? "relative" : ""}`}>
-                    {tr.length > 0 ? (
-                      tr
-                    ) : (
-                      <div className="table-loading">loading...</div>
-                    )}
+                    {tr.length > 0
+                      ? tr
+                      : !loading && (
+                          <div className="table-loading">no data to show</div>
+                        )}
+                    {loading && <div className="table-loading">loading</div>}
                   </tbody>
                 </table>
               </div>
