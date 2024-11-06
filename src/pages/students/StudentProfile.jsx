@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../../components/profile.css";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
+import { Context } from "../../context/Context";
 
 const StudentProfile = () => {
   const [data, setData] = useState({
@@ -24,6 +25,8 @@ const StudentProfile = () => {
       relationship: "",
     },
   });
+  const context = useContext(Context);
+  const language = context && context.selectedLang;
 
   const { id } = useParams();
 
@@ -71,7 +74,8 @@ const StudentProfile = () => {
             <div className="image">
               <i className="photo fa-solid fa-user"></i>
               <Link to={`/update_student/${id}`} className="center gap-10">
-                edit <i className="fa-regular fa-pen-to-square"></i>
+                {language.students && language.students.edit_btn}
+                <i className="fa-regular fa-pen-to-square"></i>
               </Link>
             </div>
             <div className="info">
@@ -82,57 +86,61 @@ const StudentProfile = () => {
               </h2>
 
               <div className="flex">
-                <h2>first name:</h2>
+                <h2>{language.students && language.students.first_name} :</h2>
                 <p> {data.firstName} </p>
               </div>
               <div className="flex">
-                <h2>middle name:</h2>
+                <h2>{language.students && language.students.middle_name} :</h2>
                 <p> {data.middleName} </p>
               </div>
               <div className="flex">
-                <h2>last name:</h2>
+                <h2>{language.students && language.students.last_name} :</h2>
                 <p> {data.lastName} </p>
               </div>
               <div className="flex">
-                <h2>email:</h2>
+                <h2>{language.students && language.students.email} :</h2>
                 <p className="email">{data.email}</p>
               </div>
               <div className="flex">
-                <h2>phone:</h2>
+                <h2>{language.students && language.students.phone} :</h2>
                 <p>{data.phoneNumber}</p>
               </div>
               <div className="flex">
-                <h2>gender:</h2>
+                <h2>{language.students && language.students.gender} :</h2>
                 <p> {data.gender} </p>
               </div>
 
               <div className="flex">
-                <h2>birth date:</h2>
+                <h2>
+                  {language.students && language.students.date_of_birth} :
+                </h2>
                 <p> {data.dateOfBirth} </p>
               </div>
               <div className="flex">
-                <h2>year level:</h2>
+                <h2>{language.students && language.students.year_level} :</h2>
                 <p>{data.yearLevel}</p>
               </div>
               <div className="flex">
-                <h2>class:</h2>
+                <h2>{language.students && language.students.classes} :</h2>
                 <p>{data.classId}</p>
               </div>
               <div className="flex">
-                <h2>enrollmentDate:</h2>
+                <h2>
+                  {language.students && language.students.enrollment_date} :
+                </h2>
                 <p>{data.enrollmentDate}</p>
               </div>
 
               <div className="flex">
-                <h2>city:</h2>
+                <h2>{language.students && language.students.city} :</h2>
                 <p>{data.city}</p>
               </div>
               <div className="flex">
-                <h2>street:</h2>
+                <h2>{language.students && language.students.street} :</h2>
                 <p>{data.street}</p>
               </div>
               <div className="flex">
-                <h2>guardian info:</h2>
+                <h2>{language.students && language.students.guardian} :</h2>
                 <p>
                   {data.guardianContact.relationship} :
                   {data.guardianContact.name} <br />
@@ -140,12 +148,18 @@ const StudentProfile = () => {
                 </p>
               </div>
               <div className="flex">
-                <h2>year repeated:</h2>
+                <h2>
+                  {language.students && language.students.years_repeated} :
+                </h2>
                 <p>
                   {data.yearRepeated
                     .map(
                       (e) =>
-                        `year : ${e.yearLevel} ; repeated count : ${e.yearCount}`
+                        `${language.students && language.students.year} : ${
+                          e.yearLevel
+                        } ; ${
+                          language.students && language.students.repeated_count
+                        }: ${e.yearCount}`
                     )
                     .join(<br />)}
                 </p>

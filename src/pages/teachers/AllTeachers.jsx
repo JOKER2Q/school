@@ -279,7 +279,9 @@ const AllTeachers = () => {
         {overlay && (
           <div className="overlay">
             <div className="change-status">
-              <h1>{`confirm delete (${selectedItems.length}) teachers`}</h1>
+              <h1>{`${language.teachers && language.teachers.confirm_delete}(${
+                selectedItems.length
+              })`}</h1>
               <div className="flex gap-20">
                 <div
                   onClick={() => {
@@ -288,7 +290,7 @@ const AllTeachers = () => {
                   }}
                   className="false center"
                 >
-                  <h2>delete</h2>
+                  <h2>{language.teachers && language.teachers.delete}</h2>
                   <i className="fa-solid fa-trash"></i>
                 </div>
                 <div
@@ -298,7 +300,7 @@ const AllTeachers = () => {
                   }}
                   className="none center"
                 >
-                  <h2>cancel</h2>
+                  <h2>{language.teachers && language.teachers.cancel_btn}</h2>
                   <i className="fa-solid fa-ban"></i>
                 </div>
               </div>
