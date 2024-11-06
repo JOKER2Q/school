@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { Context } from "../../context/Context";
 const Navbar = () => {
   const context = useContext(Context);
+  const language = context && context.selectedLang;
 
   const location = useLocation();
   const isClosed = JSON.parse(localStorage.getItem("isClosed")) || false;
@@ -130,7 +131,7 @@ const Navbar = () => {
               type="text"
               onInput={(e) => setForm(e.target.value)}
               className="flex-1"
-              placeholder="write something"
+              placeholder={language.navBar && language.navBar.search}
             />
             <i className="fa-solid fa-magnifying-glass"></i>
             {form.length > 1 && <div className="results">{search()}</div>}
@@ -187,58 +188,86 @@ const Navbar = () => {
           <div className="links">
             <div data-index="0" onClick={openDiv} className="center">
               <i className="fa-solid fa-people-group"></i>
-              <h1 className="flex-1">teachers</h1>
+              <h1 className="flex-1">
+                {language.navBar && language.navBar.teachers}
+              </h1>
               <i className="arrow fa-solid fa-chevron-right"></i>
             </div>
             <article>
-              <NavLink to={"all_teachers"}>all teachers</NavLink>
-              <NavLink to={"add_teacher"}>add teacher</NavLink>
+              <NavLink to={"all_teachers"}>
+                {language.navBar && language.navBar.all_teachers}
+              </NavLink>
+              <NavLink to={"add_teacher"}>
+                {language.navBar && language.navBar.add_teacher}
+              </NavLink>
             </article>
           </div>
           <div className="links">
             <div data-index="1" onClick={openDiv} className="center">
               <i className="fa-solid fa-children"></i>
-              <h1 className="flex-1">studants</h1>
+              <h1 className="flex-1">
+                {language.navBar && language.navBar.students}
+              </h1>
               <i className="arrow fa-solid fa-chevron-right"></i>
             </div>
             <article>
-              <NavLink to={"all_students"}>all studants</NavLink>
-              <NavLink to={"add_student"}>add studant</NavLink>
+              <NavLink to={"all_students"}>
+                {language.navBar && language.navBar.all_students}
+              </NavLink>
+              <NavLink to={"add_student"}>
+                {language.navBar && language.navBar.add_student}
+              </NavLink>
             </article>
           </div>
 
           <div className="links">
             <div data-index="2" onClick={openDiv} className="center">
               <i className="fa-solid fa-list-check"></i>
-              <h1 className="flex-1">exam</h1>
+              <h1 className="flex-1">
+                {language.navBar && language.navBar.exam}
+              </h1>
               <i className="arrow fa-solid fa-chevron-right"></i>
             </div>
             <article>
-              <NavLink to={"exams_schedule"}>exams schedule</NavLink>
-              <NavLink to={"add_exam"}>add exam</NavLink>
-              <NavLink to={"exams_result"}>exams result</NavLink>
-              <NavLink to={"add_exam_result"}>add exams result</NavLink>
+              <NavLink to={"exams_schedule"}>
+                {language.navBar && language.navBar.exam_schedule}
+              </NavLink>
+              <NavLink to={"add_exam"}>
+                {language.navBar && language.navBar.add_exam}
+              </NavLink>
+              <NavLink to={"exams_result"}>
+                {language.navBar && language.navBar.exam_results}
+              </NavLink>
+              <NavLink to={"add_exam_result"}>
+                {language.navBar && language.navBar.add_exam_results}
+              </NavLink>
             </article>
           </div>
 
           <div className="links">
             <div data-index="3" onClick={openDiv} className="center">
               <i className="fa-regular fa-calendar-days"></i>
-              <h1 className="flex-1">activitys</h1>
+              <h1 className="flex-1">
+                {language.navBar && language.navBar.activities}
+              </h1>
               <i className="arrow fa-solid fa-chevron-right"></i>
             </div>
             <article>
-              <NavLink to={"attendence"}>attendence</NavLink>
-              <NavLink to={"time_table"}>time table</NavLink>
+              <NavLink to={"attendence"}>
+                {language.navBar && language.navBar.attendance}
+              </NavLink>
+              <NavLink to={"time_table"}>
+                {language.navBar && language.navBar.time_table}
+              </NavLink>
             </article>
           </div>
           <NavLink to={"subjects"} className="w-100 justify-start center">
             <i className="fa-solid fa-pen-nib"></i>
-            <h1>subjects</h1>
+            <h1> {language.navBar && language.navBar.subjects}</h1>
           </NavLink>
           <NavLink to={"classes"} className="w-100 justify-start center">
             <i className="fa-solid fa-school-flag"></i>
-            <h1>calsses</h1>
+            <h1>{language.navBar && language.navBar.classes}</h1>
           </NavLink>
         </div>
       </aside>

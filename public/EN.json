@@ -21,8 +21,8 @@
   "teachers": {
     "all_teachers": "All Teachers",
     "search_by_name": "Search by Name",
-    "search_by_class": "Search by Class",
-    "search_by_subject": "Search by Subject",
+    "all_years": "all years",
+    "both_genders": "both genders",
     "add_teacher_btn": "Add Teacher",
     "name": "Name",
     "gender": "Gender",
@@ -56,6 +56,8 @@
     "subjects": "Subjects",
     "subjects_placeholder": "Select subject",
     "save_btn": "Save",
+    "no_data": "No data available",
+    "loading": "loading...",
     "edit_btn": "Edit"
   },
   "students": {

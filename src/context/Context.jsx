@@ -1,3 +1,4 @@
+import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 const userLanguage = navigator.language || navigator.userLanguage;
 const userLang = userLanguage.startsWith("ar") ? "AR" : "EN";
@@ -5,8 +6,9 @@ export const Context = createContext({});
 const Provider = ({ children }) => {
   const [mode, setMode] = useState(+localStorage.getItem("isDark") || false);
   const [language, setLanguage] = useState(
-    localStorage.getItem("language") || userLang
+    localStorage.getItem("language") || userLang || "EN"
   );
+  const [selectedLang, setSelectedLang] = useState("");
 
   useEffect(() => {
     localStorage.setItem("isDark", mode ? 1 : 0);
@@ -26,9 +28,20 @@ const Provider = ({ children }) => {
       );
     }
   }, [language]);
+  const getLang = async () => {
+    try {
+      const data = await axios.get(`/${language && language}.json`);
+      setSelectedLang(data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getLang();
+  }, [language]);
 
   return (
-    <Context.Provider value={{ setMode, language, setLanguage }}>
+    <Context.Provider value={{ setMode, language, setLanguage, selectedLang }}>
       {children}
     </Context.Provider>
   );

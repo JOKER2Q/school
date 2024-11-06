@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../../components/form.css";
 import axios from "axios";
 import FormLoading from "../../components/FormLoading";
 import SendData from "../../components/response/SendData";
+import { Context } from "../../context/Context";
 
 const AddTeacher = () => {
   const [form, setForm] = useState({
@@ -16,7 +17,8 @@ const AddTeacher = () => {
     subjects: "",
     classes: "",
   });
-
+  const context = useContext(Context);
+  const language = context && context.selectedLang;
   const [loading, setLoading] = useState(false);
   const [DataError, setDataError] = useState(false);
   const [subject, setSubject] = useState([]);
@@ -190,10 +192,14 @@ const AddTeacher = () => {
           <h1 className="title"> add teaher </h1>
           <form onSubmit={handelSubmit} className=" relative dashboard-form">
             {loading && <FormLoading />}
-            <h1>please complete the form to add a teacher</h1>
+            <h1>
+              {language.teachers && language.teachers.please_complete_form}
+            </h1>
             <div className="flex wrap ">
               <div className="flex flex-direction">
-                <label htmlFor="firstName">first name</label>
+                <label htmlFor="firstName">
+                  {language.teachers && language.teachers.first_name}
+                </label>
                 <input
                   onInput={handleForm}
                   value={form.firstName}
@@ -201,11 +207,16 @@ const AddTeacher = () => {
                   id="firstName"
                   className="inp"
                   required
-                  placeholder="please write your first name"
+                  placeholder={
+                    language.teachers &&
+                    language.teachers.first_name_placeholder
+                  }
                 />
               </div>
               <div className="flex flex-direction">
-                <label htmlFor="middleName">middle name</label>
+                <label htmlFor="middleName">
+                  {language.teachers && language.teachers.middle_name}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -213,53 +224,73 @@ const AddTeacher = () => {
                   type="text"
                   id="middleName"
                   className="inp"
-                  placeholder="please write your middle name"
+                  placeholder={
+                    language.teachers &&
+                    language.teachers.middle_name_placeholder
+                  }
                 />
               </div>
               <div className="flex flex-direction">
-                <label htmlFor="lastName">last name</label>
+                <label htmlFor="lastName">
+                  {language.teachers && language.teachers.last_name}
+                </label>
                 <input
                   required
                   onInput={handleForm}
                   value={form.lastName}
                   type="text"
                   id="lastName"
-                  placeholder="please write your last name"
+                  placeholder={
+                    language.teachers && language.teachers.last_name_placeholder
+                  }
                   className="inp"
                 />
               </div>
 
               <div className="flex flex-direction">
-                <label>gender</label>
+                <label>
+                  {language.teachers && language.teachers.gender_input}
+                </label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
-                    {form.gender ? form.gender : "please selecte gander"}
+                    {form.gender
+                      ? form.gender
+                      : `${
+                          language.teachers &&
+                          language.teachers.gender_placeholder
+                        }`}
                   </div>
                   <article>
                     <h2 onClick={selectMale} data-gender="Male">
-                      male
+                      {language.teachers && language.teachers.male}
                     </h2>
                     <h2 onClick={selectMale} data-gender="Female">
-                      Female
+                      {language.teachers && language.teachers.female}
                     </h2>
                   </article>
                 </div>
               </div>
 
               <div className="flex flex-direction">
-                <label htmlFor="email">email</label>
+                <label htmlFor="email">
+                  {language.teachers && language.teachers.email}
+                </label>
                 <input
                   required
                   onInput={handleForm}
                   value={form.email}
                   type="email"
                   id="email"
-                  placeholder="please write your email"
+                  placeholder={
+                    language.teachers && language.teachers.email_placeholder
+                  }
                   className="inp"
                 />
               </div>
               <div className="flex flex-direction">
-                <label htmlFor="phoneNumber">phone</label>
+                <label htmlFor="phoneNumber">
+                  {language.teachers && language.teachers.phone_number_input}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -267,16 +298,24 @@ const AddTeacher = () => {
                   type="text"
                   id="phoneNumber"
                   className="inp"
-                  placeholder="please write your phone number"
+                  placeholder={
+                    language.teachers &&
+                    language.teachers.phone_number_placeholder
+                  }
                 />
               </div>
               <div className="flex flex-direction">
-                <label>year level</label>
+                <label>
+                  {language.teachers && language.teachers.year_level}
+                </label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
                     {form.yearLevel.length > 0
                       ? form.yearLevel.join(" , ")
-                      : "please selecte year level"}
+                      : `${
+                          language.teachers &&
+                          language.teachers.year_level_placeholder
+                        }`}
                   </div>
                   <article className="grid-3">{createYearLeve()}</article>
                   <div className="selected-value flex">
@@ -307,12 +346,17 @@ const AddTeacher = () => {
               {form.yearLevel && (
                 <>
                   <div className="flex flex-direction">
-                    <label>classes</label>
+                    <label>
+                      {language.teachers && language.teachers.classes}
+                    </label>
                     <div className="selecte">
                       <div onClick={handleClick} className="inp">
                         {classesName.length > 0
                           ? classesName.join(" , ")
-                          : "please select classes"}
+                          : `${
+                              language.teachers &&
+                              language.teachers.classes_placeholder
+                            }`}
                       </div>
                       <article>
                         {classes.map((e, i) => {
@@ -351,12 +395,17 @@ const AddTeacher = () => {
                     </div>
                   </div>
                   <div className="flex flex-direction">
-                    <label>subject</label>
+                    <label>
+                      {language.teachers && language.teachers.subjects}
+                    </label>
                     <div className="selecte">
                       <div onClick={handleClick} className="inp">
                         {subjectName.length > 0
                           ? subjectName.join(" , ")
-                          : "please select subject"}
+                          : `${
+                              language.teachers &&
+                              language.teachers.subjects_placeholder
+                            }`}
                       </div>
                       <article>
                         {subject.map((e, i) => {
@@ -398,7 +447,9 @@ const AddTeacher = () => {
               )}
             </div>
             {DataError && <p className="error">{DataError}</p>}
-            <button className="btn">save </button>
+            <button className="btn">
+              {language.teachers && language.teachers.save_btn}
+            </button>
           </form>
         </div>
       </div>

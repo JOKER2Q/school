@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../../components/profile.css";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
+import { Context } from "../../context/Context";
 const TeacherProfile = () => {
   const [data, setData] = useState({
     classes: [],
@@ -16,7 +17,8 @@ const TeacherProfile = () => {
   });
 
   const { id } = useParams();
-
+  const context = useContext(Context);
+  const language = context && context.selectedLang;
   useEffect(() => {
     axios.get(`http://localhost:8000/api/teachers/${id}`).then((res) => {
       const data = res.data.teacher;
