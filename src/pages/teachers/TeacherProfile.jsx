@@ -18,22 +18,33 @@ const TeacherProfile = () => {
 
   const { id } = useParams();
   const context = useContext(Context);
+  const token = context && context.userDetails.token;
+
   const language = context && context.selectedLang;
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/teachers/${id}`).then((res) => {
-      const data = res.data.teacher;
-      setData({
-        classes: data.classes,
-        email: data.email,
-        firstName: data.firstName,
-        gender: data.gender,
-        lastName: data.lastName,
-        middleName: data.middleName,
-        phoneNumber: data.phoneNumber,
-        subjects: data.subjects,
-        yearLevel: data.yearLevel,
+    axios
+      .get(
+        `http://localhost:8000/api/teachers/${context.userDetails.userDetails._id}`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      .then((res) => {
+        const data = res.data.teacher;
+        setData({
+          classes: data.classes,
+          email: data.email,
+          firstName: data.firstName,
+          gender: data.gender,
+          lastName: data.lastName,
+          middleName: data.middleName,
+          phoneNumber: data.phoneNumber,
+          subjects: data.subjects,
+          yearLevel: data.yearLevel,
+        });
       });
-    });
   }, []);
 
   return (

@@ -1,5 +1,4 @@
 import { Route, Routes, useLocation } from "react-router-dom";
-import Navbar from "./components/navbar/Navbar";
 import AllTeachers from "./pages/teachers/AllTeachers";
 import AddTeacher from "./pages/teachers/AddTeacher";
 import TeacherProfile from "./pages/teachers/TeacherProfile";
@@ -19,6 +18,9 @@ import UpdateTeacher from "./pages/teachers/UpdateTeacher";
 import UpdateExamSchedule from "./pages/exams/UpdateExamSchedule";
 import UpdateStudent from "./pages/students/UpdateStudent";
 import { useEffect } from "react";
+import NotFound from "./components/NotFound";
+import Dashboard from "./pages/Dashboard";
+import Auth from "./Auth/Auth";
 
 function App() {
   const location = useLocation();
@@ -27,28 +29,31 @@ function App() {
   }, [location.pathname]);
   return (
     <div className="App">
-      {/* {location.pathname !== "/" && <Navbar />} */}
-      <Navbar />
       <Routes>
-        {/* <Route path="/" element={<Login />} /> */}
-        <Route path="all_teachers" element={<AllTeachers />} />
-        <Route path="add_teacher" element={<AddTeacher />} />
-        <Route path="update_teacher/:id" element={<UpdateTeacher />} />
-        <Route path="teacher_profile/:id" element={<TeacherProfile />} />
-        <Route path="student_profile/:id" element={<StudentProfile />} />
-        <Route path="all_students" element={<AllStudents />} />
-        <Route path="add_student" element={<AddStudent />} />
-        <Route path="update_student/:id" element={<UpdateStudent />} />
-        <Route path="attendence" element={<Attendence />} />
-        <Route path="time_table" element={<TimeTable />} />
-        <Route path="classes" element={<Classes />} />
-        <Route path="add_student" element={<AddStudent />} />
-        <Route path="subjects" element={<Subjects />} />
-        <Route path="exams_schedule" element={<ExamSchedule />} />
-        <Route path="update_exam/:id" element={<UpdateExamSchedule />} />
-        <Route path="add_exam" element={<AddExam />} />
-        <Route path="add_exam_result" element={<AddExamResult />} />
-        <Route path="exams_result" element={<ExamResult />} />
+        <Route path="*" element={<NotFound />} />
+        <Route path="/" element={<Login />} />
+        <Route element={<Auth />}>
+          <Route path="dashboard" element={<Dashboard />}>
+            <Route path="all_teachers" element={<AllTeachers />} />
+            <Route path="add_teacher" element={<AddTeacher />} />
+            <Route path="update_teacher/:id" element={<UpdateTeacher />} />
+            <Route path="teacher_profile/:id" element={<TeacherProfile />} />
+            <Route path="student_profile/:id" element={<StudentProfile />} />
+            <Route path="all_students" element={<AllStudents />} />
+            <Route path="add_student" element={<AddStudent />} />
+            <Route path="update_student/:id" element={<UpdateStudent />} />
+            <Route path="attendence" element={<Attendence />} />
+            <Route path="time_table" element={<TimeTable />} />
+            <Route path="classes" element={<Classes />} />
+            <Route path="add_student" element={<AddStudent />} />
+            <Route path="subjects" element={<Subjects />} />
+            <Route path="exams_schedule" element={<ExamSchedule />} />
+            <Route path="update_exam/:id" element={<UpdateExamSchedule />} />
+            <Route path="add_exam" element={<AddExam />} />
+            <Route path="add_exam_result" element={<AddExamResult />} />
+            <Route path="exams_result" element={<ExamResult />} />
+          </Route>
+        </Route>
       </Routes>
     </div>
   );

@@ -9,6 +9,13 @@ const Provider = ({ children }) => {
     localStorage.getItem("language") || userLang || "EN"
   );
   const [selectedLang, setSelectedLang] = useState("");
+  const [userDetails, setUserDetails] = useState({
+    isAdmin: false,
+    isTeacher: false,
+    isStudent: false,
+    token: "",
+    userDetails: {},
+  });
 
   useEffect(() => {
     localStorage.setItem("isDark", mode ? 1 : 0);
@@ -41,7 +48,16 @@ const Provider = ({ children }) => {
   }, [language]);
 
   return (
-    <Context.Provider value={{ setMode, language, setLanguage, selectedLang }}>
+    <Context.Provider
+      value={{
+        setMode,
+        language,
+        setLanguage,
+        selectedLang,
+        userDetails,
+        setUserDetails,
+      }}
+    >
       {children}
     </Context.Provider>
   );

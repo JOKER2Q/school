@@ -1,4 +1,4 @@
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import "./navbar.css";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../context/Context";
@@ -120,22 +120,44 @@ const Navbar = () => {
     }
     return reasult;
   };
+  const nav = useNavigate();
+  const searchClick = () => {
+    const matchedPage = pages.find(
+      (e) =>
+        e.name.toLowerCase() === form.toLowerCase() ||
+        e.path.toLowerCase() === form.toLowerCase()
+    );
 
+    if (matchedPage) {
+      nav(matchedPage.path);
+    } else {
+      const path = form.replaceAll(" ", "_");
+      nav(`/${path}`);
+    }
+    setForm("");
+  };
   return (
     <>
       <nav className={`${!isClosed === false ? "closed" : ""} center`}>
         <div className="container between">
-          <div className="search center relative">
+          <form className="search center relative">
             <input
               value={form}
               type="text"
+              required
               onInput={(e) => setForm(e.target.value)}
               className="flex-1"
               placeholder={language.navBar && language.navBar.search}
             />
-            <i className="fa-solid fa-magnifying-glass"></i>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                searchClick();
+              }}
+              className="fa-solid fa-magnifying-glass"
+            ></button>
             {form.length > 1 && <div className="results">{search()}</div>}
-          </div>
+          </form>
           <div className="setting  center">
             <Link to={"teacher_profile"} className="info center">
               <i className="center photo fa-solid fa-user"></i>
@@ -177,7 +199,7 @@ const Navbar = () => {
 
       <aside className={`${!isClosed === false ? "closed" : ""}`}>
         <article className="between">
-          <Link className="center" to={"/"}>
+          <Link className="center" to={"/dashboard"}>
             <i className="fa-solid fa-graduation-cap"></i>
             <h1>school</h1>
           </Link>

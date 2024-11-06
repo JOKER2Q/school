@@ -246,6 +246,11 @@ body.arabic {
   z-index: 1 !important;
 }
 
+.error-404 {
+  text-transform: capitalize;
+  color: var(--font-color);
+}
+
 @keyframes en-arrow {
   100% {
     transform: translateX(5px);
