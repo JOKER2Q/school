@@ -45,7 +45,8 @@ const TeacherProfile = () => {
             <div className="image">
               <i className=" photo fa-solid fa-user"></i>
               <Link to={`/update_teacher/${id}`} className="center gap-10">
-                edit <i className="fa-regular fa-pen-to-square"></i>
+                {language.teachers && language.teachers.edit_btn}
+                <i className="fa-regular fa-pen-to-square"></i>
               </Link>
             </div>
             <div className="info">
@@ -56,19 +57,19 @@ const TeacherProfile = () => {
               </h2>
 
               <div className="flex">
-                <h2>first name:</h2>
+                <h2>{language.teachers && language.teachers.first_name}:</h2>
                 <p> {data.firstName} </p>
               </div>
               <div className="flex">
-                <h2>middle name:</h2>
+                <h2>{language.teachers && language.teachers.middle_name}:</h2>
                 <p>{data.middleName}</p>
               </div>
               <div className="flex">
-                <h2>last name:</h2>
+                <h2>{language.teachers && language.teachers.last_name}:</h2>
                 <p> {data.lastName} </p>
               </div>
               <div className="flex">
-                <h2>gender:</h2>
+                <h2>{language.teachers && language.teachers.gender}:</h2>
                 <p>{data.gender}</p>
               </div>
 
@@ -77,20 +78,20 @@ const TeacherProfile = () => {
                 <p className="email"> {data.email} </p>
               </div>
               <div className="flex">
-                <h2>Class:</h2>
+                <h2>{language.teachers && language.teachers.class}:</h2>
                 <p> {data.classes.join(" , ")} </p>
               </div>
               <div className="flex">
-                <h2>subject:</h2>
+                <h2>{language.teachers && language.teachers.subject}:</h2>
                 <p>{data.subjects.join(" , ")}</p>
               </div>
               <div className="flex">
-                <h2>yearLevel:</h2>
+                <h2>{language.teachers && language.teachers.year_level}:</h2>
                 <p>{data.yearLevel.join(" , ")}</p>
               </div>
 
               <div className="flex">
-                <h2>phone:</h2>
+                <h2>{language.teachers && language.teachers.phone_number}:</h2>
                 <p>{data.phoneNumber}</p>
               </div>
             </div>
