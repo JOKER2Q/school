@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../components/table.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Context } from "../../context/Context";
 const AllTeachers = () => {
+  const context = useContext(Context);
+  const language = context && context.selectedLang;
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [dataLength, setDataLength] = useState(0);
@@ -208,14 +211,16 @@ const AllTeachers = () => {
               }}
               className="flex delete"
             >
-              <i className="fa-solid fa-trash"></i> delete
+              <i className="fa-solid fa-trash"></i>{" "}
+              {language.teachers && language.teachers.delete}
             </div>
             <Link to={`/update_teacher/${e._id}`} className="flex update">
               <i className="fa-regular fa-pen-to-square"></i>
-              update
+              {language.teachers && language.teachers.update}
             </Link>
             <Link to={`/teacher_profile/${e._id}`} className="flex visit">
-              <i className="fa-solid fa-circle-user"></i> visit
+              <i className="fa-solid fa-circle-user"></i>{" "}
+              {language.teachers && language.teachers.visit}
             </Link>
           </div>
         </td>
@@ -301,7 +306,9 @@ const AllTeachers = () => {
           </div>
         )}
         <div className="container">
-          <h1 className="title">all Teachers</h1>
+          <h1 className="title">
+            {language.teachers && language.teachers.all_teachers}
+          </h1>
           <div className="tabel-container">
             <div className="table">
               <form onSubmit={handelSubmit} className="flex search gap-20">
@@ -313,18 +320,25 @@ const AllTeachers = () => {
                   value={form}
                   required
                   type="text"
-                  placeholder="search by name"
+                  placeholder={
+                    language.teachers && language.teachers.search_by_name
+                  }
                 />
                 <div className="flex flex-direction">
                   <div className="selecte">
                     <div onClick={handleClick} className="inp">
                       {yearLevel
                         ? "yearl level: " + yearLevel
-                        : "yearl level: all level"}
+                        : `${
+                            language.teachers && language.teachers.year_level
+                          }: ${
+                            language.teachers && language.teachers.all_years
+                          }`}
                     </div>
+
                     <article className="grid-3">
                       <h2 data-level={false} onClick={selectYears}>
-                        all level
+                        {language.teachers && language.teachers.all_years}
                       </h2>
                       {createYearLeve()}
                     </article>
@@ -333,17 +347,22 @@ const AllTeachers = () => {
                 <div className="flex flex-direction">
                   <div className="selecte">
                     <div onClick={handleClick} className="inp">
-                      {gender ? "gender: " + gender : "gender: all gender"}
+                      {gender
+                        ? `${language.teachers && language.teachers.gender}: ` +
+                          gender
+                        : `${language.teachers && language.teachers.gender}: ${
+                            language.teachers && language.teachers.both_genders
+                          }`}
                     </div>
                     <article>
                       <h2 onClick={selectGender} data-gender={0}>
-                        all gender
+                        {language.teachers && language.teachers.both_genders}
                       </h2>
                       <h2 onClick={selectGender} data-gender="Male">
-                        male
+                        {language.teachers && language.teachers.male}
                       </h2>
                       <h2 onClick={selectGender} data-gender="Female">
-                        female
+                        {language.teachers && language.teachers.female}
                       </h2>
                     </article>
                   </div>
@@ -351,7 +370,8 @@ const AllTeachers = () => {
 
                 <button className="btn fa-solid fa-magnifying-glass"></button>
                 <Link className="btn" to={"/add_teacher"}>
-                  <i className="fa-regular fa-square-plus"></i> add teacher
+                  <i className="fa-regular fa-square-plus"></i>{" "}
+                  {language.teachers && language.teachers.add_teachers}
                 </Link>
               </form>
 
@@ -364,11 +384,13 @@ const AllTeachers = () => {
                         className="checkbox select-all"
                       ></div>
                     </th>
-                    <th>name</th>
-                    <th>gander</th>
-                    <th>class</th>
-                    <th>subject</th>
-                    <th>phone</th>
+                    <th>{language.teachers && language.teachers.name}</th>
+                    <th> {language.teachers && language.teachers.gender}</th>
+                    <th>{language.teachers && language.teachers.class}</th>
+                    <th>{language.teachers && language.teachers.subject}</th>
+                    <th>
+                      {language.teachers && language.teachers.phone_number}
+                    </th>
                     <th></th>
                   </tr>
                 </thead>
@@ -378,9 +400,15 @@ const AllTeachers = () => {
                   {tableData?.length > 0
                     ? tableData
                     : !loading && (
-                        <div className="table-loading">no data to show</div>
+                        <div className="table-loading">
+                          {language.teachers && language.teachers.no_data}
+                        </div>
                       )}
-                  {loading && <div className="table-loading">loading</div>}
+                  {loading && (
+                    <div className="table-loading">
+                      {language.teachers && language.teachers.loading}
+                    </div>
+                  )}
                 </tbody>
               </table>
               {selectedItems.length > 1 && (
@@ -391,7 +419,8 @@ const AllTeachers = () => {
                   }}
                   className="delete-all"
                 >
-                  <i className="fa-solid fa-trash"></i>delete all (
+                  <i className="fa-solid fa-trash"></i>{" "}
+                  {language.teachers && language.teachers.delete_all_btn}(
                   {selectedItems.length})
                 </div>
               )}
