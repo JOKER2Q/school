@@ -24,7 +24,31 @@ nav .search input {
   font-size: 15px;
   color: var(--font-color);
 }
-nav .search i {
+nav .search .results {
+  position: absolute;
+  background-color: var(--body-color);
+  width: 100%;
+  padding: 15px 10px;
+  box-shadow: var(--box-shadow);
+  top: calc(100% + 4px);
+  border-radius: 6px;
+}
+nav .search .results a,
+nav .search .results p {
+  color: var(--font-color);
+  display: block;
+  padding: 5px 0;
+  text-transform: capitalize;
+  font-size: 17px;
+}
+nav .search .results:hover a {
+  opacity: 0.5;
+}
+nav .search .results a:hover {
+  opacity: 1;
+  font-weight: bold;
+}
+nav .search > i {
   color: var(--font-color);
   opacity: 0.7;
   font-size: 19px;

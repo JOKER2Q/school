@@ -1,12 +1,13 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import "./navbar.css";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "../../context/Context";
 const Navbar = () => {
   const context = useContext(Context);
 
   const location = useLocation();
   const isClosed = JSON.parse(localStorage.getItem("isClosed")) || false;
+  const [form, setForm] = useState("");
 
   window.addEventListener("click", () => {
     const langDiv = document.querySelector(
@@ -80,17 +81,59 @@ const Navbar = () => {
     context.setLanguage(e.target.dataset.lang);
   };
 
+  const pages = [
+    { name: "all teachers", path: "all_teachers" },
+    { name: "add teacher", path: "add_teacher" },
+    { name: "all students", path: "all_students" },
+    { name: "add student", path: "add_student" },
+    { name: "exams schedule", path: "exams_schedule" },
+    { name: "add exam", path: "add_exam" },
+    { name: "exams result", path: "exams_result" },
+    { name: "add exam result", path: "add_exam_result" },
+    { name: "attendence", path: "attendence" },
+    { name: "time table", path: "time_table" },
+    { name: "all subjects", path: "subjects" },
+    { name: "add subjects", path: "subjects" },
+    { name: "all classes", path: "classes" },
+    { name: "add classes", path: "classes" },
+  ];
+
+  const search = () => {
+    let reasult = [];
+    if (form.length > 1) {
+      pages.forEach((e, i) => {
+        if (
+          e.name.includes(form.toLowerCase()) ||
+          e.path.includes(form.toLowerCase())
+        ) {
+          reasult.push(
+            <Link key={i} onClick={() => setForm("")} to={e.path}>
+              {e.name}
+            </Link>
+          );
+        }
+      });
+    }
+    if (reasult.length === 0) {
+      reasult.push(<p>no results found</p>);
+    }
+    return reasult;
+  };
+
   return (
     <>
       <nav className={`${!isClosed === false ? "closed" : ""} center`}>
         <div className="container between">
-          <div className="search center">
+          <div className="search center relative">
             <input
+              value={form}
               type="text"
+              onInput={(e) => setForm(e.target.value)}
               className="flex-1"
               placeholder="write something"
             />
             <i className="fa-solid fa-magnifying-glass"></i>
+            {form.length > 1 && <div className="results">{search()}</div>}
           </div>
           <div className="setting  center">
             <Link to={"teacher_profile"} className="info center">
