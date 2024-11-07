@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../../components/table.css";
 import axios from "axios";
+import { Context } from "../../context/Context";
 
 const Attendence = () => {
   const [form, setForm] = useState({
     date: "",
     classId: "",
   });
-
+  const context = useContext(Context);
+  const language = context && context.selectedLang;
   const [data, setData] = useState([]); // Holds students data
   const [classes, setClasses] = useState([]); // Holds class options
   const [classesName, setClassesName] = useState(""); // Selected class name
@@ -29,7 +31,7 @@ const Attendence = () => {
   // Fetch classes
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/classes")
+      .get("http://localhost:8000/api/classes?active=true")
       .then((res) => setClasses(res.data.data));
   }, []);
 
@@ -247,21 +249,22 @@ const Attendence = () => {
           <div className="overlay">
             <div className="change-status">
               <h1>
-                change status for student:
+                {language.attendance && language.attendance.select_status}
                 <span>{`${selectedStudent.student.studentName} `}</span>
-                in day: {selectedStudent.day}
+                {language.attendance && language.attendance.in_day}{" "}
+                {selectedStudent.day}
               </h1>
               <div className="flex gap-20">
                 <div onClick={trueCheck} className="true center">
-                  <h2>Present</h2>
+                  <h2>{language.attendance && language.attendance.present}</h2>
                   <i className="fa-solid fa-check"></i>
                 </div>
                 <div onClick={falseCheck} className="false center">
-                  <h2>false</h2>
+                  <h2>{language.attendance && language.attendance.absent}</h2>
                   <i className="fa-solid fa-xmark"></i>
                 </div>
                 <div onClick={noneCheck} className="none center">
-                  <h2>None</h2>
+                  <h2>{language.attendance && language.attendance.none}</h2>
                   <i className="fa-solid fa-ban"></i>
                 </div>
               </div>
@@ -269,12 +272,16 @@ const Attendence = () => {
           </div>
         )}
         <div className="container flex flex-direction gap-20">
-          <h1 className="title">students attendence</h1>
+          <h1 className="title">
+            {language.attendance && language.attendance.student_atendance}
+          </h1>
           <div className="flex"></div>
           <form onSubmit={handleSubmit} className="dashboard-form">
             <div className="flex wrap">
               <div className="flex flex-direction">
-                <label htmlFor="date">date</label>
+                <label htmlFor="date">
+                  {language.attendance && language.attendance.date}
+                </label>
                 <input
                   onInput={(e) => setForm({ ...form, date: e.target.value })}
                   id="date"
@@ -294,15 +301,17 @@ const Attendence = () => {
               </div>
             </div>
             {dataError && <p className="error"> {dataError} </p>}
-            <button className="btn">search</button>
+            <button className="btn">
+              {language.attendance && language.attendance.search_btn}
+            </button>
           </form>
 
           {data.length > 0 && (
             <div className="tabel-container">
               <div className="table">
                 <h2>
-                  Attendence Sheet Of Class {classesName}: Section A,
-                  {form.date}
+                  {language.attendance && language.attendance.section_header}{" "}
+                  {classesName} : ,{form.date}
                 </h2>
                 <table
                   className={`${data.length === 0 ? "loading" : ""}attendence`}
@@ -316,9 +325,15 @@ const Attendence = () => {
                     {tr.length > 0
                       ? tr
                       : !loading && (
-                          <div className="table-loading">no data to show</div>
+                          <div className="table-loading">
+                            {language.attendance && language.attendance.no_data}
+                          </div>
                         )}
-                    {loading && <div className="table-loading">loading</div>}
+                    {loading && (
+                      <div className="table-loading">
+                        {language.attendance && language.attendance.loading}
+                      </div>
+                    )}
                   </tbody>
                 </table>
               </div>

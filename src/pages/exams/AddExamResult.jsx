@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../../components/form.css";
 import axios from "axios";
 import FormLoading from "../../components/FormLoading";
 import SendData from "../../components/response/SendData";
+import { Context } from "../../context/Context";
 
 const AddExamResult = () => {
   const [form, setForm] = useState({
@@ -12,7 +13,8 @@ const AddExamResult = () => {
     student: "",
     score: "",
   });
-
+  const context = useContext(Context);
+  const language = context && context.selectedLang;
   const [loading, setLoading] = useState(false);
   const [DataError, setDataError] = useState(false);
   const [classes, setClasses] = useState([]);
@@ -21,7 +23,6 @@ const AddExamResult = () => {
   const [overlay, setOverlay] = useState(false);
   const [response, setResponse] = useState(false);
   const [maxScore, setMaxScore] = useState(100);
-  
 
   const [dataNames, setDataNames] = useState({
     classesName: "",
@@ -174,18 +175,27 @@ const AddExamResult = () => {
       <div className="dashboard-container">
         <div className="container relative">
           {overlay && <SendData data="exam" response={response} />}
-          <h1 className="title"> add exam </h1>
+          <h1 className="title">
+            {language.examResult && language.examResult.add_exam_result}{" "}
+          </h1>
           <form onSubmit={handelSubmit} className=" relative dashboard-form">
             {loading && <FormLoading />}
-            <h1>please complete the form to add a exam</h1>
+            <h1>
+              {language.examResult && language.examResult.please_complete_form}{" "}
+            </h1>
             <div className="flex wrap ">
               <div className="flex flex-direction">
-                <label>year level</label>
+                <label>
+                  {language.examResult && language.examResult.year_level}
+                </label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
                     {form.yearLevel
                       ? form.yearLevel
-                      : "please selecte year level"}
+                      : `${
+                          language.examResult &&
+                          language.examResult.year_level_placeholder
+                        }`}
                   </div>
                   <article className="grid-3">{createYearLeve()}</article>
                 </div>
@@ -194,12 +204,17 @@ const AddExamResult = () => {
               {form.yearLevel && (
                 <>
                   <div className="flex flex-direction">
-                    <label>classes</label>
+                    <label>
+                      {language.examResult && language.examResult.class}
+                    </label>
                     <div className="selecte">
                       <div onClick={handleClick} className="inp">
                         {dataNames.classesName
                           ? dataNames.classesName
-                          : "please select classes"}
+                          : `${
+                              language.examResult &&
+                              language.examResult.class_placeholder
+                            }`}
                       </div>
                       <article>
                         {classes.map((e, i) => {
@@ -222,12 +237,17 @@ const AddExamResult = () => {
               {form.classId && (
                 <>
                   <div className="flex flex-direction">
-                    <label>exam</label>
+                    <label>
+                      {language.examResult && language.examResult.exam}
+                    </label>
                     <div className="selecte">
                       <div onClick={handleClick} className="inp">
                         {dataNames.examsName
                           ? dataNames.examsName
-                          : "please select exam"}
+                          : `${
+                              language.examResult &&
+                              language.examResult.exam_placeholder
+                            }`}
                       </div>
                       <article>
                         {exams.map((e, i) => {
@@ -253,12 +273,17 @@ const AddExamResult = () => {
               {form.exam && (
                 <>
                   <div className="flex flex-direction">
-                    <label>studen</label>
+                    <label>
+                      {language.examResult && language.examResult.student}
+                    </label>
                     <div className="selecte">
                       <div onClick={handleClick} className="inp">
                         {dataNames.studentName
                           ? dataNames.studentName
-                          : "please select student"}
+                          : `${
+                              language.examResult &&
+                              language.examResult.student_Placeholder
+                            }`}
                       </div>
                       <article>
                         {students.map((e, i) => {
@@ -279,7 +304,9 @@ const AddExamResult = () => {
               )}
 
               <div className="flex flex-direction">
-                <label htmlFor="totalMarks">score</label>
+                <label htmlFor="totalMarks">
+                  {language.examResult && language.examResult.score}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -289,12 +316,16 @@ const AddExamResult = () => {
                   className="inp"
                   max={maxScore}
                   min={0}
-                  placeholder="exam minute total Marks"
+                  placeholder={
+                    language.examResult && language.examResult.score_placeholder
+                  }
                 />
               </div>
             </div>
             {DataError && <p className="error">{DataError}</p>}
-            <button className="btn">save</button>
+            <button className="btn">
+              {language.examResult && language.examResult.save_btn}
+            </button>
           </form>
         </div>
       </div>

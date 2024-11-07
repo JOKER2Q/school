@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../components/table.css";
 import "../../components/form.css";
 import axios from "axios";
 import FormLoading from "./../../components/FormLoading";
+import { Context } from "../../context/Context";
 const TimeTable = () => {
   const date = new Date();
   const [data, setData] = useState([]);
@@ -15,7 +16,8 @@ const TimeTable = () => {
   const [subjectName, setSubjectName] = useState("");
   const [formLoading, setFormLoading] = useState(false);
   const [selectedId, setSelectedId] = useState("");
-
+  const context = useContext(Context);
+  const language = context && context.selectedLang;
   const daysOfWeek = [
     "Sunday",
     "Monday",
@@ -238,10 +240,17 @@ const TimeTable = () => {
             >
               {formLoading && <FormLoading />}
               <div className="flex flex-direction">
-                <label htmlFor="subject">subject</label>
+                <label htmlFor="subject">
+                  {language.timeTable && language.timeTable.subject}
+                </label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
-                    {subjectName ? subjectName : "please selecte subject"}
+                    {subjectName
+                      ? subjectName
+                      : `${
+                          language.timeTable &&
+                          language.timeTable.subject_placeholder
+                        }`}
                   </div>
                   <article>
                     {subjects.map((e) => {
@@ -253,7 +262,9 @@ const TimeTable = () => {
                     })}
                   </article>
                 </div>
-                <label htmlFor="startTime">start time</label>
+                <label htmlFor="startTime">
+                  {language.timeTable && language.timeTable.start_time}
+                </label>
                 <input
                   value={form.startTime}
                   onInput={(e) =>
@@ -264,7 +275,9 @@ const TimeTable = () => {
                   className="inp"
                   id="startTime"
                 />
-                <label htmlFor="endTime">end time</label>
+                <label htmlFor="endTime">
+                  {language.timeTable && language.timeTable.end_time}
+                </label>
                 <input
                   value={form.endTime}
                   onInput={(e) => setForm({ ...form, endTime: e.target.value })}
@@ -274,7 +287,9 @@ const TimeTable = () => {
                   id="endTime"
                 />
                 {DataError && <p className="error">{DataError}</p>}
-                <button className="btn">save</button>
+                <button className="btn">
+                  {language.timeTable && language.timeTable.save_btn}
+                </button>
               </div>
             </form>
           </div>
@@ -283,12 +298,17 @@ const TimeTable = () => {
           <form className="exam-result dashboard-form">
             <div className="flex wrap ">
               <div className="flex flex-direction">
-                <label>year level</label>
+                <label>
+                  {language.timeTable && language.timeTable.year_level}
+                </label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
                     {form.yearLevel
                       ? form.yearLevel
-                      : "please selecte year level"}
+                      : `${
+                          language.timeTable &&
+                          language.timeTable.year_level_placeholder
+                        }`}
                   </div>
                   <article className="grid-3">{createYearLeve()}</article>
                 </div>
@@ -326,11 +346,11 @@ const TimeTable = () => {
             <div className="tabel-container">
               <div className="day flex">
                 <div onClick={decrement} className="flex-1">
-                  prev day
+                  {language.timeTable && language.timeTable.prev_day}
                 </div>
                 <div className="flex-1"> {daysOfWeek[dayNumber]} </div>
                 <div onClick={increment} className="flex-1">
-                  next day
+                  {language.timeTable && language.timeTable.next_day}
                 </div>
               </div>
               <div className="table flex">
@@ -341,10 +361,16 @@ const TimeTable = () => {
                 >
                   <thead>
                     <tr>
-                      <th>room</th>
-                      <th>period start</th>
-                      <th>period end</th>
-                      <th>subject</th>
+                      <th>{language.timeTable && language.timeTable.room}</th>
+                      <th>
+                        {language.timeTable && language.timeTable.period_start}
+                      </th>
+                      <th>
+                        {language.timeTable && language.timeTable.period_end}
+                      </th>
+                      <th>
+                        {language.timeTable && language.timeTable.subject}
+                      </th>
                       <th></th>
                     </tr>
                   </thead>
@@ -354,9 +380,15 @@ const TimeTable = () => {
                     {tableData.length > 0
                       ? tableData
                       : !loading && (
-                          <div className="table-loading">no data to show</div>
+                          <div className="table-loading">
+                            {language.timeTable && language.timeTable.no_data}
+                          </div>
                         )}
-                    {loading && <div className="table-loading">loading</div>}
+                    {loading && (
+                      <div className="table-loading">
+                        {language.timeTable && language.timeTable.loading}
+                      </div>
+                    )}
                   </tbody>
                 </table>
                 <button
@@ -366,7 +398,8 @@ const TimeTable = () => {
                   }}
                   className="btn green-btn"
                 >
-                  add new lesson <i className="fa-solid fa-plus"></i>
+                  {language.timeTable && language.timeTable.add_btn}{" "}
+                  <i className="fa-solid fa-plus"></i>
                 </button>
               </div>
             </div>
