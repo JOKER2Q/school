@@ -180,87 +180,95 @@ aside > article i {
   font-size: 18px;
 }
 aside > div {
+  height: calc(100% - 75px);
   padding: 20px 15px;
+  align-items: flex-start !important;
 }
-aside > div > .links {
+aside.closed > div {
+  align-items: center !important;
+}
+aside > div > div {
+  width: 100%;
+}
+aside > div > div > .links {
   position: relative;
 }
-aside > div > .links > .center,
-aside > div > a {
+aside > div > div > .links > .center,
+aside > div > div > a {
   cursor: pointer;
   padding: 13px 15px;
   background-color: var(--section-color);
   border-radius: 6px;
   color: var(--font-color);
 }
-aside > div > .links > a.center {
+aside > div > div > .links > a.center {
   margin-top: 10px;
 }
-aside.closed > div > .links > .center {
+aside.closed > div > div > .links > .center {
   justify-content: center;
 }
-aside.closed > div > a i {
+aside.closed > div > div > a i {
   margin: auto;
 }
-aside > div > .links > .center:hover,
-aside > div > .links > .center.active,
-aside > div > a:hover,
-aside > div > a.active {
+aside > div > div > .links > .center:hover,
+aside > div > div > .links > .center.active,
+aside > div > div > a:hover,
+aside > div > div > a.active {
   background-color: var(--main-color);
 }
 
-aside > div > .links > .center h1,
-aside > div > a h1 {
+aside > div > div > .links > .center h1,
+aside > div > div > a h1 {
   font-size: 20px;
   text-transform: capitalize;
   letter-spacing: 1px;
   color: var(--font-color);
   pointer-events: none;
 }
-aside.closed > div > .links > .center h1,
-aside.closed > div > a h1 {
+aside.closed > div > div > .links > .center h1,
+aside.closed > div > div > a h1 {
   display: none;
 }
-aside > div > .links > .center i {
+aside > div > div > .links > .center i {
   pointer-events: none;
   font-size: 13px;
 }
-aside.closed > div > .links > .center i.arrow {
+aside.closed > div > div > .links > .center i.arrow {
   display: none;
 }
-aside > div > .links > .center i:not(.arrow),
-aside > div > a i {
+aside > div > div > .links > .center i:not(.arrow),
+aside > div > div > a i {
   margin-right: 10px;
   font-size: 14px;
   color: var(--main-color);
 }
-aside.closed > div > .links > .center i:not(.arrow) {
+aside.closed > div > div > .links > .center i:not(.arrow) {
   margin-right: 0;
 }
-aside > div > .links > .center:hover i,
-aside > div > .links > .center.active i,
-aside > div > .links > .center:hover h1,
-aside > div > .links > .center.active h1,
-aside > div > a:hover h1,
-aside > div > a.active h1,
-aside > div > a:hover i,
-aside > div > a.active i {
+aside > div > div > .links > .center:hover i,
+aside > div > div > .links > .center.active i,
+aside > div > div > .links > .center:hover h1,
+aside > div > div > .links > .center.active h1,
+aside > div > div > a:hover h1,
+aside > div > div > a.active h1,
+aside > div > div > a:hover i,
+aside > div > div > a.active i {
   color: white;
 }
-aside > div > .links.active i.arrow {
+aside > div > div > .links.active i.arrow {
   rotate: 90deg;
 }
-aside > div > .links > article {
+aside > div > div > .links > article {
   background-color: var(--section-color);
   margin-top: 6px;
   border-radius: 6px;
   overflow: hidden;
   max-height: 0px;
 }
-aside.closed > div > .links > article {
+aside.closed > div > div > .links > article {
   background-color: var(--body-color);
 }
-aside.closed > div > .links > article {
+aside.closed > div > div > .links > article {
   position: absolute;
   left: calc(100% + 16px);
   z-index: 2;
@@ -268,10 +276,10 @@ aside.closed > div > .links > article {
   width: 150px;
 }
 
-aside > div > .links.active > article {
+aside > div > div > .links.active > article {
   max-height: 200px;
 }
-aside > div > .links > article a {
+aside > div > div > .links > article a {
   display: block;
   text-transform: capitalize;
   font-size: 17px;
@@ -279,8 +287,18 @@ aside > div > .links > article a {
   color: var(--font-color);
   padding: 13px 15px;
 }
-aside > div > .links > article a.active,
-aside > div > .links > article a:hover {
+aside > div > div > .links > article a.active,
+aside > div > div > .links > article a:hover {
   background-color: var(--border-color);
   color: var(--font-color);
+}
+.log-out {
+  color: var(--font-color);
+  gap: 5px;
+}
+.log-out:hover {
+  color: var(--main-color);
+}
+aside.closed .log-out h3 {
+  display: none;
 }

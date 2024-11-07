@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../components/table.css";
 import "./subjects.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import SendData from "../../components/response/SendData";
 import FormLoading from "../../components/FormLoading";
+import { Context } from "../../context/Context";
 const Subjects = () => {
+  const context = useContext(Context);
+  const token = context && context.userDetails.token;
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedId, setSelectedId] = useState(false);
@@ -66,7 +69,11 @@ const Subjects = () => {
   useEffect(() => {
     if (selectedId) {
       axios
-        .get(`http://localhost:8000/api/subjects/${selectedId}`)
+        .get(`http://localhost:8000/api/subjects/${selectedId}`, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
         .then((res) => {
           const data = res.data.data;
           setForm({
@@ -90,7 +97,11 @@ const Subjects = () => {
         url += `&yearLevel=${yearLevel}`;
       }
 
-      const res = await axios.get(url);
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
 
       setDataLength(res.data.numberOfActiveSubjects);
 
@@ -281,7 +292,12 @@ const Subjects = () => {
         if (!selectedId) {
           const data = await axios.post(
             "http://localhost:8000/api/subjects",
-            form
+            form,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
           );
 
           if (data.status === 201) {
@@ -290,7 +306,12 @@ const Subjects = () => {
         } else {
           await axios.patch(
             `http://localhost:8000/api/subjects/${selectedId}`,
-            form
+            form,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
           );
         }
         setForm({
@@ -313,7 +334,13 @@ const Subjects = () => {
   const deleteOne = async () => {
     try {
       const data = await axios.patch(
-        `http://localhost:8000/api/subjects/deactivate/${selectedItems[0]}`
+        `http://localhost:8000/api/subjects/deactivate/${selectedItems[0]}`,
+        [],
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       );
       data && fetchData();
 
@@ -330,6 +357,11 @@ const Subjects = () => {
         "http://localhost:8000/api/subjects/deactivateMany",
         {
           Ids: selectedItems,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
         }
       );
       data && fetchData();

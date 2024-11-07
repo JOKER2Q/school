@@ -31,30 +31,37 @@ const UpdateTeacher = () => {
   });
   const context = useContext(Context);
   const language = context && context.selectedLang;
+  const token = context && context.userDetails.token;
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/teachers/${params.id}`).then((res) => {
-      const data = res.data.teacher;
-      const subjects = data.subjects.map((e) => {
-        setSubjectName((prev) => [...new Set([...prev, e.name])]);
-        return e._id;
-      });
-      const classes = data.classes.map((e) => {
-        setClassesName((prev) => [...new Set([...prev, e.name])]);
-        return e._id;
-      });
+    axios
+      .get(`http://localhost:8000/api/teachers/${params.id}`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((res) => {
+        const data = res.data.teacher;
+        const subjects = data.subjects.map((e) => {
+          setSubjectName((prev) => [...new Set([...prev, e.name])]);
+          return e._id;
+        });
+        const classes = data.classes.map((e) => {
+          setClassesName((prev) => [...new Set([...prev, e.name])]);
+          return e._id;
+        });
 
-      setForm({
-        subjects: subjects,
-        firstName: data.firstName,
-        middleName: data.middleName,
-        lastName: data.lastName,
-        email: data.email,
-        phoneNumber: data.phoneNumber,
-        gender: data.gender,
-        yearLevel: data.yearLevel,
-        classes: classes,
+        setForm({
+          subjects: subjects,
+          firstName: data.firstName,
+          middleName: data.middleName,
+          lastName: data.lastName,
+          email: data.email,
+          phoneNumber: data.phoneNumber,
+          gender: data.gender,
+          yearLevel: data.yearLevel,
+          classes: classes,
+        });
       });
-    });
   }, []);
 
   const responseFun = (complete = false) => {
@@ -129,7 +136,12 @@ const UpdateTeacher = () => {
           form.yearLevel &&
             form.yearLevel.map(async (yearLevel) => {
               const response = await fetch(
-                `http://localhost:8000/api/subjects?yearLevel=${yearLevel}&active=true`
+                `http://localhost:8000/api/subjects?yearLevel=${yearLevel}&active=true`,
+                {
+                  headers: {
+                    Authorization: "Bearer " + token,
+                  },
+                }
               );
               if (!response.ok) {
                 throw new Error(
@@ -156,7 +168,12 @@ const UpdateTeacher = () => {
           form.yearLevel &&
             form.yearLevel.map(async (yearLevel) => {
               const response = await fetch(
-                `http://localhost:8000/api/classes?yearLevel=${yearLevel}&active=true`
+                `http://localhost:8000/api/classes?yearLevel=${yearLevel}&active=true`,
+                {
+                  headers: {
+                    Authorization: "Bearer " + token,
+                  },
+                }
               );
               if (!response.ok) {
                 throw new Error(
@@ -186,7 +203,12 @@ const UpdateTeacher = () => {
       try {
         const data = await axios.patch(
           `http://localhost:8000/api/teachers/${params.id}`,
-          form
+          form,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         );
         setForm({
           firstName: "",
@@ -202,7 +224,7 @@ const UpdateTeacher = () => {
 
         if (data.status === 200) {
           responseFun(true);
-          nav("/all_teachers");
+          nav("/dashboard/all_teachers");
         }
       } catch (error) {
         console.log(error);

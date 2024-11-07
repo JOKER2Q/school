@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../components/table.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import SendData from "../../components/response/SendData";
 import FormLoading from "../../components/FormLoading";
+import { Context } from "../../context/Context";
 const Classes = () => {
+  const context = useContext(Context);
+  const token = context && context.userDetails.token;
+  const isAdmin = context && context.userDetails.isAdmin;
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [classesCount, setClassesCount] = useState(0);
@@ -66,7 +70,11 @@ const Classes = () => {
         url += `&yearLevel=${yearLevel}`;
       }
 
-      const res = await axios.get(url);
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
 
       setDataLength(res.data.numberOfActiveClasses);
 
@@ -147,7 +155,12 @@ const Classes = () => {
       for (let e of searchData) {
         try {
           const res = await axios.get(
-            `http://localhost:8000/api/students/count-students?classId=${e._id}`
+            `http://localhost:8000/api/students/count-students?classId=${e._id}`,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
           );
           counts[e._id] = res.data.numberOfDocuments;
         } catch (error) {
@@ -211,7 +224,11 @@ const Classes = () => {
   useEffect(() => {
     if (selectedId) {
       axios
-        .get(`http://localhost:8000/api/classes/${selectedId}`)
+        .get(`http://localhost:8000/api/classes/${selectedId}`, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
         .then((res) => {
           const data = res.data.data;
           setForm({
@@ -290,7 +307,12 @@ const Classes = () => {
         if (!selectedId) {
           const data = await axios.post(
             "http://localhost:8000/api/classes",
-            form
+            form,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
           );
 
           if (data.status === 201) {
@@ -299,7 +321,12 @@ const Classes = () => {
         } else {
           await axios.patch(
             `http://localhost:8000/api/classes/${selectedId}`,
-            form
+            form,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
           );
         }
         fetchData();
@@ -319,7 +346,13 @@ const Classes = () => {
   const deleteOne = async () => {
     try {
       const data = await axios.patch(
-        `http://localhost:8000/api/classes/deactivate/${selectedItems[0]}`
+        `http://localhost:8000/api/classes/deactivate/${selectedItems[0]}`,
+        [],
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       );
       data && fetchData();
 
@@ -336,6 +369,11 @@ const Classes = () => {
         "http://localhost:8000/api/classes/deactivateMany",
         {
           Ids: selectedItems,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
         }
       );
       data && fetchData();
@@ -384,30 +422,34 @@ const Classes = () => {
           )}
           <h1 className="title">classes</h1>
           <div className="flex align-start wrap subjects">
-            <form onSubmit={handelSubmit} className="dashboard-form ">
-              {formLoading && <FormLoading />}
-              <h1> add new class</h1>
-              <label htmlFor="name"> name </label>
-              <input
-                value={form.name}
-                onInput={(e) => setForm({ ...form, name: e.target.value })}
-                required
-                type="text"
-                id="name"
-                className="inp"
-                placeholder="write a subject name"
-              />
+            {isAdmin && (
+              <form onSubmit={handelSubmit} className="dashboard-form ">
+                {formLoading && <FormLoading />}
+                <h1> add new class</h1>
+                <label htmlFor="name"> name </label>
+                <input
+                  value={form.name}
+                  onInput={(e) => setForm({ ...form, name: e.target.value })}
+                  required
+                  type="text"
+                  id="name"
+                  className="inp"
+                  placeholder="write a subject name"
+                />
 
-              <label> year Level </label>
-              <div className="selecte">
-                <div onClick={handleClick} className="inp">
-                  {form.yearLevel ? form.yearLevel : "select year level"}
+                <label> year Level </label>
+                <div className="selecte">
+                  <div onClick={handleClick} className="inp">
+                    {form.yearLevel ? form.yearLevel : "select year level"}
+                  </div>
+                  <article className="grid-3">{createYearLeve()}</article>
                 </div>
-                <article className="grid-3">{createYearLeve()}</article>
-              </div>
-              {DataError && <p className="error">{DataError}</p>}
-              <button className="btn">{selectedId ? "save" : "create"}</button>
-            </form>
+                {DataError && <p className="error">{DataError}</p>}
+                <button className="btn">
+                  {selectedId ? "save" : "create"}
+                </button>
+              </form>
+            )}
             <div className="tabel-container">
               <div className="table">
                 <h2>all classes</h2>

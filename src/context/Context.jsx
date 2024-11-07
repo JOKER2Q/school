@@ -15,6 +15,7 @@ const Provider = ({ children }) => {
     isStudent: false,
     token: "",
     userDetails: {},
+    role: "",
   });
 
   useEffect(() => {

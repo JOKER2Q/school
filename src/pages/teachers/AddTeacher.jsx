@@ -19,6 +19,7 @@ const AddTeacher = () => {
   });
   const context = useContext(Context);
   const language = context && context.selectedLang;
+  const token = context && context.userDetails.token;
   const [loading, setLoading] = useState(false);
   const [DataError, setDataError] = useState(false);
   const [subject, setSubject] = useState([]);
@@ -102,7 +103,12 @@ const AddTeacher = () => {
           form.yearLevel &&
             form.yearLevel.map(async (yearLevel) => {
               const response = await fetch(
-                `http://localhost:8000/api/subjects?yearLevel=${yearLevel}&active=true`
+                `http://localhost:8000/api/subjects?yearLevel=${yearLevel}&active=true`,
+                {
+                  headers: {
+                    Authorization: "Bearer " + token,
+                  },
+                }
               );
               if (!response.ok) {
                 throw new Error(
@@ -129,7 +135,12 @@ const AddTeacher = () => {
           form.yearLevel &&
             form.yearLevel.map(async (yearLevel) => {
               const response = await fetch(
-                `http://localhost:8000/api/classes?yearLevel=${yearLevel}&active=true`
+                `http://localhost:8000/api/classes?yearLevel=${yearLevel}&active=true`,
+                {
+                  headers: {
+                    Authorization: "Bearer " + token,
+                  },
+                }
               );
               if (!response.ok) {
                 throw new Error(
@@ -159,7 +170,12 @@ const AddTeacher = () => {
       try {
         const data = await axios.post(
           "http://localhost:8000/api/teachers",
-          form
+          form,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         );
         setForm({
           firstName: "",
@@ -190,7 +206,7 @@ const AddTeacher = () => {
         <div className="container relative">
           {overlay && <SendData data="teacher" response={response} />}
           <h1 className="title">
-            {language.teachers && language.teachers.add_teacher_btn}{" "}
+            {language.teachers && language.teachers.add_teacher_btn}
           </h1>
           <form onSubmit={handelSubmit} className=" relative dashboard-form">
             {loading && <FormLoading />}

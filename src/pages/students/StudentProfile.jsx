@@ -27,42 +27,49 @@ const StudentProfile = () => {
   });
   const context = useContext(Context);
   const language = context && context.selectedLang;
+  const token = context && context.userDetails.token;
 
   const { id } = useParams();
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/students/${id}`).then((res) => {
-      const data = res.data.data;
-      const birthDateCount = new Date(data.dateOfBirth);
-      const dateOfBirth = `${birthDateCount.getFullYear()}/${birthDateCount.getMonth()}/${birthDateCount.getDay()}`;
-      const enrollmentDateCount = new Date(data.enrollmentDate);
-      const enrollmentDate = `${enrollmentDateCount.getFullYear()}/${enrollmentDateCount.getMonth()}/${enrollmentDateCount.getDay()}`;
-
-      const updateForm = {
-        ...data,
-        email: data.contactInfo.email,
-        firstName: data.firstName,
-        gender: data.gender,
-        lastName: data.lastName,
-        middleName: data.middleName,
-        phoneNumber: data.contactInfo.phone,
-        yearLevel: data.yearLevel,
-        street: data.address.street,
-        city: data.address.city,
-        dateOfBirth: dateOfBirth,
-        enrollmentDate: enrollmentDate,
-        guardianContact: {
-          name: data.guardianContact.name,
-          phone: data.guardianContact.phone,
-          relationship: data.guardianContact.relationship,
+    axios
+      .get(`http://localhost:8000/api/students/${id}`, {
+        headers: {
+          Authorization: "Bearer " + token,
         },
-        yearRepeated: data.yearRepeated,
-      };
-      if (data.classId) {
-        updateForm.classId = data.classId.name;
-      }
-      setData(updateForm);
-    });
+      })
+      .then((res) => {
+        const data = res.data.data;
+        const birthDateCount = new Date(data.dateOfBirth);
+        const dateOfBirth = `${birthDateCount.getFullYear()}/${birthDateCount.getMonth()}/${birthDateCount.getDay()}`;
+        const enrollmentDateCount = new Date(data.enrollmentDate);
+        const enrollmentDate = `${enrollmentDateCount.getFullYear()}/${enrollmentDateCount.getMonth()}/${enrollmentDateCount.getDay()}`;
+
+        const updateForm = {
+          ...data,
+          email: data.contactInfo.email,
+          firstName: data.firstName,
+          gender: data.gender,
+          lastName: data.lastName,
+          middleName: data.middleName,
+          phoneNumber: data.contactInfo.phone,
+          yearLevel: data.yearLevel,
+          street: data.address.street,
+          city: data.address.city,
+          dateOfBirth: dateOfBirth,
+          enrollmentDate: enrollmentDate,
+          guardianContact: {
+            name: data.guardianContact.name,
+            phone: data.guardianContact.phone,
+            relationship: data.guardianContact.relationship,
+          },
+          yearRepeated: data.yearRepeated,
+        };
+        if (data.classId) {
+          updateForm.classId = data.classId.name;
+        }
+        setData(updateForm);
+      });
   }, []);
 
   return (

@@ -6,6 +6,8 @@ import { Context } from "../../context/Context";
 const AllTeachers = () => {
   const context = useContext(Context);
   const language = context && context.selectedLang;
+  const token = context && context.userDetails.token;
+  const isAdmin = context && context.userDetails.isAdmin;
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [dataLength, setDataLength] = useState(0);
@@ -64,7 +66,13 @@ const AllTeachers = () => {
   const deleteOne = async () => {
     try {
       const data = await axios.patch(
-        `http://localhost:8000/api/teachers/deactivate/${selectedItems[0]}`
+        `http://localhost:8000/api/teachers/deactivate/${selectedItems[0]}`,
+        [],
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       );
       data && fetchData();
 
@@ -81,7 +89,11 @@ const AllTeachers = () => {
     if (yearLevel) URL += `&yearLevel=${yearLevel}`;
     if (gender) URL += `&gender=${gender}`;
     try {
-      const data = await axios.get(URL);
+      const data = await axios.get(URL, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
 
       setDataLength(data.data.totalResults);
       setSearchData(data.data.data);
@@ -98,7 +110,11 @@ const AllTeachers = () => {
     if (gender) URL += `&gender=${gender}`;
 
     try {
-      const data = await axios.get(URL);
+      const data = await axios.get(URL, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
       setDataLength(data.data.numberOfActiveTeachers);
       setSearchData(data.data.data);
     } catch (error) {
@@ -174,12 +190,14 @@ const AllTeachers = () => {
   const tableData = searchData?.map((e, i) => {
     return (
       <tr key={e._id}>
-        <td>
-          <div
-            onClick={(target) => checkOne(target, e._id)}
-            className="checkbox"
-          ></div>
-        </td>
+        {isAdmin && (
+          <td>
+            <div
+              onClick={(target) => checkOne(target, e._id)}
+              className="checkbox"
+            ></div>
+          </td>
+        )}
 
         <td>{`${e.firstName} ${e.lastName}`}</td>
         <td> {e.gender} </td>
@@ -201,25 +219,33 @@ const AllTeachers = () => {
             data-index={i}
           ></i>
           <div className="options has-visit">
-            <div
-              onClick={(event) => {
-                event.stopPropagation();
-                setOverlay(true);
-                const allSelectors = document.querySelectorAll("td .checkbox");
-                allSelectors.forEach((e) => e.classList.remove("active"));
-                setSelectedItems([e._id]);
-              }}
-              className="flex delete"
-            >
-              <i className="fa-solid fa-trash"></i>{" "}
-              {language.teachers && language.teachers.delete}
-            </div>
-            <Link to={`/update_teacher/${e._id}`} className="flex update">
-              <i className="fa-regular fa-pen-to-square"></i>
-              {language.teachers && language.teachers.update}
-            </Link>
+            {isAdmin && (
+              <div
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setOverlay(true);
+                  const allSelectors =
+                    document.querySelectorAll("td .checkbox");
+                  allSelectors.forEach((e) => e.classList.remove("active"));
+                  setSelectedItems([e._id]);
+                }}
+                className="flex delete"
+              >
+                <i className="fa-solid fa-trash"></i>
+                {language.teachers && language.teachers.delete}
+              </div>
+            )}
+            {isAdmin && (
+              <Link
+                to={`/dashboard/update_teacher/${e._id}`}
+                className="flex update"
+              >
+                <i className="fa-regular fa-pen-to-square"></i>
+                {language.teachers && language.teachers.update}
+              </Link>
+            )}
             <Link to={`/teacher_profile/${e._id}`} className="flex visit">
-              <i className="fa-solid fa-circle-user"></i>{" "}
+              <i className="fa-solid fa-circle-user"></i>
               {language.teachers && language.teachers.visit}
             </Link>
           </div>
@@ -234,6 +260,11 @@ const AllTeachers = () => {
         "http://localhost:8000/api/teachers/deleteTeachers",
         {
           teacherIds: selectedItems,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
         }
       );
       data && fetchData();
@@ -371,21 +402,25 @@ const AllTeachers = () => {
                 </div>
 
                 <button className="btn fa-solid fa-magnifying-glass"></button>
-                <Link className="btn" to={"/add_teacher"}>
-                  <i className="fa-regular fa-square-plus"></i>{" "}
-                  {language.teachers && language.teachers.add_teachers}
-                </Link>
+                {isAdmin && (
+                  <Link className="btn" to={"/dashboard/add_teacher"}>
+                    <i className="fa-regular fa-square-plus"></i>
+                    {language.teachers && language.teachers.add_teachers}
+                  </Link>
+                )}
               </form>
 
               <table className={`${tableData?.length === 0 ? "loading" : ""}`}>
                 <thead>
                   <tr>
-                    <th>
-                      <div
-                        onClick={checkAll}
-                        className="checkbox select-all"
-                      ></div>
-                    </th>
+                    {isAdmin && (
+                      <th>
+                        <div
+                          onClick={checkAll}
+                          className="checkbox select-all"
+                        ></div>
+                      </th>
+                    )}
                     <th>{language.teachers && language.teachers.name}</th>
                     <th> {language.teachers && language.teachers.gender}</th>
                     <th>{language.teachers && language.teachers.class}</th>
@@ -413,7 +448,7 @@ const AllTeachers = () => {
                   )}
                 </tbody>
               </table>
-              {selectedItems.length > 1 && (
+              {isAdmin && selectedItems.length > 1 && (
                 <div
                   onClick={(e) => {
                     e.stopPropagation();
@@ -421,7 +456,7 @@ const AllTeachers = () => {
                   }}
                   className="delete-all"
                 >
-                  <i className="fa-solid fa-trash"></i>{" "}
+                  <i className="fa-solid fa-trash"></i>
                   {language.teachers && language.teachers.delete_all_btn}(
                   {selectedItems.length})
                 </div>

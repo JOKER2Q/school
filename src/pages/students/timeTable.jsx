@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../components/table.css";
 import "../../components/form.css";
 import axios from "axios";
 import FormLoading from "./../../components/FormLoading";
+import { Context } from "../../context/Context";
 const TimeTable = () => {
+  const context = useContext(Context);
+  const token = context && context.userDetails.token;
+  const isAdmin = context && context.userDetails.isAdmin;
+
   const date = new Date();
   const [data, setData] = useState([]);
   const [dayNumber, setDayNumber] = useState(date.getUTCDay() || 0);
@@ -39,7 +44,12 @@ const TimeTable = () => {
     if (form.classId) {
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/time-table?active=true&classId=${form.classId}&dayOfWeek=${daysOfWeek[dayNumber]}&sort=startTime`
+          `http://localhost:8000/api/time-table?active=true&classId=${form.classId}&dayOfWeek=${daysOfWeek[dayNumber]}&sort=startTime`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         );
         setData(res.data.data);
       } catch (error) {
@@ -58,7 +68,12 @@ const TimeTable = () => {
   useEffect(() => {
     axios
       .get(
-        `http://localhost:8000/api/subjects?active=true&yearLevel=${form.yearLevel}`
+        `http://localhost:8000/api/subjects?active=true&yearLevel=${form.yearLevel}`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       )
       .then((res) => setSubjects(res.data.data));
   }, [form.yearLevel]);
@@ -78,7 +93,13 @@ const TimeTable = () => {
   const deleteData = async (id) => {
     try {
       await axios.patch(
-        `http://localhost:8000/api/time-table/deactivate/${id}`
+        `http://localhost:8000/api/time-table/deactivate/${id}`,
+        [],
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       );
       getData();
     } catch (error) {
@@ -95,23 +116,25 @@ const TimeTable = () => {
           <td>{e.startTime}</td>
           <td> {e.endTime} </td>
           <td> {e.subjectId.name} </td>
-          <td>
-            <div className="flex gap-10">
-              <i
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setIsUpdate(true);
-                  setSelectedId(e);
-                  setOverlay(true);
-                }}
-                className="update fa-regular fa-pen-to-square"
-              ></i>
-              <i
-                onClick={() => deleteData(e._id)}
-                className="delete fa-regular fa-trash-can"
-              ></i>
-            </div>
-          </td>
+          {isAdmin && (
+            <td>
+              <div className="flex gap-10">
+                <i
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setIsUpdate(true);
+                    setSelectedId(e);
+                    setOverlay(true);
+                  }}
+                  className="update fa-regular fa-pen-to-square"
+                ></i>
+                <i
+                  onClick={() => deleteData(e._id)}
+                  className="delete fa-regular fa-trash-can"
+                ></i>
+              </div>
+            </td>
+          )}
         </tr>
       );
     });
@@ -163,12 +186,21 @@ const TimeTable = () => {
       setFormLoading(true);
       try {
         if (!isUpdate) {
-          await axios.post(`http://localhost:8000/api/time-table`, form);
+          await axios.post(`http://localhost:8000/api/time-table`, form, {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
           getData();
         } else {
           await axios.patch(
             `http://localhost:8000/api/time-table/${selectedId._id}`,
-            form
+            form,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
           );
           getData();
         }
@@ -218,7 +250,12 @@ const TimeTable = () => {
     if (form.yearLevel) {
       axios
         .get(
-          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`
+          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         )
         .then((res) => {
           setClasses(res.data.data);
@@ -345,7 +382,7 @@ const TimeTable = () => {
                       <th>period start</th>
                       <th>period end</th>
                       <th>subject</th>
-                      <th></th>
+                      {isAdmin && <th></th>}
                     </tr>
                   </thead>
                   <tbody
@@ -359,15 +396,17 @@ const TimeTable = () => {
                     {loading && <div className="table-loading">loading</div>}
                   </tbody>
                 </table>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOverlay(true);
-                  }}
-                  className="btn green-btn"
-                >
-                  add new lesson <i className="fa-solid fa-plus"></i>
-                </button>
+                {isAdmin && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOverlay(true);
+                    }}
+                    className="btn green-btn"
+                  >
+                    add new lesson <i className="fa-solid fa-plus"></i>
+                  </button>
+                )}
               </div>
             </div>
           )}

@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../../components/form.css";
 import axios from "axios";
 import FormLoading from "../../components/FormLoading";
 import SendData from "../../components/response/SendData";
+import { Context } from "./../../context/Context";
 
 const AddExamResult = () => {
+  const context = useContext(Context);
+  const token = context && context.userDetails.token;
   const [form, setForm] = useState({
     yearLevel: "",
     classId: "",
@@ -21,7 +24,6 @@ const AddExamResult = () => {
   const [overlay, setOverlay] = useState(false);
   const [response, setResponse] = useState(false);
   const [maxScore, setMaxScore] = useState(100);
-  
 
   const [dataNames, setDataNames] = useState({
     classesName: "",
@@ -107,7 +109,12 @@ const AddExamResult = () => {
     if (form.yearLevel) {
       axios
         .get(
-          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`
+          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         )
         .then((res) => {
           setClasses(res.data.data);
@@ -121,14 +128,24 @@ const AddExamResult = () => {
     if (form.classId) {
       axios
         .get(
-          `http://localhost:8000/api/exams?classId=${form.classId}&active=true`
+          `http://localhost:8000/api/exams?classId=${form.classId}&active=true`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         )
         .then((res) => {
           setExams(res.data.data);
         });
       axios
         .get(
-          `http://localhost:8000/api/students?classId=${form.classId}&active=true`
+          `http://localhost:8000/api/students?classId=${form.classId}&active=true`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         )
         .then((res) => {
           setStudents(res.data.data);
@@ -146,7 +163,12 @@ const AddExamResult = () => {
       try {
         const data = await axios.post(
           "http://localhost:8000/api/exam-results",
-          form
+          form,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         );
 
         if (data.status === 201) {
@@ -174,10 +196,10 @@ const AddExamResult = () => {
       <div className="dashboard-container">
         <div className="container relative">
           {overlay && <SendData data="exam" response={response} />}
-          <h1 className="title"> add exam </h1>
+          <h1 className="title"> add exam result </h1>
           <form onSubmit={handelSubmit} className=" relative dashboard-form">
             {loading && <FormLoading />}
-            <h1>please complete the form to add a exam</h1>
+            <h1>please complete the form to add a exam result</h1>
             <div className="flex wrap ">
               <div className="flex flex-direction">
                 <label>year level</label>

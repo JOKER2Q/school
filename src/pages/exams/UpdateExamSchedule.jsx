@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../../components/form.css";
 import axios from "axios";
 import FormLoading from "../../components/FormLoading";
 import SendData from "../../components/response/SendData";
 import { useNavigate, useParams } from "react-router-dom";
+import { Context } from "../../context/Context";
 
 const UpdateExamSchedule = () => {
+  const context = useContext(Context);
+  const token = context && context.userDetails.token;
   const params = useParams();
   const [form, setForm] = useState({
     classId: "",
@@ -26,31 +29,37 @@ const UpdateExamSchedule = () => {
   const [response, setResponse] = useState(false);
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/exams/${params.id}`).then((res) => {
-      const data = res.data.data;
-      const dateObject = new Date(data.date);
-      const formattedDateTime = dateObject.toISOString().slice(0, 16);
+    axios
+      .get(`http://localhost:8000/api/exams/${params.id}`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((res) => {
+        const data = res.data.data;
+        const dateObject = new Date(data.date);
+        const formattedDateTime = dateObject.toISOString().slice(0, 16);
 
-      const updatedForm = {
-        ...form,
-        yearLevel: data.yearLevel,
-        date: formattedDateTime,
-        duration: data.duration,
-        totalMarks: data.totalMarks,
-      };
+        const updatedForm = {
+          ...form,
+          yearLevel: data.yearLevel,
+          date: formattedDateTime,
+          duration: data.duration,
+          totalMarks: data.totalMarks,
+        };
 
-      if (data.classId) {
-        setClassesName(data.classId.name);
-        updatedForm.classId = data.classId._id;
-      }
+        if (data.classId) {
+          setClassesName(data.classId.name);
+          updatedForm.classId = data.classId._id;
+        }
 
-      if (data.subjectId) {
-        setSubjectsName(data.subjectId.name);
-        updatedForm.subjectId = data.subjectId._id;
-      }
+        if (data.subjectId) {
+          setSubjectsName(data.subjectId.name);
+          updatedForm.subjectId = data.subjectId._id;
+        }
 
-      setForm(updatedForm);
-    });
+        setForm(updatedForm);
+      });
   }, []);
 
   const responseFun = (complete = false) => {
@@ -139,7 +148,12 @@ const UpdateExamSchedule = () => {
     if (form.yearLevel) {
       axios
         .get(
-          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`
+          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         )
         .then((res) => {
           setClasses(res.data.data);
@@ -147,7 +161,12 @@ const UpdateExamSchedule = () => {
 
       axios
         .get(
-          `http://localhost:8000/api/subjects?yearLevel=${form.yearLevel}&active=true`
+          `http://localhost:8000/api/subjects?yearLevel=${form.yearLevel}&active=true`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         )
         .then((res) => {
           setSubjects(res.data.data);
@@ -164,7 +183,12 @@ const UpdateExamSchedule = () => {
       try {
         const data = await axios.patch(
           `http://localhost:8000/api/exams/${params.id}`,
-          form
+          form,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         );
 
         if (data.status === 200) {
@@ -177,7 +201,7 @@ const UpdateExamSchedule = () => {
             duration: "",
             totalMarks: "",
           });
-          nav("/exams_schedule");
+          nav("/dashboard/exams_schedule");
         }
       } catch (error) {
         console.log(error);

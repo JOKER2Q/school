@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../components/table.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Context } from "../../context/Context";
 const ExamSchedule = () => {
+  const context = useContext(Context);
+  const token = context && context.userDetails.token;
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -61,7 +64,11 @@ const ExamSchedule = () => {
     let URL = `http://localhost:8000/api/exams?limit=${divsCount}&page=${activePage}&sort=-date&active=true`;
     if (yearLevel) URL += `&yearLevel=${yearLevel}`;
     try {
-      const data = await axios.get(URL);
+      const data = await axios.get(URL, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
       setDataLength(data.data.numberOfActiveExams);
       setSearchData(data.data.data);
     } catch (error) {
@@ -171,7 +178,10 @@ const ExamSchedule = () => {
               >
                 <i className="fa-solid fa-trash"></i> delete
               </div>
-              <Link to={`/update_exam/${e._id}`} className="flex update">
+              <Link
+                to={`/dashboard/update_exam/${e._id}`}
+                className="flex update"
+              >
                 <i className="fa-regular fa-pen-to-square"></i>
                 update
               </Link>
@@ -184,7 +194,13 @@ const ExamSchedule = () => {
   const deleteOne = async () => {
     try {
       const data = await axios.patch(
-        `http://localhost:8000/api/exams/deactivate/${selectedItems[0]}`
+        `http://localhost:8000/api/exams/deactivate/${selectedItems[0]}`,
+        [],
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       );
       data && fetchData();
 
@@ -201,6 +217,11 @@ const ExamSchedule = () => {
         "http://localhost:8000/api/exams/deactivate-many",
         {
           ids: selectedItems,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
         }
       );
       data && fetchData();

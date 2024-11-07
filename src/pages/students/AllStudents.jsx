@@ -6,6 +6,8 @@ import { Context } from "../../context/Context";
 const AllStudents = () => {
   const context = useContext(Context);
   const language = context && context.selectedLang;
+  const isAdmin = context && context.userDetails.isAdmin;
+  const token = context && context.userDetails.token;
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [dataLength, setDataLength] = useState(0);
@@ -67,7 +69,11 @@ const AllStudents = () => {
     if (yearLevel) URL += `&yearLevel=${yearLevel}`;
     if (gender) URL += `&gender=${gender}`;
     try {
-      const data = await axios.get(URL);
+      const data = await axios.get(URL, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
 
       setDataLength(data.data.totalResults);
       setSearchData(data.data.data);
@@ -83,7 +89,11 @@ const AllStudents = () => {
     if (yearLevel) URL += `&yearLevel=${yearLevel}`;
     if (gender) URL += `&gender=${gender}`;
     try {
-      const data = await axios.get(URL);
+      const data = await axios.get(URL, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
       const fltr = data.data.data.filter((e) => e.active);
 
       setDataLength(data.data.numberOfActiveStudents);
@@ -160,12 +170,14 @@ const AllStudents = () => {
   const tableData = searchData.map((e, i) => {
     return (
       <tr key={e._id}>
-        <td>
-          <div
-            onClick={(target) => checkOne(target, e._id)}
-            className="checkbox"
-          ></div>
-        </td>
+        {isAdmin && (
+          <td>
+            <div
+              onClick={(target) => checkOne(target, e._id)}
+              className="checkbox"
+            ></div>
+          </td>
+        )}
 
         <td>{`${e.firstName} ${e.lastName}`}</td>
         <td> {e.contactInfo.phone} </td>
@@ -180,23 +192,31 @@ const AllStudents = () => {
             data-index={i}
           ></i>
           <div className="options has-visit">
-            <div
-              onClick={(event) => {
-                event.stopPropagation();
-                setOverlay(true);
-                const allSelectors = document.querySelectorAll("td .checkbox");
-                allSelectors.forEach((e) => e.classList.remove("active"));
-                setSelectedItems([e._id]);
-              }}
-              className="flex delete"
-            >
-              <i className="fa-solid fa-trash"></i>{" "}
-              {language.students && language.students.delete}
-            </div>
-            <Link to={`/update_student/${e._id}`} className="flex update">
-              <i className="fa-regular fa-pen-to-square"></i>
-              {language.students && language.students.update}
-            </Link>
+            {isAdmin && (
+              <div
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setOverlay(true);
+                  const allSelectors =
+                    document.querySelectorAll("td .checkbox");
+                  allSelectors.forEach((e) => e.classList.remove("active"));
+                  setSelectedItems([e._id]);
+                }}
+                className="flex delete"
+              >
+                <i className="fa-solid fa-trash"></i>{" "}
+                {language.students && language.students.delete}
+              </div>
+            )}
+            {isAdmin && (
+              <Link
+                to={`/dashboard/update_student/${e._id}`}
+                className="flex update"
+              >
+                <i className="fa-regular fa-pen-to-square"></i>
+                {language.students && language.students.update}
+              </Link>
+            )}
             <Link to={`/student_profile/${e._id}`} className="flex visit">
               <i className="fa-solid fa-circle-user"></i>{" "}
               {language.students && language.students.visit}
@@ -210,7 +230,13 @@ const AllStudents = () => {
   const deleteOne = async () => {
     try {
       const data = await axios.patch(
-        `http://localhost:8000/api/students/deactivate/${selectedItems[0]}`
+        `http://localhost:8000/api/students/deactivate/${selectedItems[0]}`,
+        [],
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       );
       data && fetchData();
 
@@ -228,6 +254,11 @@ const AllStudents = () => {
         "http://localhost:8000/api/students/deleteStudents",
         {
           ids: selectedItems,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
         }
       );
       data && fetchData();
@@ -366,20 +397,24 @@ const AllStudents = () => {
                 </div>
 
                 <button className="btn fa-solid fa-magnifying-glass"></button>
-                <Link className="btn" to={"/add_student"}>
-                  <i className="fa-regular fa-square-plus"></i>{" "}
-                  {language.students && language.students.add_student}
-                </Link>
+                {isAdmin && (
+                  <Link className="btn" to={"/dashboard/add_student"}>
+                    <i className="fa-regular fa-square-plus"></i>{" "}
+                    {language.students && language.students.add_student}
+                  </Link>
+                )}
               </form>
               <table className={`${tableData.length === 0 ? "loading" : ""}`}>
                 <thead>
                   <tr>
-                    <th>
-                      <div
-                        onClick={checkAll}
-                        className="checkbox select-all"
-                      ></div>
-                    </th>
+                    {isAdmin && (
+                      <th>
+                        <div
+                          onClick={checkAll}
+                          className="checkbox select-all"
+                        ></div>
+                      </th>
+                    )}
                     <th>{language.students && language.students.name}</th>
                     <th>{language.students && language.students.phone}</th>
                     <th>{language.students && language.students.gender}</th>
@@ -410,7 +445,7 @@ const AllStudents = () => {
                   )}
                 </tbody>
               </table>
-              {selectedItems.length > 1 && (
+              {isAdmin && selectedItems.length > 1 && (
                 <div
                   onClick={(e) => {
                     e.stopPropagation();

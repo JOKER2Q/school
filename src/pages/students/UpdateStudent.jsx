@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../../components/form.css";
 import axios from "axios";
 import FormLoading from "../../components/FormLoading";
 import SendData from "../../components/response/SendData";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Context } from "../../context/Context";
 
 const UpdateStudent = () => {
   const { id } = useParams();
-
+  const context = useContext(Context);
+  const token = context && context.userDetails.token;
+  const nav = useNavigate();
   const [form, setForm] = useState({
     contactInfo: { email: "", phone: "" },
     address: {
@@ -37,46 +40,53 @@ const UpdateStudent = () => {
   const [response, setResponse] = useState(false);
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/students/${id}`).then((res) => {
-      const data = res.data.data;
-
-
-      const dateOfBirth = new Date(data.dateOfBirth).toISOString().slice(0, 16);
-      const enrollmentDate = new Date(data.enrollmentDate)
-        .toISOString()
-        .slice(0, 16);
-
-      const updatedForm = {
-        ...form,
-        contactInfo: {
-          email: data.contactInfo.email,
-          phone: data.contactInfo.phone,
+    axios
+      .get(`http://localhost:8000/api/students/${id}`, {
+        headers: {
+          Authorization: "Bearer " + token,
         },
-        address: {
-          street: data.address.street,
-          city: data.address.city,
-        },
-        guardianContact: {
-          name: data.guardianContact.name,
-          phone: data.guardianContact.phone,
-          relationship: data.guardianContact.relationship,
-        },
-        firstName: data.firstName,
-        middleName: data.middleName,
-        lastName: data.lastName,
-        gender: data.gender,
-        yearLevel: data.yearLevel,
-        dateOfBirth: dateOfBirth,
-        enrollmentDate: enrollmentDate,
-      };
+      })
+      .then((res) => {
+        const data = res.data.data;
 
-      if (data.classId) {
-        setClassesName(data.classId.name);
-        updatedForm.classId = data.classId._id;
-      }
+        const dateOfBirth = new Date(data.dateOfBirth)
+          .toISOString()
+          .slice(0, 16);
+        const enrollmentDate = new Date(data.enrollmentDate)
+          .toISOString()
+          .slice(0, 16);
 
-      setForm(updatedForm);
-    });
+        const updatedForm = {
+          ...form,
+          contactInfo: {
+            email: data.contactInfo.email,
+            phone: data.contactInfo.phone,
+          },
+          address: {
+            street: data.address.street,
+            city: data.address.city,
+          },
+          guardianContact: {
+            name: data.guardianContact.name,
+            phone: data.guardianContact.phone,
+            relationship: data.guardianContact.relationship,
+          },
+          firstName: data.firstName,
+          middleName: data.middleName,
+          lastName: data.lastName,
+          gender: data.gender,
+          yearLevel: data.yearLevel,
+          dateOfBirth: dateOfBirth,
+          enrollmentDate: enrollmentDate,
+        };
+
+        if (data.classId) {
+          setClassesName(data.classId.name);
+          updatedForm.classId = data.classId._id;
+        }
+
+        setForm(updatedForm);
+      });
   }, []);
 
   const responseFun = (complete = false) => {
@@ -160,7 +170,12 @@ const UpdateStudent = () => {
     form.yearLevel &&
       axios
         .get(
-          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`
+          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         )
         .then((res) => {
           setClasses(res.data.data);
@@ -174,9 +189,14 @@ const UpdateStudent = () => {
     else if (!form.classId) setDataError("please choose a classes");
     else {
       try {
-        const data = await axios.post(
-          "http://localhost:8000/api/students",
-          form
+        const data = await axios.patch(
+          `http://localhost:8000/api/students/${id}`,
+          form,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         );
         setForm({
           contactInfo: { email: "", phone: "" },
@@ -198,10 +218,9 @@ const UpdateStudent = () => {
           enrollmentDate: "",
           classId: "",
         });
-        console.log(data);
-
-        if (data.status === 201) {
+        if (data.status === 200) {
           responseFun(true);
+          nav("/dashboard/all_students");
         }
       } catch (error) {
         console.log(error);

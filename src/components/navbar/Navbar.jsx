@@ -2,13 +2,32 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import "./navbar.css";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../context/Context";
+import Cookies from "universal-cookie";
 const Navbar = () => {
   const context = useContext(Context);
   const language = context && context.selectedLang;
+  const isAdmin = context && context.userDetails.isAdmin;
+  const isStudent = context && context.userDetails.isStudent;
+  const name =
+    context &&
+    context.userDetails.userDetails.firstName +
+      " " +
+      context.userDetails.userDetails.lastName;
 
   const location = useLocation();
   const isClosed = JSON.parse(localStorage.getItem("isClosed")) || false;
   const [form, setForm] = useState("");
+  const cookie = new Cookies();
+  const logOut = () => {
+    cookie.remove("school-token");
+    context.setUserDetails({
+      isAdmin: false,
+      isTeacher: false,
+      isStudent: false,
+      token: "",
+      userDetails: {},
+    });
+  };
 
   window.addEventListener("click", () => {
     const langDiv = document.querySelector(
@@ -16,7 +35,7 @@ const Navbar = () => {
     );
     langDiv && langDiv.classList.remove("active-div");
     const linksDiv = document.querySelector(
-      "aside.closed > div > .links.active"
+      "aside.closed >div> div > .links.active"
     );
     if (linksDiv) {
       linksDiv.classList.remove("active");
@@ -35,7 +54,9 @@ const Navbar = () => {
 
   const openDiv = (ele) => {
     ele.stopPropagation();
-    const allDivs = document.querySelectorAll("aside > div > .links > .center");
+    const allDivs = document.querySelectorAll(
+      "aside >div> div > .links > .center"
+    );
     allDivs.forEach((e, i) => {
       +ele.target.dataset.index !== i &&
         e.parentElement.classList.remove("active");
@@ -50,7 +71,7 @@ const Navbar = () => {
   useEffect(() => {
     const linksDiv = document.querySelectorAll("aside .links");
     const removeClass = document.querySelectorAll(
-      "aside > div > .links > div.center"
+      "aside >div> div > .links > div.center"
     );
     removeClass && removeClass.forEach((e) => e.classList.remove("active"));
     linksDiv &&
@@ -64,7 +85,9 @@ const Navbar = () => {
     const nav = document.querySelector("nav.closed");
     const container = document.querySelector(".dashboard-container");
     nav && container && container.classList.add("closed");
-    const activeArticle = document.querySelector("aside > div > .links.active");
+    const activeArticle = document.querySelector(
+      "aside >div> div > .links.active"
+    );
     activeArticle && activeArticle.classList.remove("active");
   }, [location.pathname]);
 
@@ -82,22 +105,30 @@ const Navbar = () => {
     context.setLanguage(e.target.dataset.lang);
   };
 
-  const pages = [
-    { name: "all teachers", path: "all_teachers" },
-    { name: "add teacher", path: "add_teacher" },
-    { name: "all students", path: "all_students" },
-    { name: "add student", path: "add_student" },
+  let pages = [
     { name: "exams schedule", path: "exams_schedule" },
-    { name: "add exam", path: "add_exam" },
     { name: "exams result", path: "exams_result" },
-    { name: "add exam result", path: "add_exam_result" },
     { name: "attendence", path: "attendence" },
     { name: "time table", path: "time_table" },
     { name: "all subjects", path: "subjects" },
-    { name: "add subjects", path: "subjects" },
     { name: "all classes", path: "classes" },
-    { name: "add classes", path: "classes" },
   ];
+  if (!isStudent) {
+    pages.push(
+      { name: "all students", path: "all_students" },
+      { name: "all teachers", path: "all_teachers" }
+    );
+  }
+  if (isAdmin) {
+    pages.push(
+      { name: "add teacher", path: "add_teacher" },
+      { name: "add student", path: "add_student" },
+      { name: "add exam", path: "add_exam" },
+      { name: "add subjects", path: "subjects" },
+      { name: "add classes", path: "classes" },
+      { name: "add exam result", path: "add_exam_result" }
+    );
+  }
 
   const search = () => {
     let reasult = [];
@@ -124,15 +155,15 @@ const Navbar = () => {
   const searchClick = () => {
     const matchedPage = pages.find(
       (e) =>
-        e.name.toLowerCase() === form.toLowerCase() ||
-        e.path.toLowerCase() === form.toLowerCase()
+        e.name.includes(form.toLowerCase()) ||
+        e.path.includes(form.toLowerCase())
     );
 
     if (matchedPage) {
       nav(matchedPage.path);
     } else {
       const path = form.replaceAll(" ", "_");
-      nav(`/${path}`);
+      nav(`/dashboard/${path}`);
     }
     setForm("");
   };
@@ -162,10 +193,11 @@ const Navbar = () => {
             <Link to={"teacher_profile"} className="info center">
               <i className="center photo fa-solid fa-user"></i>
               <article>
-                <h4>diyar direki</h4>
-                <p> admin </p>
+                <h4>{name}</h4>
+                <p> {context.userDetails.role} </p>
               </article>
             </Link>
+
             <i
               onClick={modeFun}
               className="fa-solid fa-moon fa-regular mode"
@@ -193,6 +225,9 @@ const Navbar = () => {
                 </h2>
               </div>
             </article>
+            <Link replace onClick={logOut} to={"/"} className="log-out center">
+              <i className="fa-solid fa-right-from-bracket"></i>
+            </Link>
           </div>
         </div>
       </nav>
@@ -206,91 +241,104 @@ const Navbar = () => {
           <i onClick={closeAside} className="fa-solid fa-bars-staggered"></i>
         </article>
 
-        <div className="flex-direction flex gap-10">
-          <div className="links">
-            <div data-index="0" onClick={openDiv} className="center">
-              <i className="fa-solid fa-people-group"></i>
-              <h1 className="flex-1">
-                {language.navBar && language.navBar.teachers}
-              </h1>
-              <i className="arrow fa-solid fa-chevron-right"></i>
+        <div className="flex-direction flex between gap-20">
+          <div className="flex-direction flex gap-10">
+            <div className="links">
+              <div data-index="0" onClick={openDiv} className="center">
+                <i className="fa-solid fa-people-group"></i>
+                <h1 className="flex-1">
+                  {language.navBar && language.navBar.teachers}
+                </h1>
+                <i className="arrow fa-solid fa-chevron-right"></i>
+              </div>
+              <article>
+                <NavLink to={"all_teachers"}>
+                  {language.navBar && language.navBar.all_teachers}
+                </NavLink>
+                {isAdmin && (
+                  <NavLink to={"add_teacher"}>
+                    {language.navBar && language.navBar.add_teacher}
+                  </NavLink>
+                )}
+              </article>
             </div>
-            <article>
-              <NavLink to={"all_teachers"}>
-                {language.navBar && language.navBar.all_teachers}
-              </NavLink>
-              <NavLink to={"add_teacher"}>
-                {language.navBar && language.navBar.add_teacher}
-              </NavLink>
-            </article>
-          </div>
-          <div className="links">
-            <div data-index="1" onClick={openDiv} className="center">
-              <i className="fa-solid fa-children"></i>
-              <h1 className="flex-1">
-                {language.navBar && language.navBar.students}
-              </h1>
-              <i className="arrow fa-solid fa-chevron-right"></i>
+            <div className="links">
+              <div data-index="1" onClick={openDiv} className="center">
+                <i className="fa-solid fa-children"></i>
+                <h1 className="flex-1">
+                  {language.navBar && language.navBar.students}
+                </h1>
+                <i className="arrow fa-solid fa-chevron-right"></i>
+              </div>
+              <article>
+                <NavLink to={"all_students"}>
+                  {language.navBar && language.navBar.all_students}
+                </NavLink>
+                {isAdmin && (
+                  <NavLink to={"add_student"}>
+                    {language.navBar && language.navBar.add_student}
+                  </NavLink>
+                )}
+              </article>
             </div>
-            <article>
-              <NavLink to={"all_students"}>
-                {language.navBar && language.navBar.all_students}
-              </NavLink>
-              <NavLink to={"add_student"}>
-                {language.navBar && language.navBar.add_student}
-              </NavLink>
-            </article>
-          </div>
 
-          <div className="links">
-            <div data-index="2" onClick={openDiv} className="center">
-              <i className="fa-solid fa-list-check"></i>
-              <h1 className="flex-1">
-                {language.navBar && language.navBar.exam}
-              </h1>
-              <i className="arrow fa-solid fa-chevron-right"></i>
+            <div className="links">
+              <div data-index="2" onClick={openDiv} className="center">
+                <i className="fa-solid fa-list-check"></i>
+                <h1 className="flex-1">
+                  {language.navBar && language.navBar.exam}
+                </h1>
+                <i className="arrow fa-solid fa-chevron-right"></i>
+              </div>
+              <article>
+                <NavLink to={"exams_schedule"}>
+                  {language.navBar && language.navBar.exam_schedule}
+                </NavLink>
+                {isAdmin && (
+                  <NavLink to={"add_exam"}>
+                    {language.navBar && language.navBar.add_exam}
+                  </NavLink>
+                )}
+                <NavLink to={"exams_result"}>
+                  {language.navBar && language.navBar.exam_results}
+                </NavLink>
+                {isAdmin && (
+                  <NavLink to={"add_exam_result"}>
+                    {language.navBar && language.navBar.add_exam_results}
+                  </NavLink>
+                )}
+              </article>
             </div>
-            <article>
-              <NavLink to={"exams_schedule"}>
-                {language.navBar && language.navBar.exam_schedule}
-              </NavLink>
-              <NavLink to={"add_exam"}>
-                {language.navBar && language.navBar.add_exam}
-              </NavLink>
-              <NavLink to={"exams_result"}>
-                {language.navBar && language.navBar.exam_results}
-              </NavLink>
-              <NavLink to={"add_exam_result"}>
-                {language.navBar && language.navBar.add_exam_results}
-              </NavLink>
-            </article>
-          </div>
 
-          <div className="links">
-            <div data-index="3" onClick={openDiv} className="center">
-              <i className="fa-regular fa-calendar-days"></i>
-              <h1 className="flex-1">
-                {language.navBar && language.navBar.activities}
-              </h1>
-              <i className="arrow fa-solid fa-chevron-right"></i>
+            <div className="links">
+              <div data-index="3" onClick={openDiv} className="center">
+                <i className="fa-regular fa-calendar-days"></i>
+                <h1 className="flex-1">
+                  {language.navBar && language.navBar.activities}
+                </h1>
+                <i className="arrow fa-solid fa-chevron-right"></i>
+              </div>
+              <article>
+                <NavLink to={"attendence"}>
+                  {language.navBar && language.navBar.attendance}
+                </NavLink>
+                <NavLink to={"time_table"}>
+                  {language.navBar && language.navBar.time_table}
+                </NavLink>
+              </article>
             </div>
-            <article>
-              <NavLink to={"attendence"}>
-                {language.navBar && language.navBar.attendance}
-              </NavLink>
-              <NavLink to={"time_table"}>
-                {language.navBar && language.navBar.time_table}
-              </NavLink>
-            </article>
+            <NavLink to={"subjects"} className="w-100 justify-start center">
+              <i className="fa-solid fa-pen-nib"></i>
+              <h1> {language.navBar && language.navBar.subjects}</h1>
+            </NavLink>
+            <NavLink to={"classes"} className="w-100 justify-start center">
+              <i className="fa-solid fa-school-flag"></i>
+              <h1>{language.navBar && language.navBar.classes}</h1>
+            </NavLink>
           </div>
-          <NavLink to={"subjects"} className="w-100 justify-start center">
-            <i className="fa-solid fa-pen-nib"></i>
-            <h1> {language.navBar && language.navBar.subjects}</h1>
-          </NavLink>
-          <NavLink to={"classes"} className="w-100 justify-start center">
-            <i className="fa-solid fa-school-flag"></i>
-            <h1>{language.navBar && language.navBar.classes}</h1>
-          </NavLink>
+          <Link replace onClick={logOut} to={"/"} className="log-out center">
+            <i className="fa-solid fa-right-from-bracket"></i> <h3>log out</h3>
+          </Link>
         </div>
       </aside>
     </>

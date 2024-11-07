@@ -4,29 +4,36 @@ import { Context } from "../context/Context";
 import { Outlet } from "react-router-dom";
 import Cookies from "universal-cookie";
 import Loader from "../components/Loader";
-
+import "../components/loader.css";
 const Refresh = () => {
   const [loading, setLoading] = useState(true);
   const context = useContext(Context);
   const tokenContext = context.userDetails.token;
 
   const cookie = new Cookies();
-  const tokenValue = cookie.get("token");
+  const tokenValue = cookie.get("school-token");
 
   useEffect(() => {
     async function reafreshToken() {
       try {
-        const data = await axios.get(
-          "https://blue-elite.tech/api/users/profile",
+        const profile = await axios.get(
+          "http://localhost:8000/api/users/profile",
           {
             headers: { Authorization: "Bearer " + tokenValue },
           }
         );
 
+        const data = profile.data.user;
+        const isAdmin = data.role.includes("Admin");
+        const isTeacher = data.role.includes("Teacher");
+        const isStudent = data.role.includes("Student");
         context.setUserDetails({
+          isAdmin: isAdmin,
+          isTeacher: isTeacher,
+          isStudent: isStudent,
           token: tokenValue,
-          user: data.data.user.role,
-          isAdmin: data.data.user.role.includes("admin"),
+          userDetails: data.profileId,
+          role: data.role,
         });
       } catch (err) {
         console.log(err);

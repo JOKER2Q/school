@@ -32,7 +32,6 @@ const Login = () => {
         form
       );
       const token = getToken.data.token;
-      console.log(token);
 
       const profile = await axios.get(
         "http://localhost:8000/api/users/profile",
@@ -52,6 +51,7 @@ const Login = () => {
         isStudent: isStudent,
         token: token,
         userDetails: data.profileId,
+        role: data.role,
       });
       cookie.set("school-token", token);
       isTeacher && nav(`/dashboard/teacher_profile/${data.profileId}`);

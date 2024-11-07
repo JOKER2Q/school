@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../components/table.css";
 import "../../components/form.css";
 import axios from "axios";
+import { Context } from "../../context/Context";
 const ExamResult = () => {
+  const context = useContext(Context);
+  const token = context && context.userDetails.token;
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -18,7 +21,14 @@ const ExamResult = () => {
     try {
       if (form.student)
         await axios
-          .get(`http://localhost:8000/api/exam-results/details/${form.student}`)
+          .get(
+            `http://localhost:8000/api/exam-results/details/${form.student}`,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
+          )
           .then((res) => {
             setData(res.data.data);
           });
@@ -52,7 +62,13 @@ const ExamResult = () => {
   const deleteExam = async () => {
     try {
       const data = await axios.patch(
-        `http://localhost:8000/api/exam-results/deactivate/${selectedItems}`
+        `http://localhost:8000/api/exam-results/deactivate/${selectedItems}`,
+        [],
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       );
       data && fetchData();
 
@@ -71,7 +87,12 @@ const ExamResult = () => {
 
       const res = await axios.patch(
         `http://localhost:8000/api/exam-results/${selectedItems}`,
-        { score: inpValue }
+        { score: inpValue },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       );
 
       if (res.status === 200) {
@@ -217,7 +238,12 @@ const ExamResult = () => {
     if (form.yearLevel) {
       axios
         .get(
-          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`
+          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         )
         .then((res) => {
           setClasses(res.data.data);
@@ -229,7 +255,12 @@ const ExamResult = () => {
     if (form.classId) {
       axios
         .get(
-          `http://localhost:8000/api/students?classId=${form.classId}&active=true`
+          `http://localhost:8000/api/students?classId=${form.classId}&active=true`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         )
         .then((res) => {
           setStudents(res.data.data);

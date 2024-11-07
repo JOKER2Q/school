@@ -21,6 +21,9 @@ import { useEffect } from "react";
 import NotFound from "./components/NotFound";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./Auth/Auth";
+import Refresh from "./Auth/Refersh";
+import AdminAuth from "./Auth/AdminAuth";
+import TeacherAuth from "./Auth/TeacherAuth";
 
 function App() {
   const location = useLocation();
@@ -32,26 +35,42 @@ function App() {
       <Routes>
         <Route path="*" element={<NotFound />} />
         <Route path="/" element={<Login />} />
-        <Route element={<Auth />}>
-          <Route path="dashboard" element={<Dashboard />}>
-            <Route path="all_teachers" element={<AllTeachers />} />
-            <Route path="add_teacher" element={<AddTeacher />} />
-            <Route path="update_teacher/:id" element={<UpdateTeacher />} />
-            <Route path="teacher_profile/:id" element={<TeacherProfile />} />
-            <Route path="student_profile/:id" element={<StudentProfile />} />
-            <Route path="all_students" element={<AllStudents />} />
-            <Route path="add_student" element={<AddStudent />} />
-            <Route path="update_student/:id" element={<UpdateStudent />} />
-            <Route path="attendence" element={<Attendence />} />
-            <Route path="time_table" element={<TimeTable />} />
-            <Route path="classes" element={<Classes />} />
-            <Route path="add_student" element={<AddStudent />} />
-            <Route path="subjects" element={<Subjects />} />
-            <Route path="exams_schedule" element={<ExamSchedule />} />
-            <Route path="update_exam/:id" element={<UpdateExamSchedule />} />
-            <Route path="add_exam" element={<AddExam />} />
-            <Route path="add_exam_result" element={<AddExamResult />} />
-            <Route path="exams_result" element={<ExamResult />} />
+
+        <Route element={<Refresh />}>
+          <Route element={<Auth />}>
+            <Route path="dashboard" element={<Dashboard />}>
+              <Route path="*" element={<NotFound />} />
+
+              <Route element={<AdminAuth />}>
+                <Route path="add_teacher" element={<AddTeacher />} />
+                <Route path="add_student" element={<AddStudent />} />
+                <Route path="add_exam_result" element={<AddExamResult />} />
+                <Route path="add_exam" element={<AddExam />} />
+                <Route path="update_teacher/:id" element={<UpdateTeacher />} />
+                <Route path="update_student/:id" element={<UpdateStudent />} />
+                <Route
+                  path="update_exam/:id"
+                  element={<UpdateExamSchedule />}
+                />
+              </Route>
+
+              <Route element={<TeacherAuth />}>
+                <Route path="all_teachers" element={<AllTeachers />} />
+                <Route
+                  path="teacher_profile/:id"
+                  element={<TeacherProfile />}
+                />
+                <Route path="all_students" element={<AllStudents />} />
+                <Route path="attendence" element={<Attendence />} />
+              </Route>
+
+              <Route path="student_profile/:id" element={<StudentProfile />} />
+              <Route path="time_table" element={<TimeTable />} />
+              <Route path="classes" element={<Classes />} />
+              <Route path="subjects" element={<Subjects />} />
+              <Route path="exams_schedule" element={<ExamSchedule />} />
+              <Route path="exams_result" element={<ExamResult />} />
+            </Route>
           </Route>
         </Route>
       </Routes>

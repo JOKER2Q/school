@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../../components/form.css";
 import axios from "axios";
 import FormLoading from "../../components/FormLoading";
 import SendData from "../../components/response/SendData";
+import { Context } from "../../context/Context";
 
 const AddExam = () => {
+  const context = useContext(Context);
+  const token = context && context.userDetails.token;
   const [form, setForm] = useState({
     classId: "",
     subjectId: "",
@@ -109,7 +112,12 @@ const AddExam = () => {
     if (form.yearLevel) {
       axios
         .get(
-          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`
+          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         )
         .then((res) => {
           setClasses(res.data.data);
@@ -117,7 +125,12 @@ const AddExam = () => {
 
       axios
         .get(
-          `http://localhost:8000/api/subjects?yearLevel=${form.yearLevel}&active=true`
+          `http://localhost:8000/api/subjects?yearLevel=${form.yearLevel}&active=true`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         )
         .then((res) => {
           setSubjects(res.data.data);
@@ -132,7 +145,11 @@ const AddExam = () => {
     else if (!form.subjectId) setDataError("please choose a subject");
     else {
       try {
-        const data = await axios.post("http://localhost:8000/api/exams", form);
+        const data = await axios.post("http://localhost:8000/api/exams", form, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
 
         if (data.status === 201) {
           responseFun(true);
@@ -160,7 +177,7 @@ const AddExam = () => {
       <div className="dashboard-container">
         <div className="container relative">
           {overlay && <SendData data="exam" response={response} />}
-          <h1 className="title"> add exam </h1>
+          <h1 className="title"> add exam</h1>
           <form onSubmit={handelSubmit} className=" relative dashboard-form">
             {loading && <FormLoading />}
             <h1>please complete the form to add a exam</h1>
