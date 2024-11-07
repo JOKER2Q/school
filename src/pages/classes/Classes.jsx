@@ -177,41 +177,49 @@ const Classes = () => {
   const tableData = searchData.map((e, i) => {
     return (
       <tr key={e._id}>
-        <td>
-          <div
-            onClick={(target) => checkOne(target, e._id)}
-            className="checkbox"
-          ></div>
-        </td>
+        {isAdmin && (
+          <td>
+            <div
+              onClick={(target) => checkOne(target, e._id)}
+              className="checkbox"
+            ></div>
+          </td>
+        )}
         <td>{e.yearLevel}</td>
         <td> {e.name} </td>
 
         <td> {classesCount[e._id] >= 0 ? classesCount[e._id] : "..."} </td>
-        <td>
-          <i
-            onClick={openOptions}
-            className="options fa-solid fa-ellipsis"
-            data-index={i}
-          ></i>
-          <div className="options">
-            <div
-              onClick={(event) => {
-                event.stopPropagation();
-                setOverlay(true);
-                const allSelectors = document.querySelectorAll("td .checkbox");
-                allSelectors.forEach((e) => e.classList.remove("active"));
-                setSelectedItems([e._id]);
-              }}
-              className="flex delete"
-            >
-              <i className="fa-solid fa-trash"></i> delete
+        {isAdmin && (
+          <td>
+            <i
+              onClick={openOptions}
+              className="options fa-solid fa-ellipsis"
+              data-index={i}
+            ></i>
+            <div className="options">
+              <div
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setOverlay(true);
+                  const allSelectors =
+                    document.querySelectorAll("td .checkbox");
+                  allSelectors.forEach((e) => e.classList.remove("active"));
+                  setSelectedItems([e._id]);
+                }}
+                className="flex delete"
+              >
+                <i className="fa-solid fa-trash"></i> delete
+              </div>
+              <Link
+                onClick={() => setSelectedId(e._id)}
+                className="flex update"
+              >
+                <i className="fa-regular fa-pen-to-square"></i>
+                update
+              </Link>
             </div>
-            <Link onClick={() => setSelectedId(e._id)} className="flex update">
-              <i className="fa-regular fa-pen-to-square"></i>
-              update
-            </Link>
-          </div>
-        </td>
+          </td>
+        )}
       </tr>
     );
   });
@@ -473,16 +481,18 @@ const Classes = () => {
                 <table className={`${tableData.length === 0 ? "loading" : ""}`}>
                   <thead>
                     <tr>
-                      <th>
-                        <div
-                          onClick={checkAll}
-                          className="checkbox select-all"
-                        ></div>
-                      </th>
+                      {isAdmin && (
+                        <th>
+                          <div
+                            onClick={checkAll}
+                            className="checkbox select-all"
+                          ></div>
+                        </th>
+                      )}
                       <th>year Level</th>
                       <th>name</th>
                       <th>students count</th>
-                      <th></th>
+                      {isAdmin && <th></th>}
                     </tr>
                   </thead>
                   <tbody
@@ -496,7 +506,7 @@ const Classes = () => {
                     {loading && <div className="table-loading">loading</div>}
                   </tbody>
                 </table>
-                {selectedItems.length > 1 && (
+                {isAdmin && selectedItems.length > 1 && (
                   <div
                     onClick={(e) => {
                       e.stopPropagation();

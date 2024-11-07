@@ -9,6 +9,7 @@ import { Context } from "../../context/Context";
 const Subjects = () => {
   const context = useContext(Context);
   const token = context && context.userDetails.token;
+  const isAdmin = context && context.userDetails.isAdmin;
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedId, setSelectedId] = useState(false);
@@ -178,47 +179,51 @@ const Subjects = () => {
     searchData.map((e, i) => {
       return (
         <tr key={e._id}>
-          <td>
-            <div
-              onClick={(target) => checkOne(target, e._id)}
-              className="checkbox"
-            ></div>
-          </td>
+          {isAdmin && (
+            <td>
+              <div
+                onClick={(target) => checkOne(target, e._id)}
+                className="checkbox"
+              ></div>
+            </td>
+          )}
 
           <td>{e.code}</td>
           <td> {e.name} </td>
           <td> {e.yearLevel} </td>
-          <td>
-            <i
-              onClick={openOptions}
-              className="options fa-solid fa-ellipsis"
-              data-index={i}
-            ></i>
-            <div className="options">
-              <div
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setOverlay(true);
-                  const allSelectors =
-                    document.querySelectorAll("td .checkbox");
-                  allSelectors.forEach((e) => e.classList.remove("active"));
-                  setSelectedItems([e._id]);
-                }}
-                className="flex delete"
-              >
-                <i className="fa-solid fa-trash"></i> delete
+          {isAdmin && (
+            <td>
+              <i
+                onClick={openOptions}
+                className="options fa-solid fa-ellipsis"
+                data-index={i}
+              ></i>
+              <div className="options">
+                <div
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setOverlay(true);
+                    const allSelectors =
+                      document.querySelectorAll("td .checkbox");
+                    allSelectors.forEach((e) => e.classList.remove("active"));
+                    setSelectedItems([e._id]);
+                  }}
+                  className="flex delete"
+                >
+                  <i className="fa-solid fa-trash"></i> delete
+                </div>
+                <Link
+                  onClick={() => {
+                    setSelectedId(e._id);
+                  }}
+                  className="flex update"
+                >
+                  <i className="fa-regular fa-pen-to-square"></i>
+                  update
+                </Link>
               </div>
-              <Link
-                onClick={() => {
-                  setSelectedId(e._id);
-                }}
-                className="flex update"
-              >
-                <i className="fa-regular fa-pen-to-square"></i>
-                update
-              </Link>
-            </div>
-          </td>
+            </td>
+          )}
         </tr>
       );
     });
@@ -410,39 +415,43 @@ const Subjects = () => {
           )}
           <h1 className="title">subjects</h1>
           <div className="flex align-start wrap subjects">
-            <form onSubmit={handelSubmit} className="dashboard-form">
-              {formLoading && <FormLoading />}
-              <h1> add new subject</h1>
-              <label htmlFor="name"> name </label>
-              <input
-                value={form.name}
-                onInput={(e) => setForm({ ...form, name: e.target.value })}
-                required
-                type="text"
-                id="name"
-                className="inp"
-                placeholder="write a subject name"
-              />
-              <label htmlFor="code">code</label>
-              <input
-                value={form.code}
-                onInput={(e) => setForm({ ...form, code: e.target.value })}
-                required
-                type="text"
-                id="code"
-                className="inp"
-                placeholder="write a subject code"
-              />
-              <label> yearLevel </label>
-              <div className="selecte">
-                <div onClick={handleClick} className="inp">
-                  {form.yearLevel ? form.yearLevel : " select a year level"}
+            {isAdmin && (
+              <form onSubmit={handelSubmit} className="dashboard-form">
+                {formLoading && <FormLoading />}
+                <h1> add new subject</h1>
+                <label htmlFor="name"> name </label>
+                <input
+                  value={form.name}
+                  onInput={(e) => setForm({ ...form, name: e.target.value })}
+                  required
+                  type="text"
+                  id="name"
+                  className="inp"
+                  placeholder="write a subject name"
+                />
+                <label htmlFor="code">code</label>
+                <input
+                  value={form.code}
+                  onInput={(e) => setForm({ ...form, code: e.target.value })}
+                  required
+                  type="text"
+                  id="code"
+                  className="inp"
+                  placeholder="write a subject code"
+                />
+                <label> yearLevel </label>
+                <div className="selecte">
+                  <div onClick={handleClick} className="inp">
+                    {form.yearLevel ? form.yearLevel : " select a year level"}
+                  </div>
+                  <article className="grid-3">{createYearLeve()}</article>
                 </div>
-                <article className="grid-3">{createYearLeve()}</article>
-              </div>
-              {DataError && <p className="error">{DataError}</p>}
-              <button className="btn">{selectedId ? "save" : "create"}</button>
-            </form>
+                {DataError && <p className="error">{DataError}</p>}
+                <button className="btn">
+                  {selectedId ? "save" : "create"}
+                </button>
+              </form>
+            )}
             <div className="tabel-container">
               <div className="table">
                 <h2> all subjects </h2>
@@ -466,16 +475,18 @@ const Subjects = () => {
                 <table className={`${tableData.length === 0 ? "loading" : ""}`}>
                   <thead>
                     <tr>
-                      <th>
-                        <div
-                          onClick={checkAll}
-                          className="checkbox select-all"
-                        ></div>
-                      </th>
+                      {isAdmin && (
+                        <th>
+                          <div
+                            onClick={checkAll}
+                            className="checkbox select-all"
+                          ></div>
+                        </th>
+                      )}
                       <th>code</th>
                       <th>name</th>
                       <th>year level</th>
-                      <th></th>
+                      {isAdmin && <th></th>}
                     </tr>
                   </thead>
                   <tbody
@@ -489,7 +500,7 @@ const Subjects = () => {
                     {loading && <div className="table-loading">loading</div>}
                   </tbody>
                 </table>
-                {selectedItems.length > 1 && (
+                {isAdmin && selectedItems.length > 1 && (
                   <div
                     onClick={(e) => {
                       e.stopPropagation();

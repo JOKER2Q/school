@@ -6,6 +6,7 @@ import { Context } from "../../context/Context";
 const ExamResult = () => {
   const context = useContext(Context);
   const token = context && context.userDetails.token;
+  const isAdmin = context && context.userDetails.isAdmin;
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -15,6 +16,7 @@ const ExamResult = () => {
     classId: "",
     student: "",
   });
+  const language = context && context.selectedLang;
   async function fetchData() {
     setData([]);
     setLoading(true);
@@ -129,44 +131,50 @@ const ExamResult = () => {
               >
                 {score.score + "/" + score.totalMarks}
               </span>
-              <form
-                onSubmit={handelSubmit}
-                onClick={(e) => e.stopPropagation()}
-                className="div-input"
-              >
-                <input
-                  className="update-input"
-                  type="number"
-                  min={0}
-                  max={score.totalMarks}
-                  required
-                />
-                <button className="fa-solid fa-arrow-right"></button>
-              </form>
-              <i
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setOverlay(true);
-                  setSelectedItems(score.examResultId);
-                }}
-                className="delete icon fa-regular fa-trash-can"
-              ></i>
-              <i
-                onClick={(event) => {
-                  event.stopPropagation();
-                  const td = document.querySelectorAll("td.input");
-                  td.forEach((e) => {
-                    e !== event.target.parentNode &&
-                      e.classList.remove("input");
-                  });
-                  event.target.parentNode.classList.toggle("input");
-                  const inp = document.querySelector("td.input input");
-                  inp && (inp.value = score.score);
-                  inp && inp.focus();
-                  setSelectedItems(score.examResultId);
-                }}
-                className="update icon fa-regular fa-pen-to-square"
-              ></i>
+              {isAdmin && (
+                <form
+                  onSubmit={handelSubmit}
+                  onClick={(e) => e.stopPropagation()}
+                  className="div-input"
+                >
+                  <input
+                    className="update-input"
+                    type="number"
+                    min={0}
+                    max={score.totalMarks}
+                    required
+                  />
+                  <button className="fa-solid fa-arrow-right"></button>
+                </form>
+              )}
+              {isAdmin && (
+                <i
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setOverlay(true);
+                    setSelectedItems(score.examResultId);
+                  }}
+                  className="delete icon fa-regular fa-trash-can"
+                ></i>
+              )}
+              {isAdmin && (
+                <i
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    const td = document.querySelectorAll("td.input");
+                    td.forEach((e) => {
+                      e !== event.target.parentNode &&
+                        e.classList.remove("input");
+                    });
+                    event.target.parentNode.classList.toggle("input");
+                    const inp = document.querySelector("td.input input");
+                    inp && (inp.value = score.score);
+                    inp && inp.focus();
+                    setSelectedItems(score.examResultId);
+                  }}
+                  className="update icon fa-regular fa-pen-to-square"
+                ></i>
+              )}
             </td>
           ))}
 
@@ -283,7 +291,10 @@ const ExamResult = () => {
                     }}
                     className="false center"
                   >
-                    <h2>delete</h2>
+                    <h2>
+                      {" "}
+                      {language.examResult && language.examResult.delete}
+                    </h2>
                     <i className="fa-solid fa-trash"></i>
                   </div>
                   <div
@@ -293,7 +304,7 @@ const ExamResult = () => {
                     }}
                     className="none center"
                   >
-                    <h2>cancel</h2>
+                    <h2>{language.examResult && language.examResult.cancel}</h2>
                     <i className="fa-solid fa-ban"></i>
                   </div>
                 </div>
@@ -303,12 +314,17 @@ const ExamResult = () => {
           <form className="exam-result dashboard-form">
             <div className="flex wrap ">
               <div className="flex flex-direction">
-                <label>year level</label>
+                <label>
+                  {language.examResult && language.examResult.year_level}
+                </label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
                     {form.yearLevel
                       ? form.yearLevel
-                      : "please selecte year level"}
+                      : `${
+                          language.examResult &&
+                          language.examResult.year_level_placeholder
+                        }`}
                   </div>
                   <article className="grid-3">{createYearLeve()}</article>
                 </div>
@@ -317,12 +333,17 @@ const ExamResult = () => {
               {form.yearLevel && (
                 <>
                   <div className="flex flex-direction">
-                    <label>classes</label>
+                    <label>
+                      {language.examResult && language.examResult.class}
+                    </label>
                     <div className="selecte">
                       <div onClick={handleClick} className="inp">
                         {dataNames.classesName
                           ? dataNames.classesName
-                          : "please select classes"}
+                          : `${
+                              language.examResult &&
+                              language.examResult.class_placeholder
+                            }`}
                       </div>
                       <article>
                         {classes.map((e, i) => {
@@ -345,12 +366,17 @@ const ExamResult = () => {
               {form.classId && (
                 <>
                   <div className="flex flex-direction">
-                    <label>studen</label>
+                    <label>
+                      {language.examResult && language.examResult.student}
+                    </label>
                     <div className="selecte">
                       <div onClick={handleClick} className="inp">
                         {dataNames.studentName
                           ? dataNames.studentName
-                          : "please select student"}
+                          : `${
+                              language.examResult &&
+                              language.examResult.student_Placeholder
+                            }`}
                       </div>
                       <article>
                         {students.map((e, i) => {
@@ -372,31 +398,44 @@ const ExamResult = () => {
             </div>
           </form>
 
-          <div className="tabel-container">
-            <div className="table">
-              <table
-                className={`${tableData.length === 0 ? "loading" : ""} exam`}
-              >
-                <thead>
-                  <tr>
-                    <th>subject name</th>
-                    {createThExams(maxResultsLength)}
-                    <th>score</th>
-                  </tr>
-                </thead>
-                <tbody
-                  className={`${tableData.length === 0 ? "relative" : ""}`}
+          {form.student && (
+            <div className="tabel-container">
+              <div className="table">
+                <table
+                  className={`${tableData.length === 0 ? "loading" : ""} exam`}
                 >
-                  {tableData.length > 0
-                    ? tableData
-                    : !loading && (
-                        <div className="table-loading">no data to show</div>
-                      )}
-                  {loading && <div className="table-loading">loading</div>}
-                </tbody>
-              </table>
+                  <thead>
+                    <tr>
+                      <th>
+                        {language.examResult &&
+                          language.examResult.subject_name}
+                      </th>
+                      {createThExams(maxResultsLength)}
+                      <th>
+                        {language.examResult && language.examResult.score}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    className={`${tableData.length === 0 ? "relative" : ""}`}
+                  >
+                    {tableData.length > 0
+                      ? tableData
+                      : !loading && (
+                          <div className="table-loading">
+                            {language.examResult && language.examResult.no_data}
+                          </div>
+                        )}
+                    {loading && (
+                      <div className="table-loading">
+                        {language.examResult && language.examResult.loading}
+                      </div>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </main>
