@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../../components/form.css";
 import axios from "axios";
 import FormLoading from "../../components/FormLoading";
 import SendData from "../../components/response/SendData";
 import { useNavigate, useParams } from "react-router-dom";
+import { Context } from "../../context/Context";
 
 const UpdateExamSchedule = () => {
   const params = useParams();
@@ -15,7 +16,8 @@ const UpdateExamSchedule = () => {
     duration: "",
     totalMarks: "",
   });
-
+  const context = useContext(Context);
+  const language = context && context.selectedLang;
   const [loading, setLoading] = useState(false);
   const [DataError, setDataError] = useState(false);
   const [classes, setClasses] = useState([]);
@@ -194,18 +196,24 @@ const UpdateExamSchedule = () => {
       <div className="dashboard-container">
         <div className="container relative">
           {overlay && <SendData data="exam" response={response} />}
-          <h1 className="title"> add exam </h1>
+          <h1 className="title">
+            {" "}
+            {language.exams && language.exams.update_exam}{" "}
+          </h1>
           <form onSubmit={handelSubmit} className=" relative dashboard-form">
             {loading && <FormLoading />}
-            <h1>please complete the form to add a exam</h1>
+            <h1>{language.exams && language.exams.please_complete_form}</h1>
             <div className="flex wrap ">
               <div className="flex flex-direction">
-                <label>year level</label>
+                <label>{language.exams && language.exams.year_level}</label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
                     {form.yearLevel
                       ? form.yearLevel
-                      : "please selecte year level"}
+                      : `${
+                          language.exams &&
+                          language.exams.year_level_placeholder
+                        }`}
                   </div>
                   <article className="grid-3">{createYearLeve()}</article>
                 </div>
@@ -214,10 +222,14 @@ const UpdateExamSchedule = () => {
               {form.yearLevel && (
                 <>
                   <div className="flex flex-direction">
-                    <label>classes</label>
+                    <label>{language.exams && language.exams.class}</label>
                     <div className="selecte">
                       <div onClick={handleClick} className="inp">
-                        {classesName ? classesName : "please select classes"}
+                        {classesName
+                          ? classesName
+                          : `${
+                              language.exams && language.exams.class_placeholder
+                            }`}
                       </div>
                       <article>
                         {classes.map((e, i) => {
@@ -236,10 +248,17 @@ const UpdateExamSchedule = () => {
                   </div>
 
                   <div className="flex flex-direction">
-                    <label>subject</label>
+                    <label>
+                      {language.exams && language.exams.subject_input}
+                    </label>
                     <div className="selecte">
                       <div onClick={handleClick} className="inp">
-                        {subjectsName ? subjectsName : "please select subject"}
+                        {subjectsName
+                          ? subjectsName
+                          : `${
+                              language.exams &&
+                              language.exams.subject_placeholder
+                            }`}
                       </div>
                       <article>
                         {subjects.map((e, i) => {
@@ -260,7 +279,9 @@ const UpdateExamSchedule = () => {
               )}
 
               <div className="flex flex-direction">
-                <label htmlFor="date">exam date</label>
+                <label htmlFor="date">
+                  {language.exams && language.exams.exam_date}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -272,7 +293,9 @@ const UpdateExamSchedule = () => {
               </div>
 
               <div className="flex flex-direction">
-                <label htmlFor="duration">duration</label>
+                <label htmlFor="duration">
+                  {language.exams && language.exams.duration_input}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -280,12 +303,16 @@ const UpdateExamSchedule = () => {
                   type="number"
                   id="duration"
                   className="inp"
-                  placeholder="exam minute duration"
+                  placeholder={
+                    language.exams && language.exams.duration_palceholder
+                  }
                 />
               </div>
 
               <div className="flex flex-direction">
-                <label htmlFor="totalMarks">total Marks</label>
+                <label htmlFor="totalMarks">
+                  {language.exams && language.exams.total_marks}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -293,12 +320,16 @@ const UpdateExamSchedule = () => {
                   type="number"
                   id="totalMarks"
                   className="inp"
-                  placeholder="exam minute total Marks"
+                  placeholder={
+                    language.exams && language.exams.total_marks_placeholder
+                  }
                 />
               </div>
             </div>
             {DataError && <p className="error">{DataError}</p>}
-            <button className="btn">save </button>
+            <button className="btn">
+              {language.exams && language.exams.save_btn}{" "}
+            </button>
           </form>
         </div>
       </div>

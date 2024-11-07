@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../components/table.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Context } from "../../context/Context";
 const ExamSchedule = () => {
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -11,6 +12,8 @@ const ExamSchedule = () => {
   const [yearLevel, setYearLevel] = useState(false);
   const [activePage, setActivePage] = useState(1);
   const divsCount = 10;
+  const context = useContext(Context);
+  const language = context && context.selectedLang;
   const createPags = (dataCount, dataLength) => {
     const pages = Math.ceil(dataLength / dataCount);
     let h3Pages = [];
@@ -169,11 +172,12 @@ const ExamSchedule = () => {
                 }}
                 className="flex delete"
               >
-                <i className="fa-solid fa-trash"></i> delete
+                <i className="fa-solid fa-trash"></i>{" "}
+                {language.exams && language.exams.delete}
               </div>
               <Link to={`/update_exam/${e._id}`} className="flex update">
                 <i className="fa-regular fa-pen-to-square"></i>
-                update
+                {language.exams && language.exams.update}
               </Link>
             </div>
           </td>
@@ -237,7 +241,9 @@ const ExamSchedule = () => {
         {overlay && (
           <div className="overlay">
             <div className="change-status">
-              <h1>{`confirm delete (${selectedItems.length}) students`}</h1>
+              <h1>{`${language.exams && language.exams.confirm_delete}(${
+                selectedItems.length
+              })`}</h1>
               <div className="flex gap-20">
                 <div
                   onClick={() => {
@@ -246,7 +252,7 @@ const ExamSchedule = () => {
                   }}
                   className="false center"
                 >
-                  <h2>delete</h2>
+                  <h2>{language.exams && language.exams.delete}</h2>
                   <i className="fa-solid fa-trash"></i>
                 </div>
                 <div
@@ -256,7 +262,7 @@ const ExamSchedule = () => {
                   }}
                   className="none center"
                 >
-                  <h2>cancel</h2>
+                  <h2>{language.exams && language.exams.cancel_btn}</h2>
                   <i className="fa-solid fa-ban"></i>
                 </div>
               </div>
@@ -264,7 +270,9 @@ const ExamSchedule = () => {
           </div>
         )}
         <div className="container">
-          <h1 className="title">Exam Schedule</h1>
+          <h1 className="title">
+            {language.exams && language.exams.exam_schedule}
+          </h1>
           <div className="tabel-container">
             <div className="table">
               <form className="flex search gap-20">
@@ -272,12 +280,15 @@ const ExamSchedule = () => {
                   <div className="selecte">
                     <div onClick={handleClick} className="inp">
                       {yearLevel
-                        ? "yearl level: " + yearLevel
-                        : "yearl level: all level"}
+                        ? `${language.exams && language.exams.year_level} : ` +
+                          yearLevel
+                        : `${language.exams && language.exams.year_level}: ${
+                            language.exams && language.exams.all_years
+                          }`}
                     </div>
                     <article className="grid-3">
                       <h2 data-level={false} onClick={selectYears}>
-                        all level
+                        {language.exams && language.exams.all_years}
                       </h2>
                       {createYearLeve()}
                     </article>
@@ -285,7 +296,8 @@ const ExamSchedule = () => {
                 </div>
 
                 <Link className="btn" to={"/add_exam"}>
-                  <i className="fa-regular fa-square-plus"></i> add exam
+                  <i className="fa-regular fa-square-plus"></i>{" "}
+                  {language.exams && language.exams.add_exam}
                 </Link>
               </form>
               <table className={`${tableData.length === 0 ? "loading" : ""}`}>
@@ -297,12 +309,12 @@ const ExamSchedule = () => {
                         className="checkbox select-all"
                       ></div>
                     </th>
-                    <th>subject</th>
-                    <th>year level</th>
-                    <th>date</th>
-                    <th>room</th>
-                    <th>duration</th>
-                    <th>mark</th>
+                    <th>{language.exams && language.exams.subject}</th>
+                    <th>{language.exams && language.exams.year_level}</th>
+                    <th>{language.exams && language.exams.date}</th>
+                    <th>{language.exams && language.exams.room}</th>
+                    <th>{language.exams && language.exams.duration}</th>
+                    <th>{language.exams && language.exams.mark}</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -312,9 +324,9 @@ const ExamSchedule = () => {
                   {tableData.length > 0
                     ? tableData
                     : !loading && (
-                        <div className="table-loading">no data to show</div>
+                        <div className="table-loading">{language.exams && language.exams.no_data}</div>
                       )}
-                  {loading && <div className="table-loading">loading</div>}
+                  {loading && <div className="table-loading">{language.exams && language.exams.loading}</div>}
                 </tbody>
               </table>
               {selectedItems.length > 1 && (
@@ -325,7 +337,7 @@ const ExamSchedule = () => {
                   }}
                   className="delete-all"
                 >
-                  <i className="fa-solid fa-trash"></i>delete all (
+                  <i className="fa-solid fa-trash"></i>{language.exams && language.exams.delete_all_btn} (
                   {selectedItems.length})
                 </div>
               )}

@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../components/table.css";
 import "../../components/form.css";
 import axios from "axios";
+import { Context } from "../../context/Context";
 const ExamResult = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,6 +13,8 @@ const ExamResult = () => {
     classId: "",
     student: "",
   });
+  const context = useContext(Context);
+  const language = context && context.selectedLang;
   async function fetchData() {
     setData([]);
     setLoading(true);
@@ -252,7 +255,7 @@ const ExamResult = () => {
                     }}
                     className="false center"
                   >
-                    <h2>delete</h2>
+                    <h2> {language.examResult && language.examResult.delete}</h2>
                     <i className="fa-solid fa-trash"></i>
                   </div>
                   <div
@@ -262,7 +265,7 @@ const ExamResult = () => {
                     }}
                     className="none center"
                   >
-                    <h2>cancel</h2>
+                    <h2>{language.examResult && language.examResult.cancel}</h2>
                     <i className="fa-solid fa-ban"></i>
                   </div>
                 </div>
@@ -272,12 +275,12 @@ const ExamResult = () => {
           <form className="exam-result dashboard-form">
             <div className="flex wrap ">
               <div className="flex flex-direction">
-                <label>year level</label>
+                <label>{language.examResult && language.examResult.year_level}</label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
                     {form.yearLevel
                       ? form.yearLevel
-                      : "please selecte year level"}
+                      : `${language.examResult && language.examResult.year_level_placeholder}`}
                   </div>
                   <article className="grid-3">{createYearLeve()}</article>
                 </div>
@@ -286,12 +289,12 @@ const ExamResult = () => {
               {form.yearLevel && (
                 <>
                   <div className="flex flex-direction">
-                    <label>classes</label>
+                    <label>{language.examResult && language.examResult.class}</label>
                     <div className="selecte">
                       <div onClick={handleClick} className="inp">
                         {dataNames.classesName
                           ? dataNames.classesName
-                          : "please select classes"}
+                          : `${language.examResult && language.examResult.class_placeholder}`}
                       </div>
                       <article>
                         {classes.map((e, i) => {
@@ -314,12 +317,12 @@ const ExamResult = () => {
               {form.classId && (
                 <>
                   <div className="flex flex-direction">
-                    <label>studen</label>
+                    <label>{language.examResult && language.examResult.student}</label>
                     <div className="selecte">
                       <div onClick={handleClick} className="inp">
                         {dataNames.studentName
                           ? dataNames.studentName
-                          : "please select student"}
+                          : `${language.examResult && language.examResult.student_Placeholder}`}
                       </div>
                       <article>
                         {students.map((e, i) => {
@@ -348,9 +351,9 @@ const ExamResult = () => {
               >
                 <thead>
                   <tr>
-                    <th>subject name</th>
+                    <th>{language.examResult && language.examResult.subject_name}</th>
                     {createThExams(maxResultsLength)}
-                    <th>score</th>
+                    <th>{language.examResult && language.examResult.score}</th>
                   </tr>
                 </thead>
                 <tbody
@@ -359,9 +362,9 @@ const ExamResult = () => {
                   {tableData.length > 0
                     ? tableData
                     : !loading && (
-                        <div className="table-loading">no data to show</div>
+                        <div className="table-loading">{language.examResult && language.examResult.no_data}</div>
                       )}
-                  {loading && <div className="table-loading">loading</div>}
+                  {loading && <div className="table-loading">{language.examResult && language.examResult.loading}</div>}
                 </tbody>
               </table>
             </div>
